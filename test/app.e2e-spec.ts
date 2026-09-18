@@ -14,6 +14,7 @@ describe('AppController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    console.log('App DB URL:', process.env.DATABASE_URL);
   });
 
   it('/ (GET)', () => {
