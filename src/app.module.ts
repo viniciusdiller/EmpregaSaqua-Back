@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
+import { ApplicationsModule } from './applications/applications.module.js';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JobsModule } from './jobs/jobs.module.js';
     UsersModule,
     AuthModule,
     JobsModule,
+    ApplicationsModule,
   ],
   controllers: [AppController],
   providers: [

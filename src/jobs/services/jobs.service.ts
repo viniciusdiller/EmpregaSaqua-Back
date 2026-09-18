@@ -24,4 +24,12 @@ export class JobsService {
     
     await this.jobsRepo.softDelete(jobId);
   }
+
+  async getJobById(jobId: string): Promise<Job> {
+    const job = await this.jobsRepo.findById(jobId);
+    if (!job) {
+      throw new NotFoundException('Vaga não encontrada');
+    }
+    return job;
+  }
 }
