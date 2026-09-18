@@ -25,8 +25,36 @@ model User {
   role          Role     @default(EMPLOYER)
   created_at    TimestamptzString @default(now())
   
-  jobs          Job[]
-  applications  Application[]
+  jobs              Job[]
+  applications      Application[]
+  company_profile   CompanyProfile?
+  candidate_profile CandidateProfile?
+}
+
+model CompanyProfile {
+  id            String  @id @default(uuid())
+  user_id       String  @unique
+  nome_fantasia String
+  cnpj          String? @unique
+  endereco      String?
+  logo_url      String?
+  created_at    TimestamptzString @default(now())
+  updated_at    temporal.updatedAtString()
+
+  user          User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model CandidateProfile {
+  id          String  @id @default(uuid())
+  user_id     String  @unique
+  bio         String?
+  telefone    String?
+  habilidades String?
+  resume_text String?
+  created_at  TimestamptzString @default(now())
+  updated_at  temporal.updatedAtString()
+
+  user        User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Job {

@@ -1,0 +1,290 @@
+[
+  {
+    "id": "table.candidateProfile",
+    "label": "Create table \"candidateProfile\"",
+    "summary": "Creates table \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"candidateProfile\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"candidateProfile\"",
+        "sql": "CREATE TABLE \"public\".\"candidateProfile\" (\n  \"bio\" text,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"habilidades\" text,\n  \"id\" text NOT NULL,\n  \"resume_text\" text,\n  \"telefone\" text,\n  \"updated_at\" timestamptz NOT NULL,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"candidateProfile\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.companyProfile",
+    "label": "Create table \"companyProfile\"",
+    "summary": "Creates table \"companyProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"companyProfile\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"companyProfile\"",
+        "sql": "CREATE TABLE \"public\".\"companyProfile\" (\n  \"cnpj\" text,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"endereco\" text,\n  \"id\" text NOT NULL,\n  \"logo_url\" text,\n  \"nome_fantasia\" text NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"companyProfile\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.candidateProfile.candidateProfile_user_id_key",
+    "label": "Add unique constraint on \"candidateProfile\" (user_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "candidateProfile_user_id_key",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"candidateProfile_user_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_user_id_key",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"candidateProfile_user_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD CONSTRAINT \"candidateProfile_user_id_key\" UNIQUE (\"user_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"candidateProfile_user_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_user_id_key",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.companyProfile.companyProfile_user_id_key",
+    "label": "Add unique constraint on \"companyProfile\" (user_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "companyProfile_user_id_key",
+        "table": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"companyProfile_user_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_user_id_key",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"companyProfile_user_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"companyProfile\" ADD CONSTRAINT \"companyProfile_user_id_key\" UNIQUE (\"user_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"companyProfile_user_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_user_id_key",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.companyProfile.companyProfile_cnpj_key",
+    "label": "Add unique constraint on \"companyProfile\" (cnpj)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "companyProfile_cnpj_key",
+        "table": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"companyProfile_cnpj_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_cnpj_key",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"companyProfile_cnpj_key\"",
+        "sql": "ALTER TABLE \"public\".\"companyProfile\" ADD CONSTRAINT \"companyProfile_cnpj_key\" UNIQUE (\"cnpj\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"companyProfile_cnpj_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_cnpj_key",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.candidateProfile.candidateProfile_user_id_fkey",
+    "label": "Add foreign key \"candidateProfile_user_id_fkey\" on \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "candidateProfile_user_id_fkey",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"candidateProfile_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_user_id_fkey",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"candidateProfile_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\"\nADD CONSTRAINT \"candidateProfile_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"candidateProfile_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_user_id_fkey",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.companyProfile.companyProfile_user_id_fkey",
+    "label": "Add foreign key \"companyProfile_user_id_fkey\" on \"companyProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "companyProfile_user_id_fkey",
+        "table": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"companyProfile_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_user_id_fkey",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"companyProfile_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"companyProfile\"\nADD CONSTRAINT \"companyProfile_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"companyProfile_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_user_id_fkey",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ]
+  }
+]

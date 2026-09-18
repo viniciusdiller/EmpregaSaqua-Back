@@ -13,6 +13,8 @@ export const db = postgres<Contract>({
 export type User = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_User>;
 export type Job = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_Job>;
 export type Application = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_Application>;
+export type CompanyProfile = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_CompanyProfile>;
+export type CandidateProfile = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_CandidateProfile>;
 
 export enum Role {
   JOB_SEEKER = 'JOB_SEEKER',
