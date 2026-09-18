@@ -58,3 +58,7 @@ lerna-debug.log*
 
 # Build caching
 tsconfig.build.tsbuildinfo
+
+# Uploads
+/uploads
+!/uploads/.gitkeep
