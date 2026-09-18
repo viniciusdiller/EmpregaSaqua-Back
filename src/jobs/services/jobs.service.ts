@@ -1,5 +1,5 @@
 import { Injectable, Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { IJobsRepository } from '../repositories/jobs.repository.interface';
+import type { IJobsRepository } from '../repositories/jobs.repository.interface.js';
 import { CreateJobDto } from '../dtos/create-job.dto';
 import { Job } from '../entities/job.entity';
 
