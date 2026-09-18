@@ -14,7 +14,7 @@ export class JobsController {
   @Roles(Role.EMPLOYER)
   @Post()
   async create(@Request() req: any, @Body() createJobDto: CreateJobDto): Promise<import('../entities/job.entity.js').Job> {
-    const employerId = req.user.userId;
+    const employerId = req.user.id;
     return this.jobsService.createJob(employerId, createJobDto);
   }
 
@@ -22,7 +22,7 @@ export class JobsController {
   @Roles(Role.EMPLOYER)
   @Delete(':id')
   async remove(@Request() req: any, @Param('id') jobId: string) {
-    const employerId = req.user.userId;
+    const employerId = req.user.id;
     await this.jobsService.deleteEmployerJob(employerId, jobId);
     return { message: 'Vaga removida com sucesso' };
   }
