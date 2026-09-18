@@ -12,6 +12,7 @@ import { UsersModule } from './users/users.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
 import { ApplicationsModule } from './applications/applications.module.js';
 import { UploadsModule } from './uploads/uploads.module.js';
+import { AnalyticsModule } from './analytics/analytics.module.js';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { UploadsModule } from './uploads/uploads.module.js';
     }),
     ThrottlerModule.forRoot([{
       ttl: 60000,
-      limit: 10,
+      limit: 100,
     }]),
     PrismaModule,
     UsersModule,
@@ -33,6 +34,7 @@ import { UploadsModule } from './uploads/uploads.module.js';
     JobsModule,
     ApplicationsModule,
     UploadsModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [

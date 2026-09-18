@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { GlobalExceptionFilter } from './common/filters/http-exception.filter.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,8 +10,15 @@ async function bootstrap() {
   // Security HTTP Headers
   app.use(helmet());
 
-  // Enable CORS
-  app.enableCors();
+  // Enable Restricted CORS
+  app.enableCors({
+    origin: process.env.NODE_ENV === 'production' ? 'https://empregasaqua.com' : '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
+  // Global Exception Filter to sanitize errors
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Global Validation Pipe for strict input validation
   app.useGlobalPipes(
