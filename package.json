@@ -21,7 +21,8 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "vitest run --no-file-parallelism --config ./vitest.config.e2e.ts",
     "postinstall": "prisma skills sync || exit 0",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -63,6 +64,7 @@
     "prisma": "^8.0.0-rc.15",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.2",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.2"
@@ -72,5 +74,8 @@
     "lodash": "^4.18.1",
     "valibot": "^1.5.0",
     "@hono/node-server": "^2.1.1"
+  },
+  "prisma": {
+    "seed": "node --experimental-strip-types prisma/seed.ts"
   }
 }
