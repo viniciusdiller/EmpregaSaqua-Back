@@ -11,6 +11,13 @@ enum JobStatus {
   REJECTED
 }
 
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -19,6 +26,7 @@ model User {
   created_at    TimestamptzString @default(now())
   
   jobs          Job[]
+  applications  Application[]
 }
 
 model Job {
@@ -37,4 +45,24 @@ model Job {
   deleted_at       TimestamptzString? // Soft Delete
 
   employer         User      @relation(fields: [employer_id], references: [id], onDelete: Cascade)
+  applications     Application[]
+}
+
+model Application {
+  id           String            @id @default(uuid())
+  job_id       String
+  applicant_id String
+  
+  cover_letter String?
+  resume_url   String?
+  
+  status       ApplicationStatus @default(PENDING)
+  
+  created_at   TimestamptzString @default(now())
+  updated_at   temporal.updatedAtString()
+
+  job          Job               @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  applicant    User              @relation(fields: [applicant_id], references: [id], onDelete: Cascade)
+  
+  @@unique([job_id, applicant_id])
 }

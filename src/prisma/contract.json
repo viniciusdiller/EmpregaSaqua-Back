@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "application": {
+      "model": "Application",
+      "namespace": "public"
+    },
     "job": {
       "model": "Job",
       "namespace": "public"
@@ -17,6 +21,27 @@
     "namespaces": {
       "public": {
         "enum": {
+          "ApplicationStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "REVIEWED",
+                "value": "REVIEWED"
+              },
+              {
+                "name": "ACCEPTED",
+                "value": "ACCEPTED"
+              },
+              {
+                "name": "REJECTED",
+                "value": "REJECTED"
+              }
+            ]
+          },
           "JobStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -57,6 +82,136 @@
           }
         },
         "models": {
+          "Application": {
+            "fields": {
+              "applicant_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "cover_letter": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "created_at": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "job_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "resume_url": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ApplicationStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updated_at": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "applicant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "applicant_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "job": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "job_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Job",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "applicant_id": {
+                  "column": "applicant_id"
+                },
+                "cover_letter": {
+                  "column": "cover_letter"
+                },
+                "created_at": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "job_id": {
+                  "column": "job_id"
+                },
+                "resume_url": {
+                  "column": "resume_url"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updated_at": {
+                  "column": "updated_at"
+                }
+              },
+              "namespaceId": "public",
+              "table": "application"
+            }
+          },
           "Job": {
             "fields": {
               "company_name": {
@@ -151,6 +306,21 @@
               }
             },
             "relations": {
+              "applications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "job_id"
+                  ]
+                },
+                "to": {
+                  "model": "Application",
+                  "namespace": "public"
+                }
+              },
               "employer": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -256,6 +426,21 @@
               }
             },
             "relations": {
+              "applications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "applicant_id"
+                  ]
+                },
+                "to": {
+                  "model": "Application",
+                  "namespace": "public"
+                }
+              },
               "jobs": {
                 "cardinality": "1:N",
                 "on": {
@@ -303,6 +488,138 @@
       "public": {
         "entries": {
           "table": {
+            "application": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'REVIEWED', 'ACCEPTED', 'REJECTED')",
+                  "name": "application_status_check_e0a4d60d",
+                  "prefix": "application_status_check"
+                }
+              ],
+              "columns": {
+                "applicant_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "cover_letter": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "job_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "resume_url": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ApplicationStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updated_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "job_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "application"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "job"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "applicant_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "application"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "applicant_id"
+                  ],
+                  "name": "application_applicant_id_idx_692f8762",
+                  "prefix": "application_applicant_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "job_id"
+                  ],
+                  "name": "application_job_id_idx_58a5bbdd",
+                  "prefix": "application_job_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "job_id",
+                    "applicant_id"
+                  ]
+                }
+              ]
+            },
             "job": {
               "checks": [
                 {
@@ -489,6 +806,15 @@
             }
           },
           "valueSet": {
+            "ApplicationStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "REVIEWED",
+                "ACCEPTED",
+                "REJECTED"
+              ]
+            },
             "JobStatus": {
               "kind": "valueSet",
               "values": [
@@ -512,12 +838,38 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "77c15d62f1c25ab81e731376b80ed93f8211b9e0d5eb229f93adba487a14eeea"
+    "storageHash": "fdd82d3032e8e6a15645ce04f9d7970ffdcb9836a3ec182efc776f601fba61bf"
   },
   "execution": {
-    "executionHash": "4771949e6483d0ac04fa6239965302760cd9a1efaa2c320172ddbe426b06fa61",
+    "executionHash": "7d56bcadc6d0183d62fa70e377682fb2c036881a08525d07c5abd9a57ccd8fcd",
     "mutations": {
       "defaults": [
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "application"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updated_at",
+            "namespace": "public",
+            "table": "application"
+          }
+        },
         {
           "onCreate": {
             "id": "uuidv4",
