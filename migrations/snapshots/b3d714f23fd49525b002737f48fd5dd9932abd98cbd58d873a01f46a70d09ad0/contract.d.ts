@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'77c15d62f1c25ab81e731376b80ed93f8211b9e0d5eb229f93adba487a14eeea'>;
+  StorageHashBase<'b3d714f23fd49525b002737f48fd5dd9932abd98cbd58d873a01f46a70d09ad0'>;
 export type ExecutionHash =
   ExecutionHashBase<'4771949e6483d0ac04fa6239965302760cd9a1efaa2c320172ddbe426b06fa61'>;
 export type ProfileHash =
@@ -260,7 +260,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly password_hash: CodecTypes['pg/text@1']['output'];
-      readonly role: 'JOB_SEEKER' | 'EMPLOYER' | 'ADMIN';
+      readonly role: 'EMPLOYER' | 'ADMIN';
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
     };
   };
@@ -285,7 +285,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly password_hash: CodecTypes['pg/text@1']['input'];
-      readonly role: 'JOB_SEEKER' | 'EMPLOYER' | 'ADMIN';
+      readonly role: 'EMPLOYER' | 'ADMIN';
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
     };
   };
@@ -311,7 +311,7 @@ export type StorageColumnTypes = {
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly password_hash: CodecTypes['pg/text@1']['output'];
-      readonly role: 'JOB_SEEKER' | 'EMPLOYER' | 'ADMIN';
+      readonly role: 'EMPLOYER' | 'ADMIN';
     };
   };
 };
@@ -336,10 +336,46 @@ export type StorageColumnInputTypes = {
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly password_hash: CodecTypes['pg/text@1']['input'];
-      readonly role: 'JOB_SEEKER' | 'EMPLOYER' | 'ADMIN';
+      readonly role: 'EMPLOYER' | 'ADMIN';
     };
   };
 };
+
+export namespace Models {
+  export type public_User = {
+    id: CodecTypes['pg/text@1']['output'];
+    email: CodecTypes['pg/text@1']['output'];
+    password_hash: CodecTypes['pg/text@1']['output'];
+    role: 'EMPLOYER' | 'ADMIN';
+    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+    jobs: public_Job[];
+    readonly [RelationKeys]?: 'jobs';
+  };
+  export type public_Job = {
+    id: CodecTypes['pg/text@1']['output'];
+    employer_id: CodecTypes['pg/text@1']['output'];
+    company_name: CodecTypes['pg/text@1']['output'];
+    title: CodecTypes['pg/text@1']['output'];
+    description: CodecTypes['pg/text@1']['output'];
+    location: CodecTypes['pg/text@1']['output'];
+    contact_whatsapp: CodecTypes['pg/text@1']['output'] | null;
+    contact_email: CodecTypes['pg/text@1']['output'] | null;
+    status: 'PENDING' | 'ACTIVE' | 'FILLED' | 'REJECTED';
+    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
+    updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
+    deleted_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    employer: public_User;
+    readonly [RelationKeys]?: 'employer';
+  };
+}
+
+export declare const models: {
+  public: {
+    User: Models.public_User;
+    Job: Models.public_Job;
+  };
+};
+
 export type TypeMaps = TypeMapsType<
   CodecTypes,
   QueryOperationTypes,
@@ -497,7 +533,7 @@ type ContractBase = Omit<
             };
             readonly Role: {
               readonly kind: 'valueSet';
-              readonly values: readonly ['JOB_SEEKER', 'EMPLOYER', 'ADMIN'];
+              readonly values: readonly ['EMPLOYER', 'ADMIN'];
             };
           };
         };
@@ -581,6 +617,7 @@ type ContractBase = Omit<
               readonly employer: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['employer_id'];
                   readonly targetFields: readonly ['id'];
@@ -659,7 +696,6 @@ type ContractBase = Omit<
           readonly Role: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
-              { readonly name: 'JOB_SEEKER'; readonly value: 'JOB_SEEKER' },
               { readonly name: 'EMPLOYER'; readonly value: 'EMPLOYER' },
               { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
             ];

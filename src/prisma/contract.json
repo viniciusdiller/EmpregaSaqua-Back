@@ -42,6 +42,10 @@
             "codecId": "pg/text@1",
             "members": [
               {
+                "name": "JOB_SEEKER",
+                "value": "JOB_SEEKER"
+              },
+              {
                 "name": "EMPLOYER",
                 "value": "EMPLOYER"
               },
@@ -422,8 +426,8 @@
             "user": {
               "checks": [
                 {
-                  "expression": "\"role\" IN ('EMPLOYER', 'ADMIN')",
-                  "name": "user_role_check_4f4b7f3e",
+                  "expression": "\"role\" IN ('JOB_SEEKER', 'EMPLOYER', 'ADMIN')",
+                  "name": "user_role_check_c2616f8e",
                   "prefix": "user_role_check"
                 }
               ],
@@ -497,6 +501,7 @@
             "Role": {
               "kind": "valueSet",
               "values": [
+                "JOB_SEEKER",
                 "EMPLOYER",
                 "ADMIN"
               ]
@@ -507,7 +512,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b3d714f23fd49525b002737f48fd5dd9932abd98cbd58d873a01f46a70d09ad0"
+    "storageHash": "77c15d62f1c25ab81e731376b80ed93f8211b9e0d5eb229f93adba487a14eeea"
   },
   "execution": {
     "executionHash": "4771949e6483d0ac04fa6239965302760cd9a1efaa2c320172ddbe426b06fa61",

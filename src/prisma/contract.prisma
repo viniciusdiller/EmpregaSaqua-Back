@@ -1,4 +1,5 @@
 enum Role {
+  JOB_SEEKER
   EMPLOYER
   ADMIN
 }
