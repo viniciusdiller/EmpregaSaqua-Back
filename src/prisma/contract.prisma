@@ -57,12 +57,39 @@ model CandidateProfile {
   user_id     String  @unique
   bio         String?
   telefone    String?
-  habilidades String?
-  resume_text String?
+  habilidades String? // Deprecated in favor of skills array? We will keep skills array as requested.
+  skills      String[] @default([])
+  address     String?
   created_at  TimestamptzString @default(now())
   updated_at  temporal.updatedAtString()
 
   user        User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  experiences Experience[]
+  educations  Education[]
+}
+
+model Experience {
+  id           String  @id @default(uuid())
+  candidate_id String
+  company      String
+  role         String
+  start_date   String
+  end_date     String?
+  description  String
+
+  candidate    CandidateProfile @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id             String  @id @default(uuid())
+  candidate_id   String
+  institution    String
+  degree         String
+  field_of_study String
+  start_date     String
+  end_date       String?
+
+  candidate      CandidateProfile @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
 }
 
 model Job {

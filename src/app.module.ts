@@ -13,6 +13,7 @@ import { JobsModule } from './jobs/jobs.module.js';
 import { ApplicationsModule } from './applications/applications.module.js';
 import { UploadsModule } from './uploads/uploads.module.js';
 import { AnalyticsModule } from './analytics/analytics.module.js';
+import { CandidatesModule } from './candidates/candidates.module.js';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AnalyticsModule } from './analytics/analytics.module.js';
     ApplicationsModule,
     UploadsModule,
     AnalyticsModule,
+    CandidatesModule,
   ],
   controllers: [AppController],
   providers: [

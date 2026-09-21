@@ -16,6 +16,14 @@
       "model": "CompanyProfile",
       "namespace": "public"
     },
+    "education": {
+      "model": "Education",
+      "namespace": "public"
+    },
+    "experience": {
+      "model": "Experience",
+      "namespace": "public"
+    },
     "job": {
       "model": "Job",
       "namespace": "public"
@@ -239,6 +247,13 @@
           },
           "CandidateProfile": {
             "fields": {
+              "address": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "bio": {
                 "nullable": true,
                 "type": {
@@ -267,8 +282,9 @@
                   "kind": "scalar"
                 }
               },
-              "resume_text": {
-                "nullable": true,
+              "skills": {
+                "many": true,
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -297,6 +313,36 @@
               }
             },
             "relations": {
+              "educations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "candidate_id"
+                  ]
+                },
+                "to": {
+                  "model": "Education",
+                  "namespace": "public"
+                }
+              },
+              "experiences": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "candidate_id"
+                  ]
+                },
+                "to": {
+                  "model": "Experience",
+                  "namespace": "public"
+                }
+              },
               "user": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -316,6 +362,9 @@
             },
             "storage": {
               "fields": {
+                "address": {
+                  "column": "address"
+                },
                 "bio": {
                   "column": "bio"
                 },
@@ -328,8 +377,8 @@
                 "id": {
                   "column": "id"
                 },
-                "resume_text": {
-                  "column": "resume_text"
+                "skills": {
+                  "column": "skills"
                 },
                 "telefone": {
                   "column": "telefone"
@@ -477,6 +526,202 @@
               },
               "namespaceId": "public",
               "table": "companyProfile"
+            }
+          },
+          "Education": {
+            "fields": {
+              "candidate_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "degree": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "end_date": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "field_of_study": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "institution": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "start_date": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "candidate": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "candidate_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "CandidateProfile",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "candidate_id": {
+                  "column": "candidate_id"
+                },
+                "degree": {
+                  "column": "degree"
+                },
+                "end_date": {
+                  "column": "end_date"
+                },
+                "field_of_study": {
+                  "column": "field_of_study"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "institution": {
+                  "column": "institution"
+                },
+                "start_date": {
+                  "column": "start_date"
+                }
+              },
+              "namespaceId": "public",
+              "table": "education"
+            }
+          },
+          "Experience": {
+            "fields": {
+              "candidate_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "company": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "end_date": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "start_date": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "candidate": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "candidate_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "CandidateProfile",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "candidate_id": {
+                  "column": "candidate_id"
+                },
+                "company": {
+                  "column": "company"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "end_date": {
+                  "column": "end_date"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "role": {
+                  "column": "role"
+                },
+                "start_date": {
+                  "column": "start_date"
+                }
+              },
+              "namespaceId": "public",
+              "table": "experience"
             }
           },
           "Job": {
@@ -963,7 +1208,19 @@
               ]
             },
             "candidateProfile": {
+              "checks": [
+                {
+                  "expression": "array_position(\"skills\", NULL) IS NULL",
+                  "name": "candidateProfile_skills_elem_not_null_79c19a4f",
+                  "prefix": "candidateProfile_skills_elem_not_null"
+                }
+              ],
               "columns": {
+                "address": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "bio": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -988,10 +1245,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
-                "resume_text": {
+                "skills": {
                   "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": true,
                   "nativeType": "text",
-                  "nullable": true
+                  "nullable": false
                 },
                 "telefone": {
                   "codecId": "pg/text@1",
@@ -1153,6 +1415,154 @@
                   ]
                 }
               ]
+            },
+            "education": {
+              "columns": {
+                "candidate_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "degree": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "end_date": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "field_of_study": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "institution": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "start_date": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "candidate_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "education"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "candidateProfile"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "candidate_id"
+                  ],
+                  "name": "education_candidate_id_idx_2164cd9a",
+                  "prefix": "education_candidate_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "experience": {
+              "columns": {
+                "candidate_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "company": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "end_date": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "start_date": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "candidate_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "experience"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "candidateProfile"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "candidate_id"
+                  ],
+                  "name": "experience_candidate_id_idx_2164cd9a",
+                  "prefix": "experience_candidate_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "job": {
               "checks": [
@@ -1438,10 +1848,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "beda9b4304bedcdc3a34294e7304816a92747c1bb82514334aa44a0960eafbcf"
+    "storageHash": "734e9d301f301725c7abf3722e654174eb436f8f9511bbd4c0ead341ea7c30ce"
   },
   "execution": {
-    "executionHash": "00e8e8f272517a684f4013421dbdad0efba37f6029579f12b404cabc3693df5b",
+    "executionHash": "5dc101723a96bdbcb040e1ec186e980348e04fb9b31033dc8b216f0e7531de8d",
     "mutations": {
       "defaults": [
         {
@@ -1520,6 +1930,28 @@
             "column": "updated_at",
             "namespace": "public",
             "table": "companyProfile"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "education"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "experience"
           }
         },
         {

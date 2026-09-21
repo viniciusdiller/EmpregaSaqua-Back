@@ -8,6 +8,8 @@ export class PrismaService implements OnModuleInit {
   public application = db.orm.public.Application;
   public companyProfile = db.orm.public.CompanyProfile;
   public candidateProfile = db.orm.public.CandidateProfile;
+  public experience = db.orm.public.Experience;
+  public education = db.orm.public.Education;
 
   async onModuleInit() {
     // Connection happens automatically when querying
