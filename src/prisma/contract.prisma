@@ -18,6 +18,12 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -38,6 +44,8 @@ model CompanyProfile {
   cnpj          String? @unique
   endereco      String?
   logo_url      String?
+  verification_status       VerificationStatus @default(PENDING)
+  verification_document_url String?
   created_at    TimestamptzString @default(now())
   updated_at    temporal.updatedAtString()
 
