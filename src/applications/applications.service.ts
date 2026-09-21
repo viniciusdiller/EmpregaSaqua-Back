@@ -4,12 +4,14 @@ import { UpdateApplicationStatusDto } from './dtos/update-application-status.dto
 import { ApplicationsRepository } from './repositories/applications.repository.interface.js';
 import { JobsService } from '../jobs/services/jobs.service.js';
 import { ApplicationStatus, JobStatus } from '../prisma/db.js';
+import { MatchScoringService } from './services/match-scoring.service.js';
 
 @Injectable()
 export class ApplicationsService {
   constructor(
     @Inject('IApplicationsRepository') private readonly repo: ApplicationsRepository,
     private readonly jobsService: JobsService,
+    private readonly matchScoringService: MatchScoringService,
   ) {}
 
   async applyForJob(applicantId: string, jobId: string, data: CreateApplicationDto) {
@@ -37,7 +39,30 @@ export class ApplicationsService {
     if (job.employer_id !== employerId) {
       throw new ForbiddenException('Apenas o criador da vaga pode visualizar seus candidatos.');
     }
-    return this.repo.findByJob(jobId);
+    
+    const applications = await this.repo.findByJob(jobId);
+
+    // Calculate match score for each application
+    const applicationsWithScore = applications.map(app => {
+      const candidateSkills = app.applicant?.candidate_profile?.skills || [];
+      const jobRequirements = job.mandatory_qualifications || [];
+      
+      const matchScore = this.matchScoringService.calculateMatchScore(
+        candidateSkills,
+        jobRequirements
+      );
+
+      // Return a new object that includes match_score without mutating the original Prisma object
+      return {
+        ...app,
+        match_score: matchScore,
+      };
+    });
+
+    // Sort descending by match_score
+    applicationsWithScore.sort((a, b) => b.match_score - a.match_score);
+
+    return applicationsWithScore;
   }
 
   async updateApplicationStatus(employerId: string, applicationId: string, data: UpdateApplicationStatusDto) {

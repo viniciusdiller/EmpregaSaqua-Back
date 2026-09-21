@@ -25,10 +25,17 @@ export class PrismaApplicationsRepository implements ApplicationsRepository {
     }).first();
   }
 
-  async findByJob(jobId: string): Promise<Application[]> {
-    return await this.prisma.application.where({
-      job_id: jobId,
-    }).all();
+  async findByJob(jobId: string): Promise<any[]> {
+    return await this.prisma.application
+      .where({ job_id: jobId })
+      .include({
+        applicant: {
+          include: {
+            candidate_profile: true
+          }
+        }
+      })
+      .all();
   }
 
   async findByApplicant(applicantId: string): Promise<Application[]> {
