@@ -17,6 +17,7 @@ import { CandidatesModule } from './candidates/candidates.module.js';
 import { PdfModule } from './pdf/pdf.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { AdminModule } from './admin/admin.module.js';
+import { TalentPoolModule } from './talent-pool/talent-pool.module.js';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AdminModule } from './admin/admin.module.js';
     PdfModule,
     ChatModule,
     AdminModule,
+    TalentPoolModule,
   ],
   controllers: [AppController],
   providers: [
