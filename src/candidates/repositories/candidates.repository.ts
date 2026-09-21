@@ -83,4 +83,13 @@ export class CandidatesRepository {
       totalPages: Math.ceil(total / limit)
     };
   }
+
+  async getMyProfile(userId: string) {
+    return this.prisma.candidateProfile
+      .where((c) => c.user_id.eq(userId))
+      .include('user', (u) => u.select('id', 'email'))
+      .include('experiences')
+      .include('educations')
+      .first();
+  }
 }

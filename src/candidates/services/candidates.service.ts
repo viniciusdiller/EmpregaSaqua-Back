@@ -9,4 +9,8 @@ export class CandidatesService {
   async searchCandidates(searchDto: SearchCandidatesDto) {
     return this.candidatesRepository.searchCandidates(searchDto);
   }
+
+  async getMyProfile(userId: string) {
+    return this.candidatesRepository.getMyProfile(userId);
+  }
 }

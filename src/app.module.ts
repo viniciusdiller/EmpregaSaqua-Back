@@ -14,6 +14,7 @@ import { ApplicationsModule } from './applications/applications.module.js';
 import { UploadsModule } from './uploads/uploads.module.js';
 import { AnalyticsModule } from './analytics/analytics.module.js';
 import { CandidatesModule } from './candidates/candidates.module.js';
+import { PdfModule } from './pdf/pdf.module.js';
 
 @Module({
   imports: [
