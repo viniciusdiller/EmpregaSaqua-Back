@@ -60,10 +60,15 @@ model CandidateProfile {
 model Job {
   id               String    @id @default(uuid())
   employer_id      String
-  company_name     String
   title            String
   description      String
-  location         String
+  address          String @default("")
+  work_schedule    String @default("")
+  salary_range     String?
+  mandatory_qualifications    String[] @default([])
+  differential_qualifications String[] @default([])
+  benefits         String[] @default([])
+  
   contact_whatsapp String?
   contact_email    String?
   status           JobStatus @default(PENDING)

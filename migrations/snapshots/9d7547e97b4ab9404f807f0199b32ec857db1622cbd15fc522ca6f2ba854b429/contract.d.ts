@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'2656551d17734a13cac20a367b10cd54eefcae3648ebbdc3559f20fd0bd30f8c'>;
+  StorageHashBase<'9d7547e97b4ab9404f807f0199b32ec857db1622cbd15fc522ca6f2ba854b429'>;
 export type ExecutionHash =
   ExecutionHashBase<'00e8e8f272517a684f4013421dbdad0efba37f6029579f12b404cabc3693df5b'>;
 export type ProfileHash =
@@ -738,19 +738,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', ''>;
-                  };
                 };
                 readonly work_schedule: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', ''>;
-                  };
                 };
                 readonly salary_range: {
                   readonly nativeType: 'text';
@@ -761,28 +753,16 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', readonly []>;
-                  };
                 };
                 readonly differential_qualifications: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', readonly []>;
-                  };
                 };
                 readonly benefits: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', readonly []>;
-                  };
                 };
                 readonly contact_whatsapp: {
                   readonly nativeType: 'text';

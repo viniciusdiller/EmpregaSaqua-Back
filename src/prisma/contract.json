@@ -438,7 +438,15 @@
           },
           "Job": {
             "fields": {
-              "company_name": {
+              "address": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "benefits": {
+                "many": true,
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -480,6 +488,14 @@
                   "kind": "scalar"
                 }
               },
+              "differential_qualifications": {
+                "many": true,
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "employer_id": {
                 "nullable": false,
                 "type": {
@@ -494,8 +510,16 @@
                   "kind": "scalar"
                 }
               },
-              "location": {
+              "mandatory_qualifications": {
+                "many": true,
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "salary_range": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -525,6 +549,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "work_schedule": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               }
@@ -564,8 +595,11 @@
             },
             "storage": {
               "fields": {
-                "company_name": {
-                  "column": "company_name"
+                "address": {
+                  "column": "address"
+                },
+                "benefits": {
+                  "column": "benefits"
                 },
                 "contact_email": {
                   "column": "contact_email"
@@ -582,14 +616,20 @@
                 "description": {
                   "column": "description"
                 },
+                "differential_qualifications": {
+                  "column": "differential_qualifications"
+                },
                 "employer_id": {
                   "column": "employer_id"
                 },
                 "id": {
                   "column": "id"
                 },
-                "location": {
-                  "column": "location"
+                "mandatory_qualifications": {
+                  "column": "mandatory_qualifications"
+                },
+                "salary_range": {
+                  "column": "salary_range"
                 },
                 "status": {
                   "column": "status"
@@ -599,6 +639,9 @@
                 },
                 "updated_at": {
                   "column": "updated_at"
+                },
+                "work_schedule": {
+                  "column": "work_schedule"
                 }
               },
               "namespaceId": "public",
@@ -1044,14 +1087,43 @@
             "job": {
               "checks": [
                 {
+                  "expression": "array_position(\"benefits\", NULL) IS NULL",
+                  "name": "job_benefits_elem_not_null_5177c089",
+                  "prefix": "job_benefits_elem_not_null"
+                },
+                {
+                  "expression": "array_position(\"differential_qualifications\", NULL) IS NULL",
+                  "name": "job_differential_qualifications_elem_not_null_d51d828c",
+                  "prefix": "job_differential_qualifications_elem_not_null"
+                },
+                {
+                  "expression": "array_position(\"mandatory_qualifications\", NULL) IS NULL",
+                  "name": "job_mandatory_qualifications_elem_not_null_6f2a780a",
+                  "prefix": "job_mandatory_qualifications_elem_not_null"
+                },
+                {
                   "expression": "\"status\" IN ('PENDING', 'ACTIVE', 'FILLED', 'REJECTED')",
                   "name": "job_status_check_76cde6b1",
                   "prefix": "job_status_check"
                 }
               ],
               "columns": {
-                "company_name": {
+                "address": {
                   "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": ""
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "benefits": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": true,
                   "nativeType": "text",
                   "nullable": false
                 },
@@ -1084,6 +1156,16 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "differential_qualifications": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": true,
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "employer_id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -1094,10 +1176,20 @@
                   "nativeType": "text",
                   "nullable": false
                 },
-                "location": {
+                "mandatory_qualifications": {
                   "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": true,
                   "nativeType": "text",
                   "nullable": false
+                },
+                "salary_range": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "status": {
                   "codecId": "pg/text@1",
@@ -1122,6 +1214,15 @@
                 "updated_at": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "work_schedule": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": ""
+                  },
+                  "nativeType": "text",
                   "nullable": false
                 }
               },
@@ -1259,7 +1360,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "649af8bbb60b5a4e91516fb2d46b9849f589487d57447acb55a4bf99eb177d14"
+    "storageHash": "2656551d17734a13cac20a367b10cd54eefcae3648ebbdc3559f20fd0bd30f8c"
   },
   "execution": {
     "executionHash": "00e8e8f272517a684f4013421dbdad0efba37f6029579f12b404cabc3693df5b",
