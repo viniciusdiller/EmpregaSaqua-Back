@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import * as puppeteer from 'puppeteer';
 import * as ejs from 'ejs';
 import * as path from 'path';
-import * as sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);

@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { Role } from '../../prisma/db.js';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
 @Controller('candidates')
 @UseGuards(JwtAuthGuard, RolesGuard)

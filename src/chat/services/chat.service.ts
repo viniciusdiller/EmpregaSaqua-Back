@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
-import * as sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
 
 @Injectable()
 export class ChatService {
@@ -13,7 +13,7 @@ export class ChatService {
   async getOrCreateRoom(candidateId: string, employerId: string, jobId: string) {
     // 1. Verify business logic: does the candidate have an application for this job?
     const application = await this.prisma.application
-      .where((a) => a.applicant_id.eq(candidateId).and(a.job_id.eq(jobId)))
+      .where({ applicant_id: candidateId, job_id: jobId })
       .first();
 
     if (!application) {
@@ -21,18 +21,18 @@ export class ChatService {
     }
 
     // 2. Verify the job belongs to the employer
-    const job = await this.prisma.job.where((j) => j.id.eq(jobId)).first();
+    const job = await this.prisma.job.where({ id: jobId }).first();
     if (!job || job.employer_id !== employerId) {
       throw new ForbiddenException('Invalid job or employer mismatch.');
     }
 
     // 3. Find existing room
     let room = await this.prisma.chatRoom
-      .where((r) => 
-        r.candidate_id.eq(candidateId)
-        .and(r.employer_id.eq(employerId))
-        .and(r.job_id.eq(jobId))
-      )
+      .where({
+        candidate_id: candidateId,
+        employer_id: employerId,
+        job_id: jobId,
+      })
       .first();
 
     // 4. Create if not exists
