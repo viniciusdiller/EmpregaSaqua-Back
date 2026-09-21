@@ -54,8 +54,12 @@ describe('ApplicationsController (e2e)', () => {
       .send({
         title: 'Backend Dev',
         description: 'Node.js needed',
-        company_name: 'Tech Co',
-        location: 'Saquarema',
+        address: 'Test Address',
+        work_schedule: 'Test Schedule',
+        salary_range: 'Test Range',
+        mandatory_qualifications: ['Q1'],
+        differential_qualifications: ['D1'],
+        benefits: ['B1'],
       });
     jobId = jobRes.body.id;
   });

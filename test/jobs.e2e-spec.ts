@@ -58,10 +58,14 @@ describe('JobsModule (e2e)', () => {
     await request(app.getHttpServer())
       .post('/jobs')
       .send({
-        company_name: 'Test Corp',
         title: 'Developer',
         description: 'Test job description',
-        location: 'Saquarema',
+        address: 'Saquarema',
+        work_schedule: 'Test Schedule',
+        salary_range: 'Test Range',
+        mandatory_qualifications: ['Q1'],
+        differential_qualifications: ['D1'],
+        benefits: ['B1'],
       })
       .expect(401);
   });
@@ -73,10 +77,14 @@ describe('JobsModule (e2e)', () => {
       .post('/jobs')
       .set('Authorization', `Bearer ${seekerToken}`)
       .send({
-        company_name: 'Test Corp',
-        title: 'Developer',
-        description: 'Test job description',
-        location: 'Saquarema',
+        title: 'Vaga Teste',
+        description: 'Desc',
+        address: 'Test Address',
+        work_schedule: 'Test Schedule',
+        salary_range: 'Test Range',
+        mandatory_qualifications: ['Q1'],
+        differential_qualifications: ['D1'],
+        benefits: ['B1'],
       })
       .expect(403);
   });
@@ -88,15 +96,19 @@ describe('JobsModule (e2e)', () => {
       .post('/jobs')
       .set('Authorization', `Bearer ${employerToken}`)
       .send({
-        company_name: 'Test Corp',
-        title: 'Developer',
-        description: 'Test job description',
-        location: 'Saquarema',
+        title: 'Vaga Teste',
+        description: 'Desc',
+        address: 'Test Address',
+        work_schedule: 'Test Schedule',
+        salary_range: 'Test Range',
+        mandatory_qualifications: ['Q1'],
+        differential_qualifications: ['D1'],
+        benefits: ['B1'],
       })
       .expect(201);
       
     expect(response.body).toHaveProperty('id');
-    expect(response.body.title).toBe('Developer');
+    expect(response.body.title).toBe('Vaga Teste');
   });
 
   it('/jobs/:id (DELETE) - should soft delete job if owner', async () => {
@@ -106,10 +118,14 @@ describe('JobsModule (e2e)', () => {
       .post('/jobs')
       .set('Authorization', `Bearer ${employerToken}`)
       .send({
-        company_name: 'Test Corp',
         title: 'Developer',
         description: 'Test job description',
-        location: 'Saquarema',
+        address: 'Saquarema',
+        work_schedule: 'Test Schedule',
+        salary_range: 'Test Range',
+        mandatory_qualifications: ['Q1'],
+        differential_qualifications: ['D1'],
+        benefits: ['B1'],
       })
       .expect(201);
       

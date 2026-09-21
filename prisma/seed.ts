@@ -53,46 +53,66 @@ async function main() {
   console.log('💼 Creating Jobs...');
   await db.orm.public.Job.create({
     employer_id: emp1.id,
-    company_name: 'Padaria Saqua',
     title: 'Atendente de Padaria',
     description: 'Vaga para atendimento ao público no balcão.',
-    location: 'Centro',
+    address: 'Centro, Saquarema',
+    work_schedule: 'Escala 6x1',
+    salary_range: 'R$ 1.500,00',
+    mandatory_qualifications: ['Ensino Médio Completo'],
+    differential_qualifications: ['Experiência anterior'],
+    benefits: ['Vale Transporte', 'Lanche no local'],
     status: JobStatus.ACTIVE,
   });
 
   await db.orm.public.Job.create({
     employer_id: emp1.id,
-    company_name: 'Padaria Saqua',
     title: 'Padeiro Noturno',
     description: 'Experiência comprovada em produção noturna.',
-    location: 'Centro',
+    address: 'Centro, Saquarema',
+    work_schedule: 'Noturno, Escala 5x2',
+    salary_range: 'R$ 3.000,00',
+    mandatory_qualifications: ['Experiência de 2 anos na área'],
+    differential_qualifications: [],
+    benefits: ['Adicional Noturno', 'Vale Transporte'],
     status: JobStatus.PENDING,
   });
 
   await db.orm.public.Job.create({
     employer_id: emp2.id,
-    company_name: 'Supermercado Local',
     title: 'Operador de Caixa',
     description: 'Turno diurno. Oferecemos treinamento.',
-    location: 'Bacaxá',
+    address: 'Bacaxá',
+    work_schedule: 'Segunda a Sábado - 08h às 17h',
+    salary_range: 'R$ 1.600,00',
+    mandatory_qualifications: ['Ensino Médio Completo'],
+    differential_qualifications: ['Experiência em supermercado'],
+    benefits: ['Vale Alimentação', 'Vale Transporte'],
     status: JobStatus.ACTIVE,
   });
 
   await db.orm.public.Job.create({
     employer_id: emp2.id,
-    company_name: 'Supermercado Local',
     title: 'Repositor',
     description: 'Vaga para repositor de mercadorias. Força física exigida.',
-    location: 'Bacaxá',
+    address: 'Bacaxá',
+    work_schedule: 'Escala 6x1',
+    salary_range: 'R$ 1.500,00',
+    mandatory_qualifications: ['Disposição Física'],
+    differential_qualifications: [],
+    benefits: ['Vale Transporte', 'Refeição no local'],
     status: JobStatus.ACTIVE,
   });
 
   await db.orm.public.Job.create({
     employer_id: emp2.id,
-    company_name: 'Supermercado Local',
     title: 'Gerente de Loja',
     description: 'Mínimo 3 anos de experiência em gestão.',
-    location: 'Bacaxá',
+    address: 'Bacaxá',
+    work_schedule: 'Comercial',
+    salary_range: 'R$ 4.500,00',
+    mandatory_qualifications: ['Superior em Administração ou áreas correlatas', 'Experiência de 3 anos'],
+    differential_qualifications: ['Pós-graduação', 'Cursos de Liderança'],
+    benefits: ['Vale Alimentação', 'Vale Combustível', 'Plano de Saúde'],
     status: JobStatus.PENDING,
   });
 
