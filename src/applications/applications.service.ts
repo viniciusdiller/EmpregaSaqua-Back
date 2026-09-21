@@ -15,7 +15,7 @@ export class ApplicationsService {
   ) {}
 
   async applyForJob(applicantId: string, jobId: string, data: CreateApplicationDto) {
-    const job = await this.jobsService.getJobById(jobId);
+    const job = await this.jobsService.getJobById(jobId) as any;
     
     // Check if job is still active
     if (job.status !== JobStatus.ACTIVE && job.status !== JobStatus.PENDING) {
@@ -27,7 +27,22 @@ export class ApplicationsService {
       throw new ConflictException('Você já se candidatou a esta vaga.');
     }
 
-    return this.repo.create(applicantId, jobId, data);
+    let isKnockedOut = false;
+    let initialStatus = ApplicationStatus.PENDING;
+
+    if (job.questions && job.questions.length > 0 && data.answers) {
+      for (const question of job.questions) {
+        const candidateAnswer = data.answers.find(a => a.question_id === question.id);
+        // If answer is missing or incorrect, it's a knockout
+        if (!candidateAnswer || candidateAnswer.answer !== question.expected_answer) {
+          isKnockedOut = true;
+          initialStatus = ApplicationStatus.REJECTED;
+          break;
+        }
+      }
+    }
+
+    return this.repo.create(applicantId, jobId, data, initialStatus, isKnockedOut);
   }
 
   async getMyApplications(applicantId: string) {

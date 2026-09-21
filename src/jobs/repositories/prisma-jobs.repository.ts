@@ -27,6 +27,16 @@ export class PrismaJobsRepository implements IJobsRepository {
       status: JobStatus.PENDING,
     });
     
+    if (data.questions && data.questions.length > 0) {
+      for (const q of data.questions) {
+        await this.prisma.jobQuestion.create({
+          job_id: jobRow.id,
+          question_text: q.question_text,
+          expected_answer: q.expected_answer,
+        });
+      }
+    }
+
     return jobRow as Job;
   }
 
@@ -34,6 +44,7 @@ export class PrismaJobsRepository implements IJobsRepository {
     const jobRow = await this.prisma.job
       .where({ id })
       .include('employer', (e) => e.include('company_profile'))
+      .include('questions', (q) => q.select('id', 'question_text', 'expected_answer'))
       .first();
     return jobRow as unknown as Job | null;
   }
@@ -68,6 +79,7 @@ export class PrismaJobsRepository implements IJobsRepository {
              cp.select('nome_fantasia', 'logo_url')
            )
         )
+        .include('questions', (q) => q.select('id', 'question_text', 'expected_answer'))
         .orderBy((j) => j.created_at.desc())
         .limit(limit)
         .offset((page - 1) * limit)

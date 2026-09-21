@@ -8,14 +8,27 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 export class PrismaApplicationsRepository implements ApplicationsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(applicantId: string, jobId: string, data: CreateApplicationDto): Promise<Application> {
-    return await this.prisma.application.create({
+  async create(applicantId: string, jobId: string, data: CreateApplicationDto, status?: ApplicationStatus, isKnockedOut?: boolean): Promise<Application> {
+    const app = await this.prisma.application.create({
       applicant_id: applicantId,
       job_id: jobId,
       cover_letter: data.cover_letter ?? null,
       resume_url: data.resume_url ?? null,
-      status: ApplicationStatus.PENDING,
+      status: status ?? ApplicationStatus.PENDING,
+      is_knocked_out: isKnockedOut ?? false,
     });
+
+    if (data.answers && data.answers.length > 0) {
+      for (const answer of data.answers) {
+        await this.prisma.applicationAnswer.create({
+          application_id: app.id,
+          question_id: answer.question_id,
+          answer: answer.answer,
+        });
+      }
+    }
+
+    return app as Application;
   }
 
   async findByJobAndApplicant(jobId: string, applicantId: string): Promise<Application | null> {
@@ -28,13 +41,7 @@ export class PrismaApplicationsRepository implements ApplicationsRepository {
   async findByJob(jobId: string): Promise<any[]> {
     return await this.prisma.application
       .where({ job_id: jobId })
-      .include({
-        applicant: {
-          include: {
-            candidate_profile: true
-          }
-        }
-      })
+      .include('applicant', (a) => a.include('candidate_profile'))
       .all();
   }
 

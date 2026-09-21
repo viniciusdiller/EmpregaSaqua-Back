@@ -1,7 +1,19 @@
-import { IsString, IsNotEmpty, MaxLength, IsOptional, IsEmail, Matches, IsArray, ArrayMaxSize } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, IsEmail, Matches, IsArray, ArrayMaxSize, ValidateNested, IsBoolean } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 import sanitizeHtml from 'sanitize-html';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+export class JobQuestionDto {
+  @ApiProperty({ example: 'Tem experiência com CNH D?' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(300)
+  question_text: string;
+
+  @ApiProperty({ example: true })
+  @IsBoolean()
+  expected_answer: boolean;
+}
 
 export class CreateJobDto {
   @ApiProperty({ example: 'Desenvolvedor Frontend Sênior', description: 'Título da vaga' })
@@ -76,4 +88,15 @@ export class CreateJobDto {
   @IsEmail()
   @IsOptional()
   contact_email?: string;
+
+  @ApiPropertyOptional({ 
+    example: [{ question_text: 'Você tem disponibilidade para trabalhar aos finais de semana?', expected_answer: true }], 
+    description: 'Perguntas de triagem (Knockout questions)',
+    isArray: true
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => JobQuestionDto)
+  questions?: JobQuestionDto[];
 }

@@ -8,6 +8,10 @@
       "model": "Application",
       "namespace": "public"
     },
+    "applicationAnswer": {
+      "model": "ApplicationAnswer",
+      "namespace": "public"
+    },
     "candidateProfile": {
       "model": "CandidateProfile",
       "namespace": "public"
@@ -30,6 +34,10 @@
     },
     "job": {
       "model": "Job",
+      "namespace": "public"
+    },
+    "jobQuestion": {
+      "model": "JobQuestion",
       "namespace": "public"
     },
     "message": {
@@ -153,6 +161,13 @@
                   "kind": "scalar"
                 }
               },
+              "is_knocked_out": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "job_id": {
                 "nullable": false,
                 "type": {
@@ -189,6 +204,21 @@
               }
             },
             "relations": {
+              "answers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "application_id"
+                  ]
+                },
+                "to": {
+                  "model": "ApplicationAnswer",
+                  "namespace": "public"
+                }
+              },
               "applicant": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -236,6 +266,9 @@
                 "id": {
                   "column": "id"
                 },
+                "is_knocked_out": {
+                  "column": "is_knocked_out"
+                },
                 "job_id": {
                   "column": "job_id"
                 },
@@ -251,6 +284,90 @@
               },
               "namespaceId": "public",
               "table": "application"
+            }
+          },
+          "ApplicationAnswer": {
+            "fields": {
+              "answer": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "application_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "question_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "application": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "application_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Application",
+                  "namespace": "public"
+                }
+              },
+              "question": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "question_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "JobQuestion",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "answer": {
+                  "column": "answer"
+                },
+                "application_id": {
+                  "column": "application_id"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "question_id": {
+                  "column": "question_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "applicationAnswer"
             }
           },
           "CandidateProfile": {
@@ -1027,6 +1144,21 @@
                   "model": "User",
                   "namespace": "public"
                 }
+              },
+              "questions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "job_id"
+                  ]
+                },
+                "to": {
+                  "model": "JobQuestion",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -1082,6 +1214,89 @@
               },
               "namespaceId": "public",
               "table": "job"
+            }
+          },
+          "JobQuestion": {
+            "fields": {
+              "expected_answer": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "job_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "question_text": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "answers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "question_id"
+                  ]
+                },
+                "to": {
+                  "model": "ApplicationAnswer",
+                  "namespace": "public"
+                }
+              },
+              "job": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "job_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Job",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "expected_answer": {
+                  "column": "expected_answer"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "job_id": {
+                  "column": "job_id"
+                },
+                "question_text": {
+                  "column": "question_text"
+                }
+              },
+              "namespaceId": "public",
+              "table": "jobQuestion"
             }
           },
           "Message": {
@@ -1405,6 +1620,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "is_knocked_out": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "job_id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -1503,6 +1727,90 @@
                   ]
                 }
               ]
+            },
+            "applicationAnswer": {
+              "columns": {
+                "answer": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "application_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "question_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "application_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "applicationAnswer"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "application"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "question_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "applicationAnswer"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "jobQuestion"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "application_id"
+                  ],
+                  "name": "applicationAnswer_application_id_idx_e32e1f6e",
+                  "prefix": "applicationAnswer_application_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "question_id"
+                  ],
+                  "name": "applicationAnswer_question_id_idx_fcfb223c",
+                  "prefix": "applicationAnswer_question_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "candidateProfile": {
               "checks": [
@@ -2157,6 +2465,65 @@
               },
               "uniques": []
             },
+            "jobQuestion": {
+              "columns": {
+                "expected_answer": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "job_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "question_text": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "job_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "jobQuestion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "job"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "job_id"
+                  ],
+                  "name": "jobQuestion_job_id_idx_58a5bbdd",
+                  "prefix": "jobQuestion_job_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "message": {
               "columns": {
                 "content": {
@@ -2365,10 +2732,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f076f59974e4696e7292487937803a4281f86be1e07082257b5acee6d7b1fa92"
+    "storageHash": "cb30ea031ffa224ef2965d1ff97557404cb7eeb1a4fdb3c7b8c36c29a1c5bdd2"
   },
   "execution": {
-    "executionHash": "201aade5db42319122f4e3375e561850972fc77440c0d19fceaa8b1400c4b8aa",
+    "executionHash": "c7a0d21888721b1eee0702cbcb3c5040deb5f7b43c19dfbbc6a4a9480406faeb",
     "mutations": {
       "defaults": [
         {
@@ -2395,6 +2762,17 @@
             "column": "updated_at",
             "namespace": "public",
             "table": "application"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "applicationAnswer"
           }
         },
         {
@@ -2506,6 +2884,17 @@
             "column": "updated_at",
             "namespace": "public",
             "table": "job"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "jobQuestion"
           }
         },
         {

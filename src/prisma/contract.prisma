@@ -119,6 +119,17 @@ model Job {
   employer         User      @relation(fields: [employer_id], references: [id], onDelete: Cascade)
   applications     Application[]
   chat_rooms       ChatRoom[]
+  questions        JobQuestion[]
+}
+
+model JobQuestion {
+  id               String   @id @default(uuid())
+  job_id           String
+  question_text    String
+  expected_answer  Boolean
+
+  job              Job      @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  answers          ApplicationAnswer[]
 }
 
 model Application {
@@ -130,14 +141,26 @@ model Application {
   resume_url   String?
   
   status       ApplicationStatus @default(PENDING)
+  is_knocked_out Boolean         @default(false)
   
   created_at   TimestamptzString @default(now())
   updated_at   temporal.updatedAtString()
 
   job          Job               @relation(fields: [job_id], references: [id], onDelete: Cascade)
   applicant    User              @relation(fields: [applicant_id], references: [id], onDelete: Cascade)
+  answers      ApplicationAnswer[]
   
   @@unique([job_id, applicant_id])
+}
+
+model ApplicationAnswer {
+  id             String      @id @default(uuid())
+  application_id String
+  question_id    String
+  answer         Boolean
+
+  application    Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
+  question       JobQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
 }
 
 model ChatRoom {
