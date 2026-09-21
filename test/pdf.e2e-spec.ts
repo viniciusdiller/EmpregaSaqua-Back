@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
+import { db } from '../src/prisma/db.js';
 
 describe('PdfModule (e2e)', () => {
   let app: INestApplication;
@@ -32,17 +33,20 @@ describe('PdfModule (e2e)', () => {
       
     jobSeekerToken = resRegister.body.access_token;
     
-    // Create profile
-    await request(app.getHttpServer())
-      .post('/candidates/profile')
-      .set('Authorization', `Bearer ${jobSeekerToken}`)
-      .send({
+    // Get the user's ID
+    const user = await db.orm.public.User.first({ email });
+    
+    // Create CandidateProfile directly in the DB
+    // (there is no POST /candidates/profile API endpoint — profile is managed via PATCH)
+    if (user) {
+      await db.orm.public.CandidateProfile.create({
+        user_id: user.id,
         bio: 'Backend developer',
         telefone: '123456789',
         address: 'Test City',
         skills: ['NestJS', 'PostgreSQL'],
-      })
-      .expect(201);
+      });
+    }
   });
 
   afterAll(async () => {
