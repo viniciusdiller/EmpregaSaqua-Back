@@ -19,7 +19,7 @@ export class TalentPoolController {
   @ApiOperation({ summary: 'Salvar um candidato no banco de talentos' })
   @HttpCode(HttpStatus.CREATED)
   async saveCandidate(@Req() req: any, @Body() data: CreateSavedCandidateDto) {
-    const employerId = req.user.userId;
+    const employerId = req.user.id;
     return this.talentPoolService.saveCandidate(employerId, data);
   }
 
@@ -33,7 +33,7 @@ export class TalentPoolController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ) {
-    const employerId = req.user.userId;
+    const employerId = req.user.id;
     return this.talentPoolService.getSavedCandidates(employerId, page, limit);
   }
 
@@ -42,7 +42,7 @@ export class TalentPoolController {
   @ApiOperation({ summary: 'Remover um candidato do banco de talentos' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeCandidate(@Req() req: any, @Param('id') id: string) {
-    const employerId = req.user.userId;
+    const employerId = req.user.id;
     await this.talentPoolService.removeCandidate(employerId, id);
   }
 }
