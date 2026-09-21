@@ -19,7 +19,7 @@ export class FindJobsQueryDto {
   @IsOptional()
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  location?: string;
+  address?: string;
 
   @IsOptional()
   @IsString()
