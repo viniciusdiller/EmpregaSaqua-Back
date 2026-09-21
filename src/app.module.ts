@@ -18,6 +18,7 @@ import { PdfModule } from './pdf/pdf.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { AdminModule } from './admin/admin.module.js';
 import { TalentPoolModule } from './talent-pool/talent-pool.module.js';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
 
 @Module({
   imports: [
@@ -53,6 +54,8 @@ import { TalentPoolModule } from './talent-pool/talent-pool.module.js';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    JwtAuthGuard,
   ],
 })
 export class AppModule {}
+
