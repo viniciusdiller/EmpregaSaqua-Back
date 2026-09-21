@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 import { CandidateProfile, db } from '../../prisma/db.js';
 import { or } from '@prisma/orm-postgres/orm-client';
 import { SearchCandidatesDto } from '../dtos/search-candidates.dto.js';
+import { UpdateCandidateProfileDto } from '../dtos/update-candidate-profile.dto.js';
 
 @Injectable()
 export class CandidatesRepository {
@@ -92,4 +93,43 @@ export class CandidatesRepository {
       .include('educations')
       .first();
   }
+
+  async updateProfile(userId: string, data: UpdateCandidateProfileDto) {
+    const profile = await this.prisma.candidateProfile.where({ user_id: userId }).first();
+    if (!profile) return null;
+
+    const { experiences, educations, ...profileFields } = data;
+
+    // Update scalar profile fields
+    const updated = await this.prisma.candidateProfile
+      .where({ id: profile.id })
+      .update({
+        ...profileFields,
+        updated_at: new Date().toISOString(),
+      });
+
+    // Replace experiences if provided
+    if (experiences !== undefined) {
+      await this.prisma.experience.where({ candidate_id: profile.id }).delete();
+      for (const exp of experiences) {
+        await this.prisma.experience.create({ candidate_id: profile.id, ...exp });
+      }
+    }
+
+    // Replace educations if provided
+    if (educations !== undefined) {
+      await this.prisma.education.where({ candidate_id: profile.id }).delete();
+      for (const edu of educations) {
+        await this.prisma.education.create({ candidate_id: profile.id, ...edu });
+      }
+    }
+
+    return this.getMyProfile(userId);
+  }
+
+  async deleteAccount(userId: string) {
+    // Cascade deletes all related records (profile, applications, messages, etc.)
+    return this.prisma.user.where({ id: userId }).delete();
+  }
 }
+
