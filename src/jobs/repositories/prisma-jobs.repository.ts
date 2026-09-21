@@ -4,6 +4,7 @@ import type { IJobsRepository } from './jobs.repository.interface.js';
 import type { Job } from '../../prisma/db.js';
 import { JobStatus } from '../../prisma/db.js';
 import type { CreateJobDto } from '../dtos/create-job.dto.js';
+import type { UpdateJobDto } from '../dtos/update-job.dto.js';
 import type { FindJobsQueryDto } from '../dtos/find-jobs-query.dto.js';
 import type { PaginatedJobsResponse } from '../dtos/paginated-jobs-response.dto.js';
 
@@ -109,6 +110,35 @@ export class PrismaJobsRepository implements IJobsRepository {
     if (!updated) {
       throw new Error('Job not found');
     }
+    return updated as Job;
+  }
+
+  async update(id: string, data: UpdateJobDto): Promise<Job> {
+    const { questions, status, ...updateData } = data;
+    
+    // We update the basic job fields
+    const updated = await this.prisma.job.where({ id }).update({
+      ...updateData,
+      ...(status && { status }),
+      updated_at: new Date().toISOString(),
+    });
+
+    if (!updated) {
+      throw new Error('Job not found');
+    }
+
+    // If new knockout questions are provided, we replace the old ones
+    if (questions) {
+      await this.prisma.jobQuestion.where({ job_id: id }).delete();
+      for (const q of questions) {
+        await this.prisma.jobQuestion.create({
+          job_id: id,
+          question_text: q.question_text,
+          expected_answer: q.expected_answer,
+        });
+      }
+    }
+
     return updated as Job;
   }
 

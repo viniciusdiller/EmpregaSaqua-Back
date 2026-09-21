@@ -38,5 +38,20 @@ export class JobsService {
     }
     return job;
   }
+
+  async updateEmployerJob(employerId: string, jobId: string, data: any): Promise<Job> {
+    const job = await this.jobsRepo.findById(jobId);
+    if (!job) {
+      throw new NotFoundException('Vaga não encontrada');
+    }
+    if (job.employer_id !== employerId) {
+      throw new ForbiddenException('Você não tem permissão para modificar esta vaga');
+    }
+    
+    // Status can only be changed by Admin via AdminController, so we remove it here to be safe
+    const { status, ...safeData } = data;
+    
+    return this.jobsRepo.update(jobId, safeData);
+  }
 }
 
