@@ -1,6 +1,7 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateUserDto } from './dtos/create-user.dto.js';
+import { UpdateCompanyProfileDto } from './dtos/update-company-profile.dto.js';
 import { User } from '../prisma/db.js';
 import * as bcrypt from 'bcrypt';
 
@@ -31,4 +32,22 @@ export class UsersService {
       role: data.role,
     });
   }
+
+  async updateCompanyProfile(userId: string, data: UpdateCompanyProfileDto) {
+    const profile = await this.prisma.companyProfile.where({ user_id: userId }).first();
+    if (!profile) throw new NotFoundException('Perfil de empresa não encontrado.');
+
+    return this.prisma.companyProfile.where({ id: profile.id }).update({
+      ...data,
+      updated_at: new Date().toISOString(),
+    });
+  }
+
+  async deleteAccount(userId: string) {
+    const user = await this.findById(userId);
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
+    // Cascade deletes all related data (company profile, jobs, etc.)
+    return this.prisma.user.where({ id: userId }).delete();
+  }
 }
+
