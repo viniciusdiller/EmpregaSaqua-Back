@@ -700,193 +700,6 @@ export type StorageColumnInputTypes = {
     };
   };
 };
-
-export namespace Models {
-  export type public_User = {
-    id: CodecTypes['pg/text@1']['output'];
-    email: CodecTypes['pg/text@1']['output'];
-    password_hash: CodecTypes['pg/text@1']['output'];
-    role: 'JOB_SEEKER' | 'EMPLOYER' | 'ADMIN';
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    applications: public_Application[];
-    candidate_profile: public_CandidateProfile | null;
-    candidate_rooms: public_ChatRoom[];
-    company_profile: public_CompanyProfile | null;
-    employer_rooms: public_ChatRoom[];
-    jobs: public_Job[];
-    saved_by_employers: public_SavedCandidate[];
-    saved_candidates: public_SavedCandidate[];
-    sent_messages: public_Message[];
-    readonly [RelationKeys]?:
-      | 'applications'
-      | 'candidate_profile'
-      | 'candidate_rooms'
-      | 'company_profile'
-      | 'employer_rooms'
-      | 'jobs'
-      | 'saved_by_employers'
-      | 'saved_candidates'
-      | 'sent_messages';
-  };
-  export type public_CompanyProfile = {
-    id: CodecTypes['pg/text@1']['output'];
-    user_id: CodecTypes['pg/text@1']['output'];
-    nome_fantasia: CodecTypes['pg/text@1']['output'];
-    cnpj: CodecTypes['pg/text@1']['output'] | null;
-    endereco: CodecTypes['pg/text@1']['output'] | null;
-    logo_url: CodecTypes['pg/text@1']['output'] | null;
-    verification_status: 'PENDING' | 'APPROVED' | 'REJECTED';
-    verification_document_url: CodecTypes['pg/text@1']['output'] | null;
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    user: public_User;
-    readonly [RelationKeys]?: 'user';
-  };
-  export type public_CandidateProfile = {
-    id: CodecTypes['pg/text@1']['output'];
-    user_id: CodecTypes['pg/text@1']['output'];
-    bio: CodecTypes['pg/text@1']['output'] | null;
-    telefone: CodecTypes['pg/text@1']['output'] | null;
-    habilidades: CodecTypes['pg/text@1']['output'] | null;
-    skills: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
-    address: CodecTypes['pg/text@1']['output'] | null;
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    educations: public_Education[];
-    experiences: public_Experience[];
-    user: public_User;
-    readonly [RelationKeys]?: 'educations' | 'experiences' | 'user';
-  };
-  export type public_Experience = {
-    id: CodecTypes['pg/text@1']['output'];
-    candidate_id: CodecTypes['pg/text@1']['output'];
-    company: CodecTypes['pg/text@1']['output'];
-    role: CodecTypes['pg/text@1']['output'];
-    start_date: CodecTypes['pg/text@1']['output'];
-    end_date: CodecTypes['pg/text@1']['output'] | null;
-    description: CodecTypes['pg/text@1']['output'];
-    candidate: public_CandidateProfile;
-    readonly [RelationKeys]?: 'candidate';
-  };
-  export type public_Education = {
-    id: CodecTypes['pg/text@1']['output'];
-    candidate_id: CodecTypes['pg/text@1']['output'];
-    institution: CodecTypes['pg/text@1']['output'];
-    degree: CodecTypes['pg/text@1']['output'];
-    field_of_study: CodecTypes['pg/text@1']['output'];
-    start_date: CodecTypes['pg/text@1']['output'];
-    end_date: CodecTypes['pg/text@1']['output'] | null;
-    candidate: public_CandidateProfile;
-    readonly [RelationKeys]?: 'candidate';
-  };
-  export type public_Job = {
-    id: CodecTypes['pg/text@1']['output'];
-    employer_id: CodecTypes['pg/text@1']['output'];
-    title: CodecTypes['pg/text@1']['output'];
-    description: CodecTypes['pg/text@1']['output'];
-    address: CodecTypes['pg/text@1']['output'];
-    work_schedule: CodecTypes['pg/text@1']['output'];
-    salary_range: CodecTypes['pg/text@1']['output'] | null;
-    mandatory_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
-    differential_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
-    benefits: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
-    contact_whatsapp: CodecTypes['pg/text@1']['output'] | null;
-    contact_email: CodecTypes['pg/text@1']['output'] | null;
-    status: 'PENDING' | 'ACTIVE' | 'FILLED' | 'REJECTED';
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    deleted_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-    applications: public_Application[];
-    chat_rooms: public_ChatRoom[];
-    employer: public_User;
-    questions: public_JobQuestion[];
-    readonly [RelationKeys]?: 'applications' | 'chat_rooms' | 'employer' | 'questions';
-  };
-  export type public_JobQuestion = {
-    id: CodecTypes['pg/text@1']['output'];
-    job_id: CodecTypes['pg/text@1']['output'];
-    question_text: CodecTypes['pg/text@1']['output'];
-    expected_answer: CodecTypes['pg/bool@1']['output'];
-    answers: public_ApplicationAnswer[];
-    job: public_Job;
-    readonly [RelationKeys]?: 'answers' | 'job';
-  };
-  export type public_Application = {
-    id: CodecTypes['pg/text@1']['output'];
-    job_id: CodecTypes['pg/text@1']['output'];
-    applicant_id: CodecTypes['pg/text@1']['output'];
-    cover_letter: CodecTypes['pg/text@1']['output'] | null;
-    resume_url: CodecTypes['pg/text@1']['output'] | null;
-    status: 'PENDING' | 'REVIEWED' | 'ACCEPTED' | 'REJECTED';
-    is_knocked_out: CodecTypes['pg/bool@1']['output'];
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    answers: public_ApplicationAnswer[];
-    applicant: public_User;
-    job: public_Job;
-    readonly [RelationKeys]?: 'answers' | 'applicant' | 'job';
-  };
-  export type public_ApplicationAnswer = {
-    id: CodecTypes['pg/text@1']['output'];
-    application_id: CodecTypes['pg/text@1']['output'];
-    question_id: CodecTypes['pg/text@1']['output'];
-    answer: CodecTypes['pg/bool@1']['output'];
-    application: public_Application;
-    question: public_JobQuestion;
-    readonly [RelationKeys]?: 'application' | 'question';
-  };
-  export type public_ChatRoom = {
-    id: CodecTypes['pg/text@1']['output'];
-    job_id: CodecTypes['pg/text@1']['output'];
-    candidate_id: CodecTypes['pg/text@1']['output'];
-    employer_id: CodecTypes['pg/text@1']['output'];
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    candidate: public_User;
-    employer: public_User;
-    job: public_Job;
-    messages: public_Message[];
-    readonly [RelationKeys]?: 'candidate' | 'employer' | 'job' | 'messages';
-  };
-  export type public_Message = {
-    id: CodecTypes['pg/text@1']['output'];
-    room_id: CodecTypes['pg/text@1']['output'];
-    sender_id: CodecTypes['pg/text@1']['output'];
-    content: CodecTypes['pg/text@1']['output'];
-    is_read: CodecTypes['pg/bool@1']['output'];
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    room: public_ChatRoom;
-    sender: public_User;
-    readonly [RelationKeys]?: 'room' | 'sender';
-  };
-  export type public_SavedCandidate = {
-    id: CodecTypes['pg/text@1']['output'];
-    employer_id: CodecTypes['pg/text@1']['output'];
-    candidate_id: CodecTypes['pg/text@1']['output'];
-    notes: CodecTypes['pg/text@1']['output'] | null;
-    created_at: CodecTypes['pg/timestamptz-string@1']['output'];
-    candidate: public_User;
-    employer: public_User;
-    readonly [RelationKeys]?: 'candidate' | 'employer';
-  };
-}
-
-export declare const models: {
-  public: {
-    User: Models.public_User;
-    CompanyProfile: Models.public_CompanyProfile;
-    CandidateProfile: Models.public_CandidateProfile;
-    Experience: Models.public_Experience;
-    Education: Models.public_Education;
-    Job: Models.public_Job;
-    JobQuestion: Models.public_JobQuestion;
-    Application: Models.public_Application;
-    ApplicationAnswer: Models.public_ApplicationAnswer;
-    ChatRoom: Models.public_ChatRoom;
-    Message: Models.public_Message;
-    SavedCandidate: Models.public_SavedCandidate;
-  };
-};
-
 export type TypeMaps = TypeMapsType<
   CodecTypes,
   QueryOperationTypes,
@@ -1936,7 +1749,6 @@ type ContractBase = Omit<
               readonly applicant: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['applicant_id'];
                   readonly targetFields: readonly ['id'];
@@ -1945,7 +1757,6 @@ type ContractBase = Omit<
               readonly job: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Job' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['job_id'];
                   readonly targetFields: readonly ['id'];
@@ -1994,7 +1805,6 @@ type ContractBase = Omit<
                   readonly model: 'Application';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['application_id'];
                   readonly targetFields: readonly ['id'];
@@ -2006,7 +1816,6 @@ type ContractBase = Omit<
                   readonly model: 'JobQuestion';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['question_id'];
                   readonly targetFields: readonly ['id'];
@@ -2096,7 +1905,6 @@ type ContractBase = Omit<
               readonly user: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['user_id'];
                   readonly targetFields: readonly ['id'];
@@ -2149,7 +1957,6 @@ type ContractBase = Omit<
               readonly candidate: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['candidate_id'];
                   readonly targetFields: readonly ['id'];
@@ -2158,7 +1965,6 @@ type ContractBase = Omit<
               readonly employer: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['employer_id'];
                   readonly targetFields: readonly ['id'];
@@ -2167,7 +1973,6 @@ type ContractBase = Omit<
               readonly job: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Job' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['job_id'];
                   readonly targetFields: readonly ['id'];
@@ -2250,7 +2055,6 @@ type ContractBase = Omit<
               readonly user: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['user_id'];
                   readonly targetFields: readonly ['id'];
@@ -2314,7 +2118,6 @@ type ContractBase = Omit<
                   readonly model: 'CandidateProfile';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['candidate_id'];
                   readonly targetFields: readonly ['id'];
@@ -2373,7 +2176,6 @@ type ContractBase = Omit<
                   readonly model: 'CandidateProfile';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['candidate_id'];
                   readonly targetFields: readonly ['id'];
@@ -2499,7 +2301,6 @@ type ContractBase = Omit<
               readonly employer: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['employer_id'];
                   readonly targetFields: readonly ['id'];
@@ -2576,7 +2377,6 @@ type ContractBase = Omit<
               readonly job: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Job' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['job_id'];
                   readonly targetFields: readonly ['id'];
@@ -2631,7 +2431,6 @@ type ContractBase = Omit<
                   readonly model: 'ChatRoom';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['room_id'];
                   readonly targetFields: readonly ['id'];
@@ -2640,7 +2439,6 @@ type ContractBase = Omit<
               readonly sender: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['sender_id'];
                   readonly targetFields: readonly ['id'];
@@ -2690,7 +2488,6 @@ type ContractBase = Omit<
               readonly candidate: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['candidate_id'];
                   readonly targetFields: readonly ['id'];
@@ -2699,7 +2496,6 @@ type ContractBase = Omit<
               readonly employer: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['employer_id'];
                   readonly targetFields: readonly ['id'];
@@ -2762,7 +2558,6 @@ type ContractBase = Omit<
                   readonly model: 'CandidateProfile';
                 };
                 readonly cardinality: '1:1';
-                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['user_id'];
@@ -2785,7 +2580,6 @@ type ContractBase = Omit<
                   readonly model: 'CompanyProfile';
                 };
                 readonly cardinality: '1:1';
-                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['user_id'];

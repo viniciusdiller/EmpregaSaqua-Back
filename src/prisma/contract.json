@@ -44,6 +44,10 @@
       "model": "Message",
       "namespace": "public"
     },
+    "savedCandidate": {
+      "model": "SavedCandidate",
+      "namespace": "public"
+    },
     "user": {
       "model": "User",
       "namespace": "public"
@@ -1403,6 +1407,100 @@
               "table": "message"
             }
           },
+          "SavedCandidate": {
+            "fields": {
+              "candidate_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "created_at": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "employer_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "candidate": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "candidate_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "employer": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "employer_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "candidate_id": {
+                  "column": "candidate_id"
+                },
+                "created_at": {
+                  "column": "created_at"
+                },
+                "employer_id": {
+                  "column": "employer_id"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "notes": {
+                  "column": "notes"
+                }
+              },
+              "namespaceId": "public",
+              "table": "savedCandidate"
+            }
+          },
           "User": {
             "fields": {
               "created_at": {
@@ -1537,6 +1635,36 @@
                 },
                 "to": {
                   "model": "Job",
+                  "namespace": "public"
+                }
+              },
+              "saved_by_employers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "candidate_id"
+                  ]
+                },
+                "to": {
+                  "model": "SavedCandidate",
+                  "namespace": "public"
+                }
+              },
+              "saved_candidates": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "employer_id"
+                  ]
+                },
+                "to": {
+                  "model": "SavedCandidate",
                   "namespace": "public"
                 }
               },
@@ -2626,6 +2754,106 @@
               },
               "uniques": []
             },
+            "savedCandidate": {
+              "columns": {
+                "candidate_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "employer_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "employer_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "savedCandidate"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "candidate_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "savedCandidate"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "candidate_id"
+                  ],
+                  "name": "savedCandidate_candidate_id_idx_2164cd9a",
+                  "prefix": "savedCandidate_candidate_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "employer_id"
+                  ],
+                  "name": "savedCandidate_employer_id_idx_f3c7e77d",
+                  "prefix": "savedCandidate_employer_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "employer_id",
+                    "candidate_id"
+                  ]
+                }
+              ]
+            },
             "user": {
               "checks": [
                 {
@@ -2732,10 +2960,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "cb30ea031ffa224ef2965d1ff97557404cb7eeb1a4fdb3c7b8c36c29a1c5bdd2"
+    "storageHash": "db5dec62708d497cc1d385858e5ad945da4f032452761efb0d73d366615e5caa"
   },
   "execution": {
-    "executionHash": "c7a0d21888721b1eee0702cbcb3c5040deb5f7b43c19dfbbc6a4a9480406faeb",
+    "executionHash": "0f377521c328f2dfb0d9fddc93a5c629ad30410c85d806de4e92c82cd1d2563e",
     "mutations": {
       "defaults": [
         {
@@ -2906,6 +3134,17 @@
             "column": "id",
             "namespace": "public",
             "table": "message"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "savedCandidate"
           }
         },
         {

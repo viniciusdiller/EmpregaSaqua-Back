@@ -12,6 +12,9 @@ export class PrismaService implements OnModuleInit {
   public education = db.orm.public.Education;
   public chatRoom = db.orm.public.ChatRoom;
   public message = db.orm.public.Message;
+  public jobQuestion = db.orm.public.JobQuestion;
+  public applicationAnswer = db.orm.public.ApplicationAnswer;
+  public savedCandidate = db.orm.public.SavedCandidate;
 
   async onModuleInit() {
     // Connection happens automatically when querying

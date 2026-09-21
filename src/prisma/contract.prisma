@@ -39,6 +39,9 @@ model User {
   candidate_rooms   ChatRoom[] @relation("CandidateRooms")
   employer_rooms    ChatRoom[] @relation("EmployerRooms")
   sent_messages     Message[]  @relation("SentMessages")
+
+  saved_by_employers SavedCandidate[] @relation("CandidateSaved")
+  saved_candidates   SavedCandidate[] @relation("EmployerSaved")
 }
 
 model CompanyProfile {
@@ -186,4 +189,17 @@ model Message {
 
   room       ChatRoom          @relation(fields: [room_id], references: [id], onDelete: Cascade)
   sender     User              @relation("SentMessages", fields: [sender_id], references: [id], onDelete: Cascade)
+}
+
+model SavedCandidate {
+  id           String            @id @default(uuid())
+  employer_id  String
+  candidate_id String
+  notes        String?
+  created_at   TimestamptzString @default(now())
+
+  employer     User              @relation("EmployerSaved", fields: [employer_id], references: [id], onDelete: Cascade)
+  candidate    User              @relation("CandidateSaved", fields: [candidate_id], references: [id], onDelete: Cascade)
+
+  @@unique([employer_id, candidate_id])
 }
