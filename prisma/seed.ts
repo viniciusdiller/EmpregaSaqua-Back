@@ -1,4 +1,4 @@
-import { db, Role, JobStatus } from '../src/prisma/db.ts';
+import { db, Role, JobStatus, VerificationStatus } from '../src/prisma/db.ts';
 import * as bcrypt from 'bcrypt';
 
 async function main() {
@@ -35,6 +35,7 @@ async function main() {
     nome_fantasia: 'Padaria Saqua',
     cnpj: '11.111.111/0001-11',
     endereco: 'Centro, Saquarema - RJ',
+    verification_status: VerificationStatus.APPROVED,
   });
 
   const emp2 = await db.orm.public.User.create({
@@ -47,6 +48,7 @@ async function main() {
     nome_fantasia: 'Supermercado Local',
     cnpj: '22.222.222/0001-22',
     endereco: 'Bacaxá, Saquarema - RJ',
+    verification_status: VerificationStatus.APPROVED,
   });
 
   // 4. Create Jobs

@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { clearDatabase } from './clear-db';
-import { JobStatus, ApplicationStatus } from '../src/prisma/db';
+import { JobStatus, ApplicationStatus, VerificationStatus, db } from '../src/prisma/db.js';
 
 describe('ApplicationsController (e2e)', () => {
   let app: INestApplication;
@@ -37,6 +37,21 @@ describe('ApplicationsController (e2e)', () => {
       .post('/auth/login')
       .send({ email: 'employer@emp.com', password: 'password' });
     employerToken = empLogin.body.access_token;
+
+    // Automatically create and approve the employer for tests to pass VerifiedEmployerGuard
+    const user = await db.orm.public.User.first({ email: 'employer@emp.com' });
+    if (user) {
+      await db.orm.public.CompanyProfile.where({ user_id: user.id }).upsert({
+        create: {
+          user_id: user.id,
+          nome_fantasia: 'Test Company',
+          verification_status: VerificationStatus.APPROVED,
+        },
+        update: {
+          verification_status: VerificationStatus.APPROVED,
+        },
+      });
+    }
 
     // 2. Create Job Seeker
     await request(app.getHttpServer())
