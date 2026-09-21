@@ -1,5 +1,7 @@
-import { Controller, Patch, Param, UseGuards } from '@nestjs/common';
+import { Controller, Patch, Param, UseGuards, Delete, Body } from '@nestjs/common';
 import { AdminService } from './admin.service.js';
+import { UpdateJobDto } from '../jobs/dtos/update-job.dto.js';
+import { UpdateUserRoleDto } from './dtos/update-user-role.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../auth/guards/roles.guard.js';
 import { Roles } from '../auth/decorators/roles.decorator.js';
@@ -29,5 +31,25 @@ export class AdminController {
   @Patch('jobs/:id/reject')
   async rejectJob(@Param('id') id: string) {
     return this.adminService.rejectJob(id);
+  }
+
+  @Patch('jobs/:id')
+  async updateJob(@Param('id') id: string, @Body() data: UpdateJobDto) {
+    return this.adminService.updateJob(id, data);
+  }
+
+  @Delete('jobs/:id')
+  async deleteJob(@Param('id') id: string) {
+    return this.adminService.deleteJob(id);
+  }
+
+  @Patch('users/:id/role')
+  async updateUserRole(@Param('id') id: string, @Body() data: UpdateUserRoleDto) {
+    return this.adminService.updateUserRole(id, data);
+  }
+
+  @Delete('users/:id')
+  async deleteUser(@Param('id') id: string) {
+    return this.adminService.deleteUser(id);
   }
 }
