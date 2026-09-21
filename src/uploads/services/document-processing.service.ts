@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
-const DOCUMENTS_DIR = join(process.cwd(), 'uploads', 'documents');
+
 
 export interface ProcessedDocument {
   filename: string;
@@ -16,7 +16,12 @@ export class DocumentProcessingService {
   /**
    * Validates Magic Numbers for PDF and saves the file to disk.
    */
-  async processAndSaveDocument(buffer: Buffer, mimetype: string): Promise<ProcessedDocument> {
+  async processAndSaveDocument(
+    buffer: Buffer, 
+    mimetype: string,
+    filenameBase: string,
+    subfolder: string = 'DocumentosEmpresas'
+  ): Promise<ProcessedDocument> {
     if (mimetype !== 'application/pdf') {
       throw new UnsupportedMediaTypeException('Apenas PDFs são permitidos.');
     }
@@ -35,16 +40,18 @@ export class DocumentProcessingService {
       );
     }
 
-    await mkdir(DOCUMENTS_DIR, { recursive: true });
+    const outputDir = join(process.cwd(), 'uploads', subfolder);
+    await mkdir(outputDir, { recursive: true });
 
-    const filename = `${randomUUID()}.pdf`;
-    const filePath = join(DOCUMENTS_DIR, filename);
+    const safeBaseName = filenameBase.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const filename = `${safeBaseName}-${randomUUID().slice(0, 8)}.pdf`;
+    const filePath = join(outputDir, filename);
 
     await writeFile(filePath, buffer);
 
     return {
       filename,
-      url: `/uploads/documents/${filename}`,
+      url: `/uploads/${subfolder}/${filename}`,
       sizeBytes: buffer.length,
     };
   }

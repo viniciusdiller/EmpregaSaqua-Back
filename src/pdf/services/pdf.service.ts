@@ -30,7 +30,19 @@ export class PdfService {
       const htmlContent = await ejs.renderFile(templatePath, { profile: sanitizedData });
 
       // 4. Generate PDF using Puppeteer (configured safely for VPS)
-      return await this.generatePdfFromHtml(htmlContent);
+      const pdfBuffer = await this.generatePdfFromHtml(htmlContent);
+
+      // 5. Save copy to /uploads/Curriculos for organized storage
+      const { mkdir, writeFile } = await import('fs/promises');
+      const curriculosDir = path.join(process.cwd(), 'uploads', 'Curriculos');
+      await mkdir(curriculosDir, { recursive: true });
+
+      const emailUsername = candidateProfile.user?.email?.split('@')[0] || 'usuario';
+      const safeName = emailUsername.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const filename = `${safeName}-Curriculo.pdf`;
+      await writeFile(path.join(curriculosDir, filename), pdfBuffer);
+
+      return pdfBuffer;
     } catch (error) {
       this.logger.error('Failed to generate PDF resume', error);
       throw new InternalServerErrorException('Error generating resume PDF');

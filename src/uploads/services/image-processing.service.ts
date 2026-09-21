@@ -12,7 +12,6 @@ const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'
 const MAX_WIDTH = 800;
 const MAX_HEIGHT = 800;
 const WEBP_QUALITY = 80;
-const LOGOS_DIR = join(process.cwd(), 'uploads', 'logos');
 
 export interface ProcessedImage {
   filename: string;
@@ -26,38 +25,44 @@ export class ImageProcessingService {
    * Validates, resizes, converts to WebP and saves an image buffer to disk.
    * @param buffer - Raw file buffer from multer MemoryStorage
    * @param mimetype - MIME type of the uploaded file
-   * @returns Metadata of the saved file including its public URL
+   * @param filenameBase - Custom filename base (e.g., 'Company Name')
+   * @param subfolder - Subfolder inside /uploads (e.g., 'Logos')
    */
-  async processAndSaveLogo(buffer: Buffer, mimetype: string): Promise<ProcessedImage> {
-    // Validate mime-type at the service level (defence-in-depth)
+  async processAndSaveImage(
+    buffer: Buffer, 
+    mimetype: string,
+    filenameBase: string,
+    subfolder: string = 'Logos'
+  ): Promise<ProcessedImage> {
     if (!ALLOWED_MIME_TYPES.includes(mimetype)) {
       throw new UnsupportedMediaTypeException(
         `Tipo de arquivo inválido: ${mimetype}. Apenas imagens JPEG, PNG, WebP e GIF são aceitas.`,
       );
     }
 
-    // Ensure the output directory exists
-    await mkdir(LOGOS_DIR, { recursive: true });
+    const outputDir = join(process.cwd(), 'uploads', subfolder);
+    await mkdir(outputDir, { recursive: true });
 
-    // Process image: resize to max 800x800 (keeping aspect ratio) and convert to WebP
     const processedBuffer = await sharp(buffer)
       .resize({
         width: MAX_WIDTH,
         height: MAX_HEIGHT,
-        fit: 'inside',       // Maintains aspect ratio, never upscales
+        fit: 'inside',
         withoutEnlargement: true,
       })
       .webp({ quality: WEBP_QUALITY })
       .toBuffer();
 
-    const filename = `${randomUUID()}.webp`;
-    const filePath = join(LOGOS_DIR, filename);
+    // Sanitize filename to prevent directory traversal or invalid characters
+    const safeBaseName = filenameBase.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const filename = `${safeBaseName}-${randomUUID().slice(0, 8)}.webp`;
+    const filePath = join(outputDir, filename);
 
     await writeFile(filePath, processedBuffer);
 
     return {
       filename,
-      url: `/uploads/logos/${filename}`,
+      url: `/uploads/${subfolder}/${filename}`,
       sizeBytes: processedBuffer.length,
     };
   }

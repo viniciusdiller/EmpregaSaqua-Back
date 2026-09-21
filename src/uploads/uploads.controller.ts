@@ -5,6 +5,7 @@ import {
   UseGuards,
   UseInterceptors,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
@@ -15,12 +16,14 @@ import { ImageUploadInterceptor } from './interceptors/image-upload.interceptor.
 import { ImageProcessingService } from './services/image-processing.service.js';
 import { DocumentUploadInterceptor } from './interceptors/document-upload.interceptor.js';
 import { DocumentProcessingService } from './services/document-processing.service.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 
 @Controller('uploads')
 export class UploadsController {
   constructor(
     private readonly imageProcessingService: ImageProcessingService,
     private readonly documentProcessingService: DocumentProcessingService,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -35,6 +38,7 @@ export class UploadsController {
   @Post('logo')
   async uploadLogo(@Req() req: Request) {
     const file = (req as any).file as Express.Multer.File | undefined;
+    const userId = (req.user as any).id;
 
     if (!file) {
       throw new BadRequestException(
@@ -42,9 +46,16 @@ export class UploadsController {
       );
     }
 
-    const result = await this.imageProcessingService.processAndSaveLogo(
+    const company = await this.prisma.companyProfile.where((c) => c.user_id.eq(userId)).first();
+    if (!company) {
+      throw new NotFoundException('Company Profile not found');
+    }
+
+    const result = await this.imageProcessingService.processAndSaveImage(
       file.buffer,
       file.mimetype,
+      company.nome_fantasia,
+      'Logos'
     );
 
     return {
@@ -66,6 +77,7 @@ export class UploadsController {
   @Post('verification-document')
   async uploadVerificationDocument(@Req() req: Request) {
     const file = (req as any).file as Express.Multer.File | undefined;
+    const userId = (req.user as any).id;
 
     if (!file) {
       throw new BadRequestException(
@@ -73,9 +85,16 @@ export class UploadsController {
       );
     }
 
+    const company = await this.prisma.companyProfile.where((c) => c.user_id.eq(userId)).first();
+    if (!company) {
+      throw new NotFoundException('Company Profile not found');
+    }
+
     const result = await this.documentProcessingService.processAndSaveDocument(
       file.buffer,
       file.mimetype,
+      company.nome_fantasia,
+      'DocumentosEmpresas'
     );
 
     return {
