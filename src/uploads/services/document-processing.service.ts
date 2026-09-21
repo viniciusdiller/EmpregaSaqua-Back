@@ -44,7 +44,7 @@ export class DocumentProcessingService {
     await mkdir(outputDir, { recursive: true });
 
     const safeBaseName = filenameBase.replace(/[^a-zA-Z0-9_-]/g, '_');
-    const filename = `${safeBaseName}-${randomUUID().slice(0, 8)}.pdf`;
+    const filename = `${safeBaseName}-${Date.now()}-${randomUUID().slice(0, 8)}.pdf`;
     const filePath = join(outputDir, filename);
 
     await writeFile(filePath, buffer);

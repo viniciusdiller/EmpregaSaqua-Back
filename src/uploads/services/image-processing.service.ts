@@ -55,7 +55,7 @@ export class ImageProcessingService {
 
     // Sanitize filename to prevent directory traversal or invalid characters
     const safeBaseName = filenameBase.replace(/[^a-zA-Z0-9_-]/g, '_');
-    const filename = `${safeBaseName}-${randomUUID().slice(0, 8)}.webp`;
+    const filename = `${safeBaseName}-${Date.now()}-${randomUUID().slice(0, 8)}.webp`;
     const filePath = join(outputDir, filename);
 
     await writeFile(filePath, processedBuffer);

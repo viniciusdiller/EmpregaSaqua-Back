@@ -39,7 +39,7 @@ export class PdfService {
 
       const emailUsername = candidateProfile.user?.email?.split('@')[0] || 'usuario';
       const safeName = emailUsername.replace(/[^a-zA-Z0-9_-]/g, '_');
-      const filename = `${safeName}-Curriculo.pdf`;
+      const filename = `${safeName}-Curriculo-${Date.now()}.pdf`;
       await writeFile(path.join(curriculosDir, filename), pdfBuffer);
 
       return pdfBuffer;
