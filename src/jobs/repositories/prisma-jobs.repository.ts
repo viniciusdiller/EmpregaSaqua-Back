@@ -14,10 +14,14 @@ export class PrismaJobsRepository implements IJobsRepository {
   async create(employerId: string, data: CreateJobDto): Promise<Job> {
     const jobRow = await this.prisma.job.create({
       employer_id: employerId,
-      company_name: data.company_name,
       title: data.title,
       description: data.description,
-      location: data.location,
+      address: data.address,
+      work_schedule: data.work_schedule,
+      salary_range: data.salary_range ?? null,
+      mandatory_qualifications: data.mandatory_qualifications,
+      differential_qualifications: data.differential_qualifications,
+      benefits: data.benefits,
       contact_whatsapp: data.contact_whatsapp ?? null,
       contact_email: data.contact_email ?? null,
       status: JobStatus.PENDING,
@@ -27,8 +31,11 @@ export class PrismaJobsRepository implements IJobsRepository {
   }
 
   async findById(id: string): Promise<Job | null> {
-    const jobRow = await this.prisma.job.where({ id }).first();
-    return jobRow ?? null;
+    const jobRow = await this.prisma.job
+      .where({ id })
+      .include('employer', (e) => e.include('company_profile'))
+      .first();
+    return jobRow as unknown as Job | null;
   }
 
   async findAllPublic(query: FindJobsQueryDto): Promise<PaginatedJobsResponse> {
@@ -42,9 +49,9 @@ export class PrismaJobsRepository implements IJobsRepository {
       .where({ status: statusFilter })
       .where((j) => j.deleted_at.isNull());
 
-    // Dynamic filter: location (case-insensitive partial match)
-    if (query.location) {
-      baseQuery = baseQuery.where((j) => j.location.ilike(`%${query.location}%`));
+    // Dynamic filter: address (case-insensitive partial match)
+    if (query.address) {
+      baseQuery = baseQuery.where((j) => j.address.ilike(`%${query.address}%`));
     }
 
     // Dynamic filter: title (case-insensitive partial match)
@@ -55,6 +62,12 @@ export class PrismaJobsRepository implements IJobsRepository {
     // Execute both queries in parallel: data page + count
     const [jobs, countResult] = await Promise.all([
       baseQuery
+        .include('employer', (e) => 
+          e.select('id')
+           .include('company_profile', (cp) => 
+             cp.select('nome_fantasia', 'logo_url')
+           )
+        )
         .orderBy((j) => j.created_at.desc())
         .limit(limit)
         .offset((page - 1) * limit)
