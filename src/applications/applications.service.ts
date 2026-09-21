@@ -1,7 +1,7 @@
 import { Injectable, Inject, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CreateApplicationDto } from './dtos/create-application.dto.js';
 import { UpdateApplicationStatusDto } from './dtos/update-application-status.dto.js';
-import { ApplicationsRepository } from './repositories/applications.repository.interface.js';
+import type { ApplicationsRepository } from './repositories/applications.repository.interface.js';
 import { JobsService } from '../jobs/services/jobs.service.js';
 import { ApplicationStatus, JobStatus } from '../prisma/db.js';
 import { MatchScoringService } from './services/match-scoring.service.js';
@@ -14,7 +14,7 @@ export class ApplicationsService {
     private readonly matchScoringService: MatchScoringService,
   ) {}
 
-  async applyForJob(applicantId: string, jobId: string, data: CreateApplicationDto) {
+  async applyForJob(applicantId: string, jobId: string, data: CreateApplicationDto): Promise<any> {
     const job = await this.jobsService.getJobById(jobId) as any;
     
     // Check if job is still active
@@ -45,7 +45,7 @@ export class ApplicationsService {
     return this.repo.create(applicantId, jobId, data, initialStatus, isKnockedOut);
   }
 
-  async getMyApplications(applicantId: string) {
+  async getMyApplications(applicantId: string): Promise<any> {
     return this.repo.findByApplicant(applicantId);
   }
 
@@ -64,7 +64,7 @@ export class ApplicationsService {
       
       const matchScore = this.matchScoringService.calculateMatchScore(
         candidateSkills,
-        jobRequirements
+        [...jobRequirements]
       );
 
       // Return a new object that includes match_score without mutating the original Prisma object
@@ -80,7 +80,7 @@ export class ApplicationsService {
     return applicationsWithScore;
   }
 
-  async updateApplicationStatus(employerId: string, applicationId: string, data: UpdateApplicationStatusDto) {
+  async updateApplicationStatus(employerId: string, applicationId: string, data: UpdateApplicationStatusDto): Promise<any> {
     const application = await this.repo.findById(applicationId);
     if (!application) {
       throw new NotFoundException('Candidatura não encontrada.');

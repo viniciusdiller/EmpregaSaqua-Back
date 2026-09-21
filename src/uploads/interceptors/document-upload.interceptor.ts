@@ -24,6 +24,6 @@ export class DocumentUploadInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return this.fileInterceptor.intercept(context, next);
+    return this.fileInterceptor.intercept(context, next) as Observable<any>;
   }
 }

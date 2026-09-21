@@ -18,7 +18,7 @@ export class ApplicationsController {
     @Param('jobId') jobId: string,
     @Body() data: CreateApplicationDto,
     @Request() req: any,
-  ) {
+  ): Promise<any> {
     return this.applicationsService.applyForJob(req.user.id, jobId, data);
   }
 
@@ -27,13 +27,13 @@ export class ApplicationsController {
   async getJobApplications(
     @Param('jobId') jobId: string,
     @Request() req: any,
-  ) {
+  ): Promise<any> {
     return this.applicationsService.getJobApplications(req.user.id, jobId);
   }
 
   @Get('applications')
   @Roles(Role.JOB_SEEKER)
-  async getMyApplications(@Request() req: any) {
+  async getMyApplications(@Request() req: any): Promise<any> {
     return this.applicationsService.getMyApplications(req.user.id);
   }
 
@@ -43,7 +43,7 @@ export class ApplicationsController {
     @Param('id') id: string,
     @Body() data: UpdateApplicationStatusDto,
     @Request() req: any,
-  ) {
+  ): Promise<any> {
     return this.applicationsService.updateApplicationStatus(req.user.id, id, data);
   }
 }

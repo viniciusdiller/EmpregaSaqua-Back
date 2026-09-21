@@ -111,7 +111,7 @@ export class PdfService {
       });
 
       // Set the HTML content
-      await page.setContent(html, { waitUntil: 'networkidle0' });
+      await page.setContent(html, { waitUntil: 'networkidle0' as any });
 
       // Generate the PDF as a buffer
       const pdfBuffer = await page.pdf({

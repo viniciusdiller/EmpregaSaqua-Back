@@ -31,7 +31,6 @@ export class AnalyticsService {
     // 2. Fetch all job IDs owned by this employer
     const jobs = await this.prisma.job
       .where({ employer_id: employerId })
-      .project((j) => ({ id: j.id }))
       .all();
     
     const jobIds = jobs.map((j) => j.id);
@@ -45,27 +44,22 @@ export class AnalyticsService {
       };
     }
 
-    // 4. Count total applications
-    const totalAppsAgg = await this.prisma.application
+    // 4 & 5. Fetch applications and group by status
+    const apps = await this.prisma.application
       .where((a) => a.job_id.in(jobIds))
-      .aggregate((a) => ({ total: a.count() }));
-
-    // 5. Group applications by status
-    const appsByStatus = await this.prisma.application
-      .where((a) => a.job_id.in(jobIds))
-      .groupBy((a) => a.status)
-      .aggregate((a) => ({
-        status: a.status,
-        count: a.count(),
-      }))
       .all();
+
+    const statusCounts: Record<string, number> = {};
+    for (const app of apps) {
+      statusCounts[app.status] = (statusCounts[app.status] || 0) + 1;
+    }
 
     return {
       active_jobs: activeJobsAgg.total,
-      total_applications: totalAppsAgg.total,
-      applications_by_status: appsByStatus.map(s => ({
-        status: s.status,
-        count: s.count,
+      total_applications: apps.length,
+      applications_by_status: Object.entries(statusCounts).map(([status, count]) => ({
+        status,
+        count,
       })),
     };
   }

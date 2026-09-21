@@ -49,7 +49,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.data.user = decoded; // Store user payload in socket
       
       this.logger.log(`Client connected: ${client.id} (User: ${decoded.email})`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.warn(`Connection rejected: ${error.message}`);
       client.disconnect();
     }
@@ -87,7 +87,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.logger.log(`User ${user.id} joined room ${roomStrId}`);
       
       return { status: 'joined', roomId: room.id };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error joining room: ${error.message}`);
       throw new WsException(error.message);
     }
@@ -126,7 +126,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.to(payload.roomId).emit('newMessage', message);
       
       return { status: 'sent', messageId: message.id };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error sending message: ${error.message}`);
       throw new WsException(error.message);
     }
