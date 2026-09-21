@@ -35,6 +35,10 @@ model User {
   applications      Application[]
   company_profile   CompanyProfile?
   candidate_profile CandidateProfile?
+
+  candidate_rooms   ChatRoom[] @relation("CandidateRooms")
+  employer_rooms    ChatRoom[] @relation("EmployerRooms")
+  sent_messages     Message[]  @relation("SentMessages")
 }
 
 model CompanyProfile {
@@ -114,6 +118,7 @@ model Job {
 
   employer         User      @relation(fields: [employer_id], references: [id], onDelete: Cascade)
   applications     Application[]
+  chat_rooms       ChatRoom[]
 }
 
 model Application {
@@ -133,4 +138,29 @@ model Application {
   applicant    User              @relation(fields: [applicant_id], references: [id], onDelete: Cascade)
   
   @@unique([job_id, applicant_id])
+}
+
+model ChatRoom {
+  id           String            @id @default(uuid())
+  job_id       String
+  candidate_id String
+  employer_id  String
+  created_at   TimestamptzString @default(now())
+
+  job          Job               @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  candidate    User              @relation("CandidateRooms", fields: [candidate_id], references: [id], onDelete: Cascade)
+  employer     User              @relation("EmployerRooms", fields: [employer_id], references: [id], onDelete: Cascade)
+  messages     Message[]
+}
+
+model Message {
+  id         String            @id @default(uuid())
+  room_id    String
+  sender_id  String
+  content    String
+  is_read    Boolean           @default(false)
+  created_at TimestamptzString @default(now())
+
+  room       ChatRoom          @relation(fields: [room_id], references: [id], onDelete: Cascade)
+  sender     User              @relation("SentMessages", fields: [sender_id], references: [id], onDelete: Cascade)
 }

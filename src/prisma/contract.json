@@ -12,6 +12,10 @@
       "model": "CandidateProfile",
       "namespace": "public"
     },
+    "chatRoom": {
+      "model": "ChatRoom",
+      "namespace": "public"
+    },
     "companyProfile": {
       "model": "CompanyProfile",
       "namespace": "public"
@@ -26,6 +30,10 @@
     },
     "job": {
       "model": "Job",
+      "namespace": "public"
+    },
+    "message": {
+      "model": "Message",
       "namespace": "public"
     },
     "user": {
@@ -392,6 +400,131 @@
               },
               "namespaceId": "public",
               "table": "candidateProfile"
+            }
+          },
+          "ChatRoom": {
+            "fields": {
+              "candidate_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "created_at": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "employer_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "job_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "candidate": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "candidate_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "employer": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "employer_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "job": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "job_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Job",
+                  "namespace": "public"
+                }
+              },
+              "messages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "room_id"
+                  ]
+                },
+                "to": {
+                  "model": "Message",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "candidate_id": {
+                  "column": "candidate_id"
+                },
+                "created_at": {
+                  "column": "created_at"
+                },
+                "employer_id": {
+                  "column": "employer_id"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "job_id": {
+                  "column": "job_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "chatRoom"
             }
           },
           "CompanyProfile": {
@@ -864,6 +997,21 @@
                   "namespace": "public"
                 }
               },
+              "chat_rooms": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "job_id"
+                  ]
+                },
+                "to": {
+                  "model": "ChatRoom",
+                  "namespace": "public"
+                }
+              },
               "employer": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -934,6 +1082,110 @@
               },
               "namespaceId": "public",
               "table": "job"
+            }
+          },
+          "Message": {
+            "fields": {
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "created_at": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "is_read": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "room_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sender_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "room": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "room_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "ChatRoom",
+                  "namespace": "public"
+                }
+              },
+              "sender": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "sender_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "content": {
+                  "column": "content"
+                },
+                "created_at": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "is_read": {
+                  "column": "is_read"
+                },
+                "room_id": {
+                  "column": "room_id"
+                },
+                "sender_id": {
+                  "column": "sender_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "message"
             }
           },
           "User": {
@@ -1012,6 +1264,21 @@
                   "namespace": "public"
                 }
               },
+              "candidate_rooms": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "candidate_id"
+                  ]
+                },
+                "to": {
+                  "model": "ChatRoom",
+                  "namespace": "public"
+                }
+              },
               "company_profile": {
                 "cardinality": "1:1",
                 "nullable": true,
@@ -1028,6 +1295,21 @@
                   "namespace": "public"
                 }
               },
+              "employer_rooms": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "employer_id"
+                  ]
+                },
+                "to": {
+                  "model": "ChatRoom",
+                  "namespace": "public"
+                }
+              },
               "jobs": {
                 "cardinality": "1:N",
                 "on": {
@@ -1040,6 +1322,21 @@
                 },
                 "to": {
                   "model": "Job",
+                  "namespace": "public"
+                }
+              },
+              "sent_messages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "sender_id"
+                  ]
+                },
+                "to": {
+                  "model": "Message",
                   "namespace": "public"
                 }
               }
@@ -1303,6 +1600,124 @@
                   ]
                 }
               ]
+            },
+            "chatRoom": {
+              "columns": {
+                "candidate_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "employer_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "job_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "job_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "chatRoom"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "job"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "candidate_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "chatRoom"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "employer_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "chatRoom"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "candidate_id"
+                  ],
+                  "name": "chatRoom_candidate_id_idx_2164cd9a",
+                  "prefix": "chatRoom_candidate_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "employer_id"
+                  ],
+                  "name": "chatRoom_employer_id_idx_f3c7e77d",
+                  "prefix": "chatRoom_employer_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "job_id"
+                  ],
+                  "name": "chatRoom_job_id_idx_58a5bbdd",
+                  "prefix": "chatRoom_job_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "companyProfile": {
               "checks": [
@@ -1742,6 +2157,108 @@
               },
               "uniques": []
             },
+            "message": {
+              "columns": {
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "is_read": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "room_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "sender_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "room_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "chatRoom"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "sender_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "room_id"
+                  ],
+                  "name": "message_room_id_idx_c32a1e8c",
+                  "prefix": "message_room_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "sender_id"
+                  ],
+                  "name": "message_sender_id_idx_311853a4",
+                  "prefix": "message_sender_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "user": {
               "checks": [
                 {
@@ -1848,10 +2365,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "734e9d301f301725c7abf3722e654174eb436f8f9511bbd4c0ead341ea7c30ce"
+    "storageHash": "f076f59974e4696e7292487937803a4281f86be1e07082257b5acee6d7b1fa92"
   },
   "execution": {
-    "executionHash": "5dc101723a96bdbcb040e1ec186e980348e04fb9b31033dc8b216f0e7531de8d",
+    "executionHash": "201aade5db42319122f4e3375e561850972fc77440c0d19fceaa8b1400c4b8aa",
     "mutations": {
       "defaults": [
         {
@@ -1904,6 +2421,17 @@
             "column": "updated_at",
             "namespace": "public",
             "table": "candidateProfile"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "chatRoom"
           }
         },
         {
@@ -1978,6 +2506,17 @@
             "column": "updated_at",
             "namespace": "public",
             "table": "job"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "message"
           }
         },
         {

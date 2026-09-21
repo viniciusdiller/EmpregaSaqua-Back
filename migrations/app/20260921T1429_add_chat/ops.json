@@ -1,0 +1,1481 @@
+[
+  {
+    "id": "dropColumn.candidateProfile.resume_text",
+    "label": "Drop column \"resume_text\" from \"candidateProfile\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "resume_text",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"resume_text\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "resume_text"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"resume_text\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" DROP COLUMN \"resume_text\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"resume_text\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "resume_text"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.job.company_name",
+    "label": "Drop column \"company_name\" from \"job\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "company_name",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"company_name\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "company_name"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"company_name\"",
+        "sql": "ALTER TABLE \"public\".\"job\" DROP COLUMN \"company_name\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"company_name\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "company_name"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.job.location",
+    "label": "Drop column \"location\" from \"job\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "location",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"location\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "location"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"location\"",
+        "sql": "ALTER TABLE \"public\".\"job\" DROP COLUMN \"location\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"location\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "location"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.chatRoom",
+    "label": "Create table \"chatRoom\"",
+    "summary": "Creates table \"chatRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"chatRoom\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"chatRoom\"",
+        "sql": "CREATE TABLE \"public\".\"chatRoom\" (\n  \"candidate_id\" text NOT NULL,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"employer_id\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"job_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"chatRoom\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.education",
+    "label": "Create table \"education\"",
+    "summary": "Creates table \"education\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "education"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"education\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"education\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"education\"",
+        "sql": "CREATE TABLE \"public\".\"education\" (\n  \"candidate_id\" text NOT NULL,\n  \"degree\" text NOT NULL,\n  \"end_date\" text,\n  \"field_of_study\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"institution\" text NOT NULL,\n  \"start_date\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"education\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"education\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.experience",
+    "label": "Create table \"experience\"",
+    "summary": "Creates table \"experience\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "experience"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"experience\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"experience\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"experience\"",
+        "sql": "CREATE TABLE \"public\".\"experience\" (\n  \"candidate_id\" text NOT NULL,\n  \"company\" text NOT NULL,\n  \"description\" text NOT NULL,\n  \"end_date\" text,\n  \"id\" text NOT NULL,\n  \"role\" text NOT NULL,\n  \"start_date\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"experience\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"experience\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.message",
+    "label": "Create table \"message\"",
+    "summary": "Creates table \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"message\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"message\"",
+        "sql": "CREATE TABLE \"public\".\"message\" (\n  \"content\" text NOT NULL,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"is_read\" bool DEFAULT false NOT NULL,\n  \"room_id\" text NOT NULL,\n  \"sender_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"message\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.candidateProfile.address",
+    "label": "Add column \"address\" to \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "address",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"address\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "address"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"address\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD COLUMN \"address\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"address\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "address"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.candidateProfile.skills",
+    "label": "Add column \"skills\" to \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "skills",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"skills\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "skills"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"skills\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD COLUMN \"skills\" text[] DEFAULT '{}' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"skills\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "skills"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.companyProfile.verification_document_url",
+    "label": "Add column \"verification_document_url\" to \"companyProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "verification_document_url",
+        "table": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"verification_document_url\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "companyProfile",
+          "verification_document_url"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"verification_document_url\"",
+        "sql": "ALTER TABLE \"public\".\"companyProfile\" ADD COLUMN \"verification_document_url\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"verification_document_url\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "companyProfile",
+          "verification_document_url"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.companyProfile.verification_status",
+    "label": "Add column \"verification_status\" to \"companyProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "verification_status",
+        "table": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"verification_status\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "companyProfile",
+          "verification_status"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"verification_status\"",
+        "sql": "ALTER TABLE \"public\".\"companyProfile\" ADD COLUMN \"verification_status\" text DEFAULT 'PENDING' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"verification_status\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "companyProfile",
+          "verification_status"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.address",
+    "label": "Add column \"address\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "address",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"address\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "address"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"address\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"address\" text DEFAULT '' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"address\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "address"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.benefits",
+    "label": "Add column \"benefits\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "benefits",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"benefits\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "benefits"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"benefits\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"benefits\" text[] DEFAULT '{}' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"benefits\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "benefits"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.differential_qualifications",
+    "label": "Add column \"differential_qualifications\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "differential_qualifications",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"differential_qualifications\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "differential_qualifications"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"differential_qualifications\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"differential_qualifications\" text[] DEFAULT '{}' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"differential_qualifications\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "differential_qualifications"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.mandatory_qualifications",
+    "label": "Add column \"mandatory_qualifications\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "mandatory_qualifications",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"mandatory_qualifications\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "mandatory_qualifications"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"mandatory_qualifications\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"mandatory_qualifications\" text[] DEFAULT '{}' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"mandatory_qualifications\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "mandatory_qualifications"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.salary_range",
+    "label": "Add column \"salary_range\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "salary_range",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"salary_range\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "salary_range"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"salary_range\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"salary_range\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"salary_range\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "salary_range"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.work_schedule",
+    "label": "Add column \"work_schedule\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "work_schedule",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"work_schedule\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "work_schedule"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"work_schedule\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"work_schedule\" text DEFAULT '' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"work_schedule\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "work_schedule"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.candidateProfile.candidateProfile_skills_elem_not_null_79c19a4f",
+    "label": "Add check constraint \"candidateProfile_skills_elem_not_null_79c19a4f\" on \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "candidateProfile_skills_elem_not_null_79c19a4f",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"candidateProfile_skills_elem_not_null_79c19a4f\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_skills_elem_not_null_79c19a4f",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"candidateProfile_skills_elem_not_null_79c19a4f\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD CONSTRAINT \"candidateProfile_skills_elem_not_null_79c19a4f\" CHECK (array_position(\"skills\", NULL) IS NULL)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"candidateProfile_skills_elem_not_null_79c19a4f\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_skills_elem_not_null_79c19a4f",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.companyProfile.companyProfile_verification_status_check_53b64910",
+    "label": "Add check constraint \"companyProfile_verification_status_check_53b64910\" on \"companyProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "companyProfile_verification_status_check_53b64910",
+        "table": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"companyProfile_verification_status_check_53b64910\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_verification_status_check_53b64910",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"companyProfile_verification_status_check_53b64910\"",
+        "sql": "ALTER TABLE \"public\".\"companyProfile\" ADD CONSTRAINT \"companyProfile_verification_status_check_53b64910\" CHECK (\"verification_status\" IN ('PENDING', 'APPROVED', 'REJECTED'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"companyProfile_verification_status_check_53b64910\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "companyProfile_verification_status_check_53b64910",
+          "public",
+          "\"public\".\"companyProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.job.job_benefits_elem_not_null_5177c089",
+    "label": "Add check constraint \"job_benefits_elem_not_null_5177c089\" on \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "job_benefits_elem_not_null_5177c089",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"job_benefits_elem_not_null_5177c089\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_benefits_elem_not_null_5177c089",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"job_benefits_elem_not_null_5177c089\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD CONSTRAINT \"job_benefits_elem_not_null_5177c089\" CHECK (array_position(\"benefits\", NULL) IS NULL)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"job_benefits_elem_not_null_5177c089\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_benefits_elem_not_null_5177c089",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.job.job_differential_qualifications_elem_not_null_d51d828c",
+    "label": "Add check constraint \"job_differential_qualifications_elem_not_null_d51d828c\" on \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "job_differential_qualifications_elem_not_null_d51d828c",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"job_differential_qualifications_elem_not_null_d51d828c\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_differential_qualifications_elem_not_null_d51d828c",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"job_differential_qualifications_elem_not_null_d51d828c\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD CONSTRAINT \"job_differential_qualifications_elem_not_null_d51d828c\" CHECK (array_position(\"differential_qualifications\", NULL) IS NULL)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"job_differential_qualifications_elem_not_null_d51d828c\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_differential_qualifications_elem_not_null_d51d828c",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.job.job_mandatory_qualifications_elem_not_null_6f2a780a",
+    "label": "Add check constraint \"job_mandatory_qualifications_elem_not_null_6f2a780a\" on \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "job_mandatory_qualifications_elem_not_null_6f2a780a",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"job_mandatory_qualifications_elem_not_null_6f2a780a\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_mandatory_qualifications_elem_not_null_6f2a780a",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"job_mandatory_qualifications_elem_not_null_6f2a780a\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD CONSTRAINT \"job_mandatory_qualifications_elem_not_null_6f2a780a\" CHECK (array_position(\"mandatory_qualifications\", NULL) IS NULL)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"job_mandatory_qualifications_elem_not_null_6f2a780a\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_mandatory_qualifications_elem_not_null_6f2a780a",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.chatRoom.chatRoom_candidate_id_idx_2164cd9a",
+    "label": "Create index \"chatRoom_candidate_id_idx_2164cd9a\" on \"chatRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "chatRoom_candidate_id_idx_2164cd9a",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"chatRoom_candidate_id_idx_2164cd9a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"chatRoom_candidate_id_idx_2164cd9a\"",
+        "sql": "CREATE INDEX \"chatRoom_candidate_id_idx_2164cd9a\" ON \"public\".\"chatRoom\" (\"candidate_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"chatRoom_candidate_id_idx_2164cd9a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.chatRoom.chatRoom_employer_id_idx_f3c7e77d",
+    "label": "Create index \"chatRoom_employer_id_idx_f3c7e77d\" on \"chatRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "chatRoom_employer_id_idx_f3c7e77d",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"chatRoom_employer_id_idx_f3c7e77d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom_employer_id_idx_f3c7e77d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"chatRoom_employer_id_idx_f3c7e77d\"",
+        "sql": "CREATE INDEX \"chatRoom_employer_id_idx_f3c7e77d\" ON \"public\".\"chatRoom\" (\"employer_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"chatRoom_employer_id_idx_f3c7e77d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom_employer_id_idx_f3c7e77d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.chatRoom.chatRoom_job_id_idx_58a5bbdd",
+    "label": "Create index \"chatRoom_job_id_idx_58a5bbdd\" on \"chatRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "chatRoom_job_id_idx_58a5bbdd",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"chatRoom_job_id_idx_58a5bbdd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom_job_id_idx_58a5bbdd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"chatRoom_job_id_idx_58a5bbdd\"",
+        "sql": "CREATE INDEX \"chatRoom_job_id_idx_58a5bbdd\" ON \"public\".\"chatRoom\" (\"job_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"chatRoom_job_id_idx_58a5bbdd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chatRoom_job_id_idx_58a5bbdd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.education.education_candidate_id_idx_2164cd9a",
+    "label": "Create index \"education_candidate_id_idx_2164cd9a\" on \"education\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "education_candidate_id_idx_2164cd9a",
+        "table": "education"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"education_candidate_id_idx_2164cd9a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"education_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"education_candidate_id_idx_2164cd9a\"",
+        "sql": "CREATE INDEX \"education_candidate_id_idx_2164cd9a\" ON \"public\".\"education\" (\"candidate_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"education_candidate_id_idx_2164cd9a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"education_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.experience.experience_candidate_id_idx_2164cd9a",
+    "label": "Create index \"experience_candidate_id_idx_2164cd9a\" on \"experience\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "experience_candidate_id_idx_2164cd9a",
+        "table": "experience"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"experience_candidate_id_idx_2164cd9a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"experience_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"experience_candidate_id_idx_2164cd9a\"",
+        "sql": "CREATE INDEX \"experience_candidate_id_idx_2164cd9a\" ON \"public\".\"experience\" (\"candidate_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"experience_candidate_id_idx_2164cd9a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"experience_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.message.message_room_id_idx_c32a1e8c",
+    "label": "Create index \"message_room_id_idx_c32a1e8c\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "message_room_id_idx_c32a1e8c",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"message_room_id_idx_c32a1e8c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_room_id_idx_c32a1e8c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"message_room_id_idx_c32a1e8c\"",
+        "sql": "CREATE INDEX \"message_room_id_idx_c32a1e8c\" ON \"public\".\"message\" (\"room_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"message_room_id_idx_c32a1e8c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_room_id_idx_c32a1e8c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.message.message_sender_id_idx_311853a4",
+    "label": "Create index \"message_sender_id_idx_311853a4\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "message_sender_id_idx_311853a4",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"message_sender_id_idx_311853a4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_sender_id_idx_311853a4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"message_sender_id_idx_311853a4\"",
+        "sql": "CREATE INDEX \"message_sender_id_idx_311853a4\" ON \"public\".\"message\" (\"sender_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"message_sender_id_idx_311853a4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_sender_id_idx_311853a4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chatRoom.chatRoom_job_id_fkey",
+    "label": "Add foreign key \"chatRoom_job_id_fkey\" on \"chatRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chatRoom_job_id_fkey",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chatRoom_job_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_job_id_fkey",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chatRoom_job_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chatRoom\"\nADD CONSTRAINT \"chatRoom_job_id_fkey\"\nFOREIGN KEY (\"job_id\")\nREFERENCES \"public\".\"job\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chatRoom_job_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_job_id_fkey",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chatRoom.chatRoom_candidate_id_fkey",
+    "label": "Add foreign key \"chatRoom_candidate_id_fkey\" on \"chatRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chatRoom_candidate_id_fkey",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chatRoom_candidate_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_candidate_id_fkey",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chatRoom_candidate_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chatRoom\"\nADD CONSTRAINT \"chatRoom_candidate_id_fkey\"\nFOREIGN KEY (\"candidate_id\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chatRoom_candidate_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_candidate_id_fkey",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chatRoom.chatRoom_employer_id_fkey",
+    "label": "Add foreign key \"chatRoom_employer_id_fkey\" on \"chatRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chatRoom_employer_id_fkey",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chatRoom_employer_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_employer_id_fkey",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chatRoom_employer_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chatRoom\"\nADD CONSTRAINT \"chatRoom_employer_id_fkey\"\nFOREIGN KEY (\"employer_id\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chatRoom_employer_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_employer_id_fkey",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.education.education_candidate_id_fkey",
+    "label": "Add foreign key \"education_candidate_id_fkey\" on \"education\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "education_candidate_id_fkey",
+        "table": "education"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"education_candidate_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "education_candidate_id_fkey",
+          "public",
+          "\"public\".\"education\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"education_candidate_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"education\"\nADD CONSTRAINT \"education_candidate_id_fkey\"\nFOREIGN KEY (\"candidate_id\")\nREFERENCES \"public\".\"candidateProfile\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"education_candidate_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "education_candidate_id_fkey",
+          "public",
+          "\"public\".\"education\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.experience.experience_candidate_id_fkey",
+    "label": "Add foreign key \"experience_candidate_id_fkey\" on \"experience\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "experience_candidate_id_fkey",
+        "table": "experience"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"experience_candidate_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "experience_candidate_id_fkey",
+          "public",
+          "\"public\".\"experience\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"experience_candidate_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"experience\"\nADD CONSTRAINT \"experience_candidate_id_fkey\"\nFOREIGN KEY (\"candidate_id\")\nREFERENCES \"public\".\"candidateProfile\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"experience_candidate_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "experience_candidate_id_fkey",
+          "public",
+          "\"public\".\"experience\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.message.message_room_id_fkey",
+    "label": "Add foreign key \"message_room_id_fkey\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "message_room_id_fkey",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"message_room_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_room_id_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"message_room_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"message\"\nADD CONSTRAINT \"message_room_id_fkey\"\nFOREIGN KEY (\"room_id\")\nREFERENCES \"public\".\"chatRoom\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"message_room_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_room_id_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.message.message_sender_id_fkey",
+    "label": "Add foreign key \"message_sender_id_fkey\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "message_sender_id_fkey",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"message_sender_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_sender_id_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"message_sender_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"message\"\nADD CONSTRAINT \"message_sender_id_fkey\"\nFOREIGN KEY (\"sender_id\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"message_sender_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_sender_id_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ]
+  }
+]

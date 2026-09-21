@@ -15,6 +15,7 @@ import { UploadsModule } from './uploads/uploads.module.js';
 import { AnalyticsModule } from './analytics/analytics.module.js';
 import { CandidatesModule } from './candidates/candidates.module.js';
 import { PdfModule } from './pdf/pdf.module.js';
+import { ChatModule } from './chat/chat.module.js';
 
 @Module({
   imports: [
@@ -38,6 +39,8 @@ import { PdfModule } from './pdf/pdf.module.js';
     UploadsModule,
     AnalyticsModule,
     CandidatesModule,
+    PdfModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [
