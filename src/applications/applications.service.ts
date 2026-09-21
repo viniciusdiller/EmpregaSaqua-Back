@@ -93,4 +93,17 @@ export class ApplicationsService {
 
     return this.repo.updateStatus(applicationId, data.status);
   }
+
+  async withdrawApplication(applicantId: string, applicationId: string): Promise<void> {
+    const application = await this.repo.findById(applicationId);
+    if (!application) {
+      throw new NotFoundException('Candidatura não encontrada.');
+    }
+    // IDOR protection: ensure the application belongs to the requesting user
+    if (application.applicant_id !== applicantId) {
+      throw new ForbiddenException('Você não tem permissão para retirar esta candidatura.');
+    }
+
+    await this.repo.delete(applicationId);
+  }
 }

@@ -8,4 +8,5 @@ export interface ApplicationsRepository {
   findByApplicant(applicantId: string): Promise<Application[]>;
   updateStatus(applicationId: string, status: ApplicationStatus): Promise<Application>;
   findById(applicationId: string): Promise<Application | null>;
+  delete(applicationId: string): Promise<void>;
 }

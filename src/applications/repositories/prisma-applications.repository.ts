@@ -61,4 +61,8 @@ export class PrismaApplicationsRepository implements ApplicationsRepository {
   async findById(applicationId: string): Promise<Application | null> {
     return await this.prisma.application.where({ id: applicationId }).first();
   }
+
+  async delete(applicationId: string): Promise<void> {
+    await this.prisma.application.where({ id: applicationId }).delete();
+  }
 }

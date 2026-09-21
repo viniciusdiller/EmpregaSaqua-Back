@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete, Param, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApplicationsService } from './applications.service.js';
 import { CreateApplicationDto } from './dtos/create-application.dto.js';
 import { UpdateApplicationStatusDto } from './dtos/update-application-status.dto.js';
@@ -45,5 +45,12 @@ export class ApplicationsController {
     @Request() req: any,
   ): Promise<any> {
     return this.applicationsService.updateApplicationStatus(req.user.id, id, data);
+  }
+
+  @Delete('applications/:id')
+  @Roles(Role.JOB_SEEKER)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async withdrawApplication(@Param('id') id: string, @Request() req: any): Promise<void> {
+    await this.applicationsService.withdrawApplication(req.user.id, id);
   }
 }
