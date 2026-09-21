@@ -7,6 +7,8 @@ import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { Role } from '../../prisma/db.js';
 
+import { VerifiedEmployerGuard } from '../../auth/guards/verified-employer.guard.js';
+
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
@@ -28,7 +30,7 @@ export class JobsController {
     return this.jobsService.getJobById(jobId);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, VerifiedEmployerGuard)
   @Roles(Role.EMPLOYER)
   @Post()
   async create(@Request() req: any, @Body() createJobDto: CreateJobDto) {
