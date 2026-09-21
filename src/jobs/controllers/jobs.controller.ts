@@ -5,7 +5,7 @@ import { FindJobsQueryDto } from '../dtos/find-jobs-query.dto.js';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
-import { Role } from '../../prisma/db.js';
+import { Role, JobStatus } from '../../prisma/db.js';
 
 import { VerifiedEmployerGuard } from '../../auth/guards/verified-employer.guard.js';
 
@@ -19,6 +19,8 @@ export class JobsController {
    */
   @Get()
   async findAll(@Query() query: FindJobsQueryDto) {
+    // Force status to ACTIVE for public queries so users cannot search PENDING or REJECTED jobs
+    query.status = JobStatus.ACTIVE;
     return this.jobsService.getPublicJobs(query);
   }
 

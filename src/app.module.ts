@@ -16,6 +16,7 @@ import { AnalyticsModule } from './analytics/analytics.module.js';
 import { CandidatesModule } from './candidates/candidates.module.js';
 import { PdfModule } from './pdf/pdf.module.js';
 import { ChatModule } from './chat/chat.module.js';
+import { AdminModule } from './admin/admin.module.js';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ChatModule } from './chat/chat.module.js';
     CandidatesModule,
     PdfModule,
     ChatModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
