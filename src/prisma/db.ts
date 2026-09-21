@@ -35,3 +35,9 @@ export enum ApplicationStatus {
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED'
 }
+
+export enum VerificationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
+}
