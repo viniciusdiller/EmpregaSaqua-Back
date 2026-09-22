@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
@@ -18,6 +19,8 @@ import { PdfModule } from './pdf/pdf.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { AdminModule } from './admin/admin.module.js';
 import { TalentPoolModule } from './talent-pool/talent-pool.module.js';
+import { AuditModule } from './audit/audit.module.js';
+import { AuditLogInterceptor } from './audit/interceptors/audit-log.interceptor.js';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
 
 @Module({
@@ -34,6 +37,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
       ttl: 60000,
       limit: 100,
     }]),
+    ScheduleModule.forRoot(),
     PrismaModule,
     UsersModule,
     AuthModule,
@@ -46,6 +50,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
     ChatModule,
     AdminModule,
     TalentPoolModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [
@@ -53,6 +58,10 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditLogInterceptor,
     },
     JwtAuthGuard,
   ],
