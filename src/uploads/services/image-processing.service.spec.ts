@@ -40,7 +40,7 @@ describe('ImageProcessingService', () => {
     it('should process a JPEG and return a .webp URL', async () => {
       const result = await service.processAndSaveImage(validBuffer, 'image/jpeg', 'test');
 
-      expect(result.url).toMatch(/^\/uploads\/logos\/.+\.webp$/);
+      expect(result.url).toMatch(/^\/uploads\/Logos\/.+\.webp$/i);
       expect(result.filename).toMatch(/\.webp$/);
       expect(result.sizeBytes).toBeGreaterThan(0);
     });
@@ -48,7 +48,7 @@ describe('ImageProcessingService', () => {
     it('should process a PNG and return a .webp URL', async () => {
       const result = await service.processAndSaveImage(validBuffer, 'image/png', 'test');
 
-      expect(result.url).toMatch(/^\/uploads\/logos\/.+\.webp$/);
+      expect(result.url).toMatch(/^\/uploads\/Logos\/.+\.webp$/i);
     });
 
     it('should process a WebP image without error', async () => {
@@ -70,7 +70,7 @@ describe('ImageProcessingService', () => {
 
     it('should call fs.mkdir to ensure the output directory exists', async () => {
       await service.processAndSaveImage(validBuffer, 'image/jpeg', 'test');
-      expect(fs.mkdir).toHaveBeenCalledWith(expect.stringContaining('logos'), { recursive: true });
+      expect(fs.mkdir).toHaveBeenCalledWith(expect.stringContaining('Logos'), { recursive: true });
     });
 
     it('should call fs.writeFile to persist the processed buffer', async () => {
