@@ -32,13 +32,13 @@ describe('ImageProcessingService', () => {
     vi.clearAllMocks();
   });
 
-  // ─── processAndSaveLogo ────────────────────────────────────────────────────────
+  // ─── processAndSaveImage ────────────────────────────────────────────────────────
 
-  describe('processAndSaveLogo', () => {
+  describe('processAndSaveImage', () => {
     const validBuffer = Buffer.from('fake-image-data');
 
     it('should process a JPEG and return a .webp URL', async () => {
-      const result = await service.processAndSaveLogo(validBuffer, 'image/jpeg');
+      const result = await service.processAndSaveImage(validBuffer, 'image/jpeg', 'test');
 
       expect(result.url).toMatch(/^\/uploads\/logos\/.+\.webp$/);
       expect(result.filename).toMatch(/\.webp$/);
@@ -46,17 +46,17 @@ describe('ImageProcessingService', () => {
     });
 
     it('should process a PNG and return a .webp URL', async () => {
-      const result = await service.processAndSaveLogo(validBuffer, 'image/png');
+      const result = await service.processAndSaveImage(validBuffer, 'image/png', 'test');
 
       expect(result.url).toMatch(/^\/uploads\/logos\/.+\.webp$/);
     });
 
     it('should process a WebP image without error', async () => {
-      await expect(service.processAndSaveLogo(validBuffer, 'image/webp')).resolves.not.toThrow();
+      await expect(service.processAndSaveImage(validBuffer, 'image/webp', 'test')).resolves.not.toThrow();
     });
 
     it('should call sharp with resize 800x800 inside and webp quality 80', async () => {
-      await service.processAndSaveLogo(validBuffer, 'image/jpeg');
+      await service.processAndSaveImage(validBuffer, 'image/jpeg', 'test');
 
       const sharpInstance = (sharp as unknown as ReturnType<typeof vi.fn>).mock.results[0].value;
       expect(sharpInstance.resize).toHaveBeenCalledWith({
@@ -69,12 +69,12 @@ describe('ImageProcessingService', () => {
     });
 
     it('should call fs.mkdir to ensure the output directory exists', async () => {
-      await service.processAndSaveLogo(validBuffer, 'image/jpeg');
+      await service.processAndSaveImage(validBuffer, 'image/jpeg', 'test');
       expect(fs.mkdir).toHaveBeenCalledWith(expect.stringContaining('logos'), { recursive: true });
     });
 
     it('should call fs.writeFile to persist the processed buffer', async () => {
-      await service.processAndSaveLogo(validBuffer, 'image/jpeg');
+      await service.processAndSaveImage(validBuffer, 'image/jpeg', 'test');
       expect(fs.writeFile).toHaveBeenCalledWith(
         expect.stringContaining('.webp'),
         expect.any(Buffer),
@@ -82,21 +82,21 @@ describe('ImageProcessingService', () => {
     });
 
     it('should throw UnsupportedMediaTypeException for PDF', async () => {
-      await expect(service.processAndSaveLogo(validBuffer, 'application/pdf')).rejects.toThrow(
+      await expect(service.processAndSaveImage(validBuffer, 'application/pdf', 'test')).rejects.toThrow(
         UnsupportedMediaTypeException,
       );
       expect(fs.writeFile).not.toHaveBeenCalled();
     });
 
     it('should throw UnsupportedMediaTypeException for text/plain', async () => {
-      await expect(service.processAndSaveLogo(validBuffer, 'text/plain')).rejects.toThrow(
+      await expect(service.processAndSaveImage(validBuffer, 'text/plain', 'test')).rejects.toThrow(
         UnsupportedMediaTypeException,
       );
     });
 
     it('should generate a unique filename on each call', async () => {
-      const r1 = await service.processAndSaveLogo(validBuffer, 'image/png');
-      const r2 = await service.processAndSaveLogo(validBuffer, 'image/png');
+      const r1 = await service.processAndSaveImage(validBuffer, 'image/png', 'test');
+      const r2 = await service.processAndSaveImage(validBuffer, 'image/png', 'test');
 
       expect(r1.filename).not.toBe(r2.filename);
     });
