@@ -26,6 +26,11 @@ export class PrismaJobsRepository implements IJobsRepository {
       contact_whatsapp: data.contact_whatsapp ?? null,
       contact_email: data.contact_email ?? null,
       status: JobStatus.PENDING,
+      work_model: data.work_model,
+      contract_type: data.contract_type,
+      is_salary_visible: data.is_salary_visible ?? true,
+      is_pcd: data.is_pcd ?? false,
+      expires_at: data.expires_at ?? null,
     });
     
     if (data.questions && data.questions.length > 0) {
@@ -71,6 +76,18 @@ export class PrismaJobsRepository implements IJobsRepository {
       baseQuery = baseQuery.where((j) => j.title.ilike(`%${query.title_like}%`));
     }
 
+    if (query.work_model) {
+      baseQuery = baseQuery.where({ work_model: query.work_model });
+    }
+
+    if (query.contract_type) {
+      baseQuery = baseQuery.where({ contract_type: query.contract_type });
+    }
+
+    if (query.is_pcd !== undefined) {
+      baseQuery = baseQuery.where({ is_pcd: query.is_pcd });
+    }
+
     // Execute both queries in parallel: data page + count
     const [jobs, countResult] = await Promise.all([
       baseQuery
@@ -91,8 +108,19 @@ export class PrismaJobsRepository implements IJobsRepository {
     const total_items = countResult.total;
     const total_pages = Math.ceil(total_items / limit);
 
+    // ATS Enterprise: Salary masking
+    const maskedJobs = jobs.map((job) => {
+      if (job.is_salary_visible === false) {
+        return {
+          ...job,
+          salary_range: null,
+        };
+      }
+      return job;
+    });
+
     return {
-      data: jobs as Job[],
+      data: maskedJobs as Job[],
       meta: {
         total_items,
         total_pages,

@@ -1,6 +1,6 @@
-import { IsOptional, IsString, IsInt, IsEnum, Min, Max } from 'class-validator';
+import { IsOptional, IsString, IsInt, IsEnum, Min, Max, IsBoolean } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { JobStatus } from '../../prisma/db.js';
+import { JobStatus, WorkModel, ContractType } from '../../prisma/db.js';
 
 export class FindJobsQueryDto {
   @IsOptional()
@@ -29,4 +29,21 @@ export class FindJobsQueryDto {
   @IsOptional()
   @IsEnum(JobStatus)
   status?: JobStatus;
+
+  @IsOptional()
+  @IsEnum(WorkModel)
+  work_model?: WorkModel;
+
+  @IsOptional()
+  @IsEnum(ContractType)
+  contract_type?: ContractType;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return value;
+  })
+  @IsBoolean()
+  is_pcd?: boolean;
 }

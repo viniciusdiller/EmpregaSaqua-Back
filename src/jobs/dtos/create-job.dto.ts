@@ -1,7 +1,8 @@
-import { IsString, IsNotEmpty, MaxLength, IsOptional, IsEmail, Matches, IsArray, ArrayMaxSize, ValidateNested, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, IsEmail, Matches, IsArray, ArrayMaxSize, ValidateNested, IsBoolean, IsEnum, IsDateString } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import sanitizeHtml from 'sanitize-html';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { WorkModel, ContractType } from '../../prisma/db.js';
 
 export class JobQuestionDto {
   @ApiProperty({ example: 'Tem experiência com CNH D?' })
@@ -77,6 +78,29 @@ export class CreateJobDto {
   @MaxLength(150, { each: true })
   @Transform(({ value }) => Array.isArray(value) ? value.map(v => sanitizeHtml(v)).filter(v => v.trim().length > 0) : value)
   benefits: string[];
+
+  @ApiProperty({ enum: WorkModel, example: WorkModel.REMOTE, description: 'Modelo de trabalho' })
+  @IsEnum(WorkModel)
+  work_model: WorkModel;
+
+  @ApiProperty({ enum: ContractType, example: ContractType.CLT, description: 'Tipo de contrato' })
+  @IsEnum(ContractType)
+  contract_type: ContractType;
+
+  @ApiPropertyOptional({ example: true, description: 'Visibilidade do salário para os candidatos' })
+  @IsOptional()
+  @IsBoolean()
+  is_salary_visible?: boolean;
+
+  @ApiPropertyOptional({ example: false, description: 'Vaga afirmativa para PCD' })
+  @IsOptional()
+  @IsBoolean()
+  is_pcd?: boolean;
+
+  @ApiPropertyOptional({ example: '2026-12-31T23:59:59Z', description: 'Data limite para se candidatar' })
+  @IsOptional()
+  @IsDateString()
+  expires_at?: string;
 
   @ApiPropertyOptional({ example: '22999999999', description: 'WhatsApp de contato para envio rápido' })
   @IsString()
