@@ -32,9 +32,10 @@ export enum JobStatus {
 }
 
 export enum ApplicationStatus {
-  PENDING = 'PENDING',
-  REVIEWED = 'REVIEWED',
-  ACCEPTED = 'ACCEPTED',
+  APPLIED = 'APPLIED',
+  REVIEWING = 'REVIEWING',
+  INTERVIEW = 'INTERVIEW',
+  HIRED = 'HIRED',
   REJECTED = 'REJECTED'
 }
 
@@ -42,4 +43,18 @@ export enum VerificationStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED'
+}
+
+export enum WorkModel {
+  ON_SITE = 'ON_SITE',
+  HYBRID = 'HYBRID',
+  REMOTE = 'REMOTE'
+}
+
+export enum ContractType {
+  CLT = 'CLT',
+  PJ = 'PJ',
+  INTERNSHIP = 'INTERNSHIP',
+  FREELANCE = 'FREELANCE',
+  APPRENTICE = 'APPRENTICE'
 }

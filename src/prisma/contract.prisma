@@ -12,10 +12,25 @@ enum JobStatus {
 }
 
 enum ApplicationStatus {
-  PENDING
-  REVIEWED
-  ACCEPTED
+  APPLIED
+  REVIEWING
+  INTERVIEW
+  HIRED
   REJECTED
+}
+
+enum WorkModel {
+  ON_SITE
+  HYBRID
+  REMOTE
+}
+
+enum ContractType {
+  CLT
+  PJ
+  INTERNSHIP
+  FREELANCE
+  APPRENTICE
 }
 
 enum VerificationStatus {
@@ -111,6 +126,13 @@ model Job {
   differential_qualifications String[] @default([])
   benefits         String[] @default([])
   
+  work_model       WorkModel
+  contract_type    ContractType
+  is_salary_visible Boolean   @default(true)
+  is_pcd           Boolean   @default(false)
+  expires_at       TimestamptzString?
+
+  
   contact_whatsapp String?
   contact_email    String?
   status           JobStatus @default(PENDING)
@@ -142,8 +164,9 @@ model Application {
   
   cover_letter String?
   resume_url   String?
+  internal_notes String?
   
-  status       ApplicationStatus @default(PENDING)
+  status       ApplicationStatus @default(APPLIED)
   is_knocked_out Boolean         @default(false)
   
   created_at   TimestamptzString @default(now())

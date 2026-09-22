@@ -61,20 +61,49 @@
             "codecId": "pg/text@1",
             "members": [
               {
-                "name": "PENDING",
-                "value": "PENDING"
+                "name": "APPLIED",
+                "value": "APPLIED"
               },
               {
-                "name": "REVIEWED",
-                "value": "REVIEWED"
+                "name": "REVIEWING",
+                "value": "REVIEWING"
               },
               {
-                "name": "ACCEPTED",
-                "value": "ACCEPTED"
+                "name": "INTERVIEW",
+                "value": "INTERVIEW"
+              },
+              {
+                "name": "HIRED",
+                "value": "HIRED"
               },
               {
                 "name": "REJECTED",
                 "value": "REJECTED"
+              }
+            ]
+          },
+          "ContractType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "CLT",
+                "value": "CLT"
+              },
+              {
+                "name": "PJ",
+                "value": "PJ"
+              },
+              {
+                "name": "INTERNSHIP",
+                "value": "INTERNSHIP"
+              },
+              {
+                "name": "FREELANCE",
+                "value": "FREELANCE"
+              },
+              {
+                "name": "APPRENTICE",
+                "value": "APPRENTICE"
               }
             ]
           },
@@ -132,6 +161,23 @@
                 "value": "REJECTED"
               }
             ]
+          },
+          "WorkModel": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ON_SITE",
+                "value": "ON_SITE"
+              },
+              {
+                "name": "HYBRID",
+                "value": "HYBRID"
+              },
+              {
+                "name": "REMOTE",
+                "value": "REMOTE"
+              }
+            ]
           }
         },
         "models": {
@@ -160,6 +206,13 @@
               },
               "id": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "internal_notes": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -269,6 +322,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "internal_notes": {
+                  "column": "internal_notes"
                 },
                 "is_knocked_out": {
                   "column": "is_knocked_out"
@@ -1009,6 +1065,19 @@
                   "kind": "scalar"
                 }
               },
+              "contract_type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ContractType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "created_at": {
                 "nullable": false,
                 "type": {
@@ -1045,10 +1114,31 @@
                   "kind": "scalar"
                 }
               },
+              "expires_at": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "is_pcd": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "is_salary_visible": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
                   "kind": "scalar"
                 }
               },
@@ -1092,6 +1182,19 @@
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
+                }
+              },
+              "work_model": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "WorkModel",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "work_schedule": {
@@ -1179,6 +1282,9 @@
                 "contact_whatsapp": {
                   "column": "contact_whatsapp"
                 },
+                "contract_type": {
+                  "column": "contract_type"
+                },
                 "created_at": {
                   "column": "created_at"
                 },
@@ -1194,8 +1300,17 @@
                 "employer_id": {
                   "column": "employer_id"
                 },
+                "expires_at": {
+                  "column": "expires_at"
+                },
                 "id": {
                   "column": "id"
+                },
+                "is_pcd": {
+                  "column": "is_pcd"
+                },
+                "is_salary_visible": {
+                  "column": "is_salary_visible"
                 },
                 "mandatory_qualifications": {
                   "column": "mandatory_qualifications"
@@ -1211,6 +1326,9 @@
                 },
                 "updated_at": {
                   "column": "updated_at"
+                },
+                "work_model": {
+                  "column": "work_model"
                 },
                 "work_schedule": {
                   "column": "work_schedule"
@@ -1718,8 +1836,8 @@
             "application": {
               "checks": [
                 {
-                  "expression": "\"status\" IN ('PENDING', 'REVIEWED', 'ACCEPTED', 'REJECTED')",
-                  "name": "application_status_check_e0a4d60d",
+                  "expression": "\"status\" IN ('APPLIED', 'REVIEWING', 'INTERVIEW', 'HIRED', 'REJECTED')",
+                  "name": "application_status_check_b407ef85",
                   "prefix": "application_status_check"
                 }
               ],
@@ -1748,6 +1866,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "internal_notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "is_knocked_out": {
                   "codecId": "pg/bool@1",
                   "default": {
@@ -1771,7 +1894,7 @@
                   "codecId": "pg/text@1",
                   "default": {
                     "kind": "literal",
-                    "value": "PENDING"
+                    "value": "APPLIED"
                   },
                   "nativeType": "text",
                   "nullable": false,
@@ -2423,6 +2546,11 @@
                   "prefix": "job_benefits_elem_not_null"
                 },
                 {
+                  "expression": "\"contract_type\" IN ('CLT', 'PJ', 'INTERNSHIP', 'FREELANCE', 'APPRENTICE')",
+                  "name": "job_contract_type_check_fd665d87",
+                  "prefix": "job_contract_type_check"
+                },
+                {
                   "expression": "array_position(\"differential_qualifications\", NULL) IS NULL",
                   "name": "job_differential_qualifications_elem_not_null_d51d828c",
                   "prefix": "job_differential_qualifications_elem_not_null"
@@ -2436,6 +2564,11 @@
                   "expression": "\"status\" IN ('PENDING', 'ACTIVE', 'FILLED', 'REJECTED')",
                   "name": "job_status_check_76cde6b1",
                   "prefix": "job_status_check"
+                },
+                {
+                  "expression": "\"work_model\" IN ('ON_SITE', 'HYBRID', 'REMOTE')",
+                  "name": "job_work_model_check_8396d0c5",
+                  "prefix": "job_work_model_check"
                 }
               ],
               "columns": {
@@ -2467,6 +2600,17 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": true
+                },
+                "contract_type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ContractType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "created_at": {
                   "codecId": "pg/timestamptz-string@1",
@@ -2502,9 +2646,32 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "expires_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
+                  "nullable": false
+                },
+                "is_pcd": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "is_salary_visible": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
                   "nullable": false
                 },
                 "mandatory_qualifications": {
@@ -2546,6 +2713,17 @@
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
                   "nullable": false
+                },
+                "work_model": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "WorkModel",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "work_schedule": {
                   "codecId": "pg/text@1",
@@ -2923,10 +3101,21 @@
             "ApplicationStatus": {
               "kind": "valueSet",
               "values": [
-                "PENDING",
-                "REVIEWED",
-                "ACCEPTED",
+                "APPLIED",
+                "REVIEWING",
+                "INTERVIEW",
+                "HIRED",
                 "REJECTED"
+              ]
+            },
+            "ContractType": {
+              "kind": "valueSet",
+              "values": [
+                "CLT",
+                "PJ",
+                "INTERNSHIP",
+                "FREELANCE",
+                "APPRENTICE"
               ]
             },
             "JobStatus": {
@@ -2953,6 +3142,14 @@
                 "APPROVED",
                 "REJECTED"
               ]
+            },
+            "WorkModel": {
+              "kind": "valueSet",
+              "values": [
+                "ON_SITE",
+                "HYBRID",
+                "REMOTE"
+              ]
             }
           }
         },
@@ -2960,7 +3157,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "db5dec62708d497cc1d385858e5ad945da4f032452761efb0d73d366615e5caa"
+    "storageHash": "3725d7b6ba864b3f56c2ca078e733036150aaccb215ff6e14f70e5435abbb555"
   },
   "execution": {
     "executionHash": "0f377521c328f2dfb0d9fddc93a5c629ad30410c85d806de4e92c82cd1d2563e",

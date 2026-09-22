@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'db5dec62708d497cc1d385858e5ad945da4f032452761efb0d73d366615e5caa'>;
+  StorageHashBase<'3725d7b6ba864b3f56c2ca078e733036150aaccb215ff6e14f70e5435abbb555'>;
 export type ExecutionHash =
   ExecutionHashBase<'0f377521c328f2dfb0d9fddc93a5c629ad30410c85d806de4e92c82cd1d2563e'>;
 export type ProfileHash =
@@ -248,7 +248,8 @@ export type FieldOutputTypes = {
       readonly applicant_id: CodecTypes['pg/text@1']['output'];
       readonly cover_letter: CodecTypes['pg/text@1']['output'] | null;
       readonly resume_url: CodecTypes['pg/text@1']['output'] | null;
-      readonly status: 'PENDING' | 'REVIEWED' | 'ACCEPTED' | 'REJECTED';
+      readonly internal_notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly status: 'APPLIED' | 'REVIEWING' | 'INTERVIEW' | 'HIRED' | 'REJECTED';
       readonly is_knocked_out: CodecTypes['pg/bool@1']['output'];
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -318,6 +319,11 @@ export type FieldOutputTypes = {
       readonly mandatory_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
       readonly differential_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
       readonly benefits: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
+      readonly work_model: 'ON_SITE' | 'HYBRID' | 'REMOTE';
+      readonly contract_type: 'CLT' | 'PJ' | 'INTERNSHIP' | 'FREELANCE' | 'APPRENTICE';
+      readonly is_salary_visible: CodecTypes['pg/bool@1']['output'];
+      readonly is_pcd: CodecTypes['pg/bool@1']['output'];
+      readonly expires_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly contact_whatsapp: CodecTypes['pg/text@1']['output'] | null;
       readonly contact_email: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'PENDING' | 'ACTIVE' | 'FILLED' | 'REJECTED';
@@ -363,7 +369,8 @@ export type FieldInputTypes = {
       readonly applicant_id: CodecTypes['pg/text@1']['input'];
       readonly cover_letter: CodecTypes['pg/text@1']['input'] | null;
       readonly resume_url: CodecTypes['pg/text@1']['input'] | null;
-      readonly status: 'PENDING' | 'REVIEWED' | 'ACCEPTED' | 'REJECTED';
+      readonly internal_notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly status: 'APPLIED' | 'REVIEWING' | 'INTERVIEW' | 'HIRED' | 'REJECTED';
       readonly is_knocked_out: CodecTypes['pg/bool@1']['input'];
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -433,6 +440,11 @@ export type FieldInputTypes = {
       readonly mandatory_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
       readonly differential_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
       readonly benefits: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
+      readonly work_model: 'ON_SITE' | 'HYBRID' | 'REMOTE';
+      readonly contract_type: 'CLT' | 'PJ' | 'INTERNSHIP' | 'FREELANCE' | 'APPRENTICE';
+      readonly is_salary_visible: CodecTypes['pg/bool@1']['input'];
+      readonly is_pcd: CodecTypes['pg/bool@1']['input'];
+      readonly expires_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly contact_whatsapp: CodecTypes['pg/text@1']['input'] | null;
       readonly contact_email: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'PENDING' | 'ACTIVE' | 'FILLED' | 'REJECTED';
@@ -477,10 +489,11 @@ export type StorageColumnTypes = {
       readonly cover_letter: CodecTypes['pg/text@1']['output'] | null;
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
+      readonly internal_notes: CodecTypes['pg/text@1']['output'] | null;
       readonly is_knocked_out: CodecTypes['pg/bool@1']['output'];
       readonly job_id: CodecTypes['pg/text@1']['output'];
       readonly resume_url: CodecTypes['pg/text@1']['output'] | null;
-      readonly status: 'PENDING' | 'REVIEWED' | 'ACCEPTED' | 'REJECTED';
+      readonly status: 'APPLIED' | 'REVIEWING' | 'INTERVIEW' | 'HIRED' | 'REJECTED';
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly applicationAnswer: {
@@ -542,17 +555,22 @@ export type StorageColumnTypes = {
       readonly benefits: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
       readonly contact_email: CodecTypes['pg/text@1']['output'] | null;
       readonly contact_whatsapp: CodecTypes['pg/text@1']['output'] | null;
+      readonly contract_type: 'CLT' | 'PJ' | 'INTERNSHIP' | 'FREELANCE' | 'APPRENTICE';
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly description: CodecTypes['pg/text@1']['output'];
       readonly differential_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
       readonly employer_id: CodecTypes['pg/text@1']['output'];
+      readonly expires_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
+      readonly is_pcd: CodecTypes['pg/bool@1']['output'];
+      readonly is_salary_visible: CodecTypes['pg/bool@1']['output'];
       readonly mandatory_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
       readonly salary_range: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'PENDING' | 'ACTIVE' | 'FILLED' | 'REJECTED';
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly work_model: 'ON_SITE' | 'HYBRID' | 'REMOTE';
       readonly work_schedule: CodecTypes['pg/text@1']['output'];
     };
     readonly jobQuestion: {
@@ -592,10 +610,11 @@ export type StorageColumnInputTypes = {
       readonly cover_letter: CodecTypes['pg/text@1']['input'] | null;
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
+      readonly internal_notes: CodecTypes['pg/text@1']['input'] | null;
       readonly is_knocked_out: CodecTypes['pg/bool@1']['input'];
       readonly job_id: CodecTypes['pg/text@1']['input'];
       readonly resume_url: CodecTypes['pg/text@1']['input'] | null;
-      readonly status: 'PENDING' | 'REVIEWED' | 'ACCEPTED' | 'REJECTED';
+      readonly status: 'APPLIED' | 'REVIEWING' | 'INTERVIEW' | 'HIRED' | 'REJECTED';
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly applicationAnswer: {
@@ -657,17 +676,22 @@ export type StorageColumnInputTypes = {
       readonly benefits: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
       readonly contact_email: CodecTypes['pg/text@1']['input'] | null;
       readonly contact_whatsapp: CodecTypes['pg/text@1']['input'] | null;
+      readonly contract_type: 'CLT' | 'PJ' | 'INTERNSHIP' | 'FREELANCE' | 'APPRENTICE';
       readonly created_at: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly description: CodecTypes['pg/text@1']['input'];
       readonly differential_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
       readonly employer_id: CodecTypes['pg/text@1']['input'];
+      readonly expires_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
+      readonly is_pcd: CodecTypes['pg/bool@1']['input'];
+      readonly is_salary_visible: CodecTypes['pg/bool@1']['input'];
       readonly mandatory_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
       readonly salary_range: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'PENDING' | 'ACTIVE' | 'FILLED' | 'REJECTED';
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly work_model: 'ON_SITE' | 'HYBRID' | 'REMOTE';
       readonly work_schedule: CodecTypes['pg/text@1']['input'];
     };
     readonly jobQuestion: {
@@ -790,6 +814,11 @@ export namespace Models {
     mandatory_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
     differential_qualifications: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
     benefits: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
+    work_model: 'ON_SITE' | 'HYBRID' | 'REMOTE';
+    contract_type: 'CLT' | 'PJ' | 'INTERNSHIP' | 'FREELANCE' | 'APPRENTICE';
+    is_salary_visible: CodecTypes['pg/bool@1']['output'];
+    is_pcd: CodecTypes['pg/bool@1']['output'];
+    expires_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     contact_whatsapp: CodecTypes['pg/text@1']['output'] | null;
     contact_email: CodecTypes['pg/text@1']['output'] | null;
     status: 'PENDING' | 'ACTIVE' | 'FILLED' | 'REJECTED';
@@ -817,7 +846,8 @@ export namespace Models {
     applicant_id: CodecTypes['pg/text@1']['output'];
     cover_letter: CodecTypes['pg/text@1']['output'] | null;
     resume_url: CodecTypes['pg/text@1']['output'] | null;
-    status: 'PENDING' | 'REVIEWED' | 'ACCEPTED' | 'REJECTED';
+    internal_notes: CodecTypes['pg/text@1']['output'] | null;
+    status: 'APPLIED' | 'REVIEWING' | 'INTERVIEW' | 'HIRED' | 'REJECTED';
     is_knocked_out: CodecTypes['pg/bool@1']['output'];
     created_at: CodecTypes['pg/timestamptz-string@1']['output'];
     updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -932,13 +962,18 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                 };
+                readonly internal_notes: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
                 readonly status: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'APPLIED'>;
                   };
                 };
                 readonly is_knocked_out: {
@@ -1509,6 +1544,39 @@ type ContractBase = Omit<
                     readonly value: DefaultLiteralValue<'pg/text@1', readonly []>;
                   };
                 };
+                readonly work_model: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly contract_type: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly is_salary_visible: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly is_pcd: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly expires_at: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
                 readonly contact_whatsapp: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -1813,7 +1881,11 @@ type ContractBase = Omit<
           readonly valueSet: {
             readonly ApplicationStatus: {
               readonly kind: 'valueSet';
-              readonly values: readonly ['PENDING', 'REVIEWED', 'ACCEPTED', 'REJECTED'];
+              readonly values: readonly ['APPLIED', 'REVIEWING', 'INTERVIEW', 'HIRED', 'REJECTED'];
+            };
+            readonly ContractType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['CLT', 'PJ', 'INTERNSHIP', 'FREELANCE', 'APPRENTICE'];
             };
             readonly JobStatus: {
               readonly kind: 'valueSet';
@@ -1826,6 +1898,10 @@ type ContractBase = Omit<
             readonly VerificationStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['PENDING', 'APPROVED', 'REJECTED'];
+            };
+            readonly WorkModel: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['ON_SITE', 'HYBRID', 'REMOTE'];
             };
           };
         };
@@ -1898,6 +1974,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly internal_notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly status: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1961,6 +2041,7 @@ type ContractBase = Omit<
                 readonly applicant_id: { readonly column: 'applicant_id' };
                 readonly cover_letter: { readonly column: 'cover_letter' };
                 readonly resume_url: { readonly column: 'resume_url' };
+                readonly internal_notes: { readonly column: 'internal_notes' };
                 readonly status: { readonly column: 'status' };
                 readonly is_knocked_out: { readonly column: 'is_knocked_out' };
                 readonly created_at: { readonly column: 'created_at' };
@@ -2439,6 +2520,29 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
                 readonly many: true;
               };
+              readonly work_model: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contract_type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly is_salary_visible: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly is_pcd: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly expires_at: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly contact_whatsapp: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2533,6 +2637,11 @@ type ContractBase = Omit<
                   readonly column: 'differential_qualifications';
                 };
                 readonly benefits: { readonly column: 'benefits' };
+                readonly work_model: { readonly column: 'work_model' };
+                readonly contract_type: { readonly column: 'contract_type' };
+                readonly is_salary_visible: { readonly column: 'is_salary_visible' };
+                readonly is_pcd: { readonly column: 'is_pcd' };
+                readonly expires_at: { readonly column: 'expires_at' };
                 readonly contact_whatsapp: { readonly column: 'contact_whatsapp' };
                 readonly contact_email: { readonly column: 'contact_email' };
                 readonly status: { readonly column: 'status' };
@@ -2878,10 +2987,29 @@ type ContractBase = Omit<
           readonly ApplicationStatus: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
-              { readonly name: 'PENDING'; readonly value: 'PENDING' },
-              { readonly name: 'REVIEWED'; readonly value: 'REVIEWED' },
-              { readonly name: 'ACCEPTED'; readonly value: 'ACCEPTED' },
+              { readonly name: 'APPLIED'; readonly value: 'APPLIED' },
+              { readonly name: 'REVIEWING'; readonly value: 'REVIEWING' },
+              { readonly name: 'INTERVIEW'; readonly value: 'INTERVIEW' },
+              { readonly name: 'HIRED'; readonly value: 'HIRED' },
               { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+            ];
+          };
+          readonly WorkModel: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'ON_SITE'; readonly value: 'ON_SITE' },
+              { readonly name: 'HYBRID'; readonly value: 'HYBRID' },
+              { readonly name: 'REMOTE'; readonly value: 'REMOTE' },
+            ];
+          };
+          readonly ContractType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'CLT'; readonly value: 'CLT' },
+              { readonly name: 'PJ'; readonly value: 'PJ' },
+              { readonly name: 'INTERNSHIP'; readonly value: 'INTERNSHIP' },
+              { readonly name: 'FREELANCE'; readonly value: 'FREELANCE' },
+              { readonly name: 'APPRENTICE'; readonly value: 'APPRENTICE' },
             ];
           };
           readonly VerificationStatus: {
