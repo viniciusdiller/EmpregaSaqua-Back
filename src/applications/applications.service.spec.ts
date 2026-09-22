@@ -4,6 +4,7 @@ import { ApplicationsService } from './applications.service.js';
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ApplicationStatus, JobStatus } from '../prisma/db.js';
 import { JobsService } from '../jobs/services/jobs.service.js';
+import { MatchScoringService } from './services/match-scoring.service.js';
 import type { ApplicationsRepository } from './repositories/applications.repository.interface.js';
 
 const makeJob = (overrides: Record<string, unknown> = {}) => ({
@@ -28,7 +29,7 @@ const makeApplication = (overrides: Record<string, unknown> = {}) => ({
   applicant_id: 'seeker-1',
   cover_letter: null,
   resume_url: null,
-  status: ApplicationStatus.PENDING,
+  status: ApplicationStatus.APPLIED,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   ...overrides,
@@ -58,6 +59,7 @@ describe('ApplicationsService', () => {
         ApplicationsService,
         { provide: 'IApplicationsRepository', useValue: mockRepo },
         { provide: JobsService, useValue: mockJobsService },
+        { provide: MatchScoringService, useValue: { calculateMatchScore: vi.fn() } },
       ],
     }).compile();
 
@@ -79,7 +81,7 @@ describe('ApplicationsService', () => {
 
       const result = await service.applyForJob('seeker-1', 'job-1', {});
 
-      expect(repo.create).toHaveBeenCalledWith('seeker-1', 'job-1', {});
+      expect(repo.create).toHaveBeenCalledWith('seeker-1', 'job-1', {}, ApplicationStatus.APPLIED, false);
       expect(result).toEqual(application);
     });
 
@@ -145,24 +147,24 @@ describe('ApplicationsService', () => {
   describe('updateApplicationStatus', () => {
     it('should update status when employer owns the job', async () => {
       const app = makeApplication();
-      const updatedApp = makeApplication({ status: ApplicationStatus.ACCEPTED });
+      const updatedApp = makeApplication({ status: ApplicationStatus.HIRED });
       repo.findById.mockResolvedValue(app as any);
       jobsService.getJobById.mockResolvedValue(makeJob({ employer_id: 'employer-1' }) as any);
       repo.updateStatus.mockResolvedValue(updatedApp as any);
 
       const result = await service.updateApplicationStatus('employer-1', 'app-1', {
-        status: ApplicationStatus.ACCEPTED,
+        status: ApplicationStatus.HIRED,
       });
 
-      expect(repo.updateStatus).toHaveBeenCalledWith('app-1', ApplicationStatus.ACCEPTED);
-      expect(result.status).toBe(ApplicationStatus.ACCEPTED);
+      expect(repo.updateStatus).toHaveBeenCalledWith('app-1', ApplicationStatus.HIRED);
+      expect(result.status).toBe(ApplicationStatus.HIRED);
     });
 
     it('should throw NotFoundException when application does not exist', async () => {
       repo.findById.mockResolvedValue(null);
 
       await expect(
-        service.updateApplicationStatus('employer-1', 'ghost', { status: ApplicationStatus.ACCEPTED }),
+        service.updateApplicationStatus('employer-1', 'ghost', { status: ApplicationStatus.HIRED }),
       ).rejects.toThrow(NotFoundException);
     });
 

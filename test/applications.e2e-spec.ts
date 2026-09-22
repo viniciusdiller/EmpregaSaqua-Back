@@ -73,6 +73,8 @@ describe('ApplicationsController (e2e)', () => {
         work_schedule: 'Test Schedule',
         salary_range: 'Test Range',
         mandatory_qualifications: ['Q1'],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
         differential_qualifications: ['D1'],
         benefits: ['B1'],
       });
@@ -99,7 +101,7 @@ describe('ApplicationsController (e2e)', () => {
       .expect(201);
 
     expect(response.body).toHaveProperty('id');
-    expect(response.body.status).toBe(ApplicationStatus.PENDING);
+    expect(response.body.status).toBe(ApplicationStatus.APPLIED);
     expect(response.body.job_id).toBe(jobId);
     
     applicationId = response.body.id;
@@ -146,9 +148,9 @@ describe('ApplicationsController (e2e)', () => {
     const response = await request(app.getHttpServer())
       .patch(`/applications/${applicationId}/status`)
       .set('Authorization', `Bearer ${employerToken}`)
-      .send({ status: ApplicationStatus.ACCEPTED })
+      .send({ status: ApplicationStatus.HIRED })
       .expect(200);
 
-    expect(response.body.status).toBe(ApplicationStatus.ACCEPTED);
+    expect(response.body.status).toBe(ApplicationStatus.HIRED);
   });
 });

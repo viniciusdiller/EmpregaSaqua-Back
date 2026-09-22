@@ -38,6 +38,8 @@ describe('CRUD Permissions (e2e)', () => {
     address: 'Saquarema - RJ',
     work_schedule: 'Seg-Sex 08h-17h',
     mandatory_qualifications: ['Node.js'],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
     differential_qualifications: [],
     benefits: ['VT'],
   };

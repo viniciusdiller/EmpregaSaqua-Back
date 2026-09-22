@@ -71,6 +71,8 @@ describe('Business Logic & Edge Cases (e2e)', () => {
         address: 'Remote',
         work_schedule: 'Flexible',
         mandatory_qualifications: ['React.js', 'NestJS'],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
         differential_qualifications: [],
         benefits: [],
       });
@@ -105,6 +107,8 @@ describe('Business Logic & Edge Cases (e2e)', () => {
         address: 'Local',
         work_schedule: 'Fixed',
         mandatory_qualifications: [],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
         differential_qualifications: [],
         benefits: [],
         questions: [{ question_text: 'Possui CNH B ativa?', expected_answer: true }]

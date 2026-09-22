@@ -80,6 +80,8 @@ describe('JobsModule (e2e)', () => {
         work_schedule: 'Test Schedule',
         salary_range: 'Test Range',
         mandatory_qualifications: ['Q1'],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
         differential_qualifications: ['D1'],
         benefits: ['B1'],
       })
@@ -99,6 +101,8 @@ describe('JobsModule (e2e)', () => {
         work_schedule: 'Test Schedule',
         salary_range: 'Test Range',
         mandatory_qualifications: ['Q1'],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
         differential_qualifications: ['D1'],
         benefits: ['B1'],
       })
@@ -118,6 +122,8 @@ describe('JobsModule (e2e)', () => {
         work_schedule: 'Test Schedule',
         salary_range: 'Test Range',
         mandatory_qualifications: ['Q1'],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
         differential_qualifications: ['D1'],
         benefits: ['B1'],
       })
@@ -140,6 +146,8 @@ describe('JobsModule (e2e)', () => {
         work_schedule: 'Test Schedule',
         salary_range: 'Test Range',
         mandatory_qualifications: ['Q1'],
+        work_model: 'ON_SITE',
+        contract_type: 'CLT',
         differential_qualifications: ['D1'],
         benefits: ['B1'],
       })

@@ -28,7 +28,7 @@ export class ApplicationsService {
     }
 
     let isKnockedOut = false;
-    let initialStatus = ApplicationStatus.PENDING;
+    let initialStatus = ApplicationStatus.APPLIED;
 
     if (job.questions && job.questions.length > 0 && data.answers) {
       for (const question of job.questions) {

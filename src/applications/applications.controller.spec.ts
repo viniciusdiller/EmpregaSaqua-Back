@@ -63,16 +63,16 @@ describe('ApplicationsController', () => {
 
   describe('PATCH /applications/:id/status', () => {
     it('should call updateApplicationStatus with correct args', async () => {
-      const updated = { id: 'app-1', status: ApplicationStatus.ACCEPTED };
+      const updated = { id: 'app-1', status: ApplicationStatus.HIRED };
       service.updateApplicationStatus.mockResolvedValue(updated);
 
       const req = makeReq('employer-1');
-      const result = await controller.updateApplicationStatus('app-1', { status: ApplicationStatus.ACCEPTED } as any, req as any);
+      const result = await controller.updateApplicationStatus('app-1', { status: ApplicationStatus.HIRED } as any, req as any);
 
       expect(service.updateApplicationStatus).toHaveBeenCalledWith(
-        'employer-1', 'app-1', { status: ApplicationStatus.ACCEPTED },
+        'employer-1', 'app-1', { status: ApplicationStatus.HIRED },
       );
-      expect(result.status).toBe(ApplicationStatus.ACCEPTED);
+      expect(result.status).toBe(ApplicationStatus.HIRED);
     });
   });
 });

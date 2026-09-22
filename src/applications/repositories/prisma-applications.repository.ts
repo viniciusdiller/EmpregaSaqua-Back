@@ -14,7 +14,7 @@ export class PrismaApplicationsRepository implements ApplicationsRepository {
       job_id: jobId,
       cover_letter: data.cover_letter ?? null,
       resume_url: data.resume_url ?? null,
-      status: status ?? ApplicationStatus.PENDING,
+      status: status ?? ApplicationStatus.APPLIED,
       is_knocked_out: isKnockedOut ?? false,
     });
 
