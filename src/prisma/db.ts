@@ -17,6 +17,7 @@ export type CompanyProfile = import('@prisma/orm-postgres/family-contract/types'
 export type CandidateProfile = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_CandidateProfile>;
 export type Experience = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_Experience>;
 export type Education = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_Education>;
+export type AuditLog = import('@prisma/orm-postgres/family-contract/types').Scalars<Models.public_AuditLog>;
 
 export enum Role {
   JOB_SEEKER = 'JOB_SEEKER',

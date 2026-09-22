@@ -1,3 +1,4 @@
+
 enum Role {
   JOB_SEEKER
   EMPLOYER
@@ -79,7 +80,7 @@ model CandidateProfile {
   user_id     String  @unique
   bio         String?
   telefone    String?
-  habilidades String? // Deprecated in favor of skills array? We will keep skills array as requested.
+  habilidades String?
   skills      String[] @default([])
   address     String?
   created_at  TimestamptzString @default(now())
@@ -109,7 +110,7 @@ model Education {
   degree         String
   field_of_study String
   start_date     String
-  end_date       String?
+  end_date     String?
 
   candidate      CandidateProfile @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
 }
@@ -131,7 +132,6 @@ model Job {
   is_salary_visible Boolean   @default(true)
   is_pcd           Boolean   @default(false)
   expires_at       TimestamptzString?
-
   
   contact_whatsapp String?
   contact_email    String?
@@ -225,4 +225,14 @@ model SavedCandidate {
   candidate    User              @relation("CandidateSaved", fields: [candidate_id], references: [id], onDelete: Cascade)
 
   @@unique([employer_id, candidate_id])
+}
+
+model AuditLog {
+  id         String            @id @default(uuid())
+  method     String
+  url        String
+  user_id    String?
+  payload    String?
+  status_code Int
+  created_at TimestamptzString @default(now())
 }

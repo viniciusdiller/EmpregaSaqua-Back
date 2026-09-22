@@ -12,6 +12,10 @@
       "model": "ApplicationAnswer",
       "namespace": "public"
     },
+    "auditLog": {
+      "model": "AuditLog",
+      "namespace": "public"
+    },
     "candidateProfile": {
       "model": "CandidateProfile",
       "namespace": "public"
@@ -428,6 +432,87 @@
               },
               "namespaceId": "public",
               "table": "applicationAnswer"
+            }
+          },
+          "AuditLog": {
+            "fields": {
+              "created_at": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "method": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "payload": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status_code": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "url": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "user_id": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "created_at": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "method": {
+                  "column": "method"
+                },
+                "payload": {
+                  "column": "payload"
+                },
+                "status_code": {
+                  "column": "status_code"
+                },
+                "url": {
+                  "column": "url"
+                },
+                "user_id": {
+                  "column": "user_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "auditLog"
             }
           },
           "CandidateProfile": {
@@ -2063,6 +2148,57 @@
               },
               "uniques": []
             },
+            "auditLog": {
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "method": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "payload": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "status_code": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "url": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "user_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "candidateProfile": {
               "checks": [
                 {
@@ -3157,10 +3293,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "3725d7b6ba864b3f56c2ca078e733036150aaccb215ff6e14f70e5435abbb555"
+    "storageHash": "8080008d75e1218f775d1efd2fe819fe1f2f1a38b3961414058cf03a3ca4942c"
   },
   "execution": {
-    "executionHash": "0f377521c328f2dfb0d9fddc93a5c629ad30410c85d806de4e92c82cd1d2563e",
+    "executionHash": "9923f9005cf2ee961465b9ff62a3504b994cc9409bd4431781e301a37808c669",
     "mutations": {
       "defaults": [
         {
@@ -3198,6 +3334,17 @@
             "column": "id",
             "namespace": "public",
             "table": "applicationAnswer"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "auditLog"
           }
         },
         {
