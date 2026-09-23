@@ -53,9 +53,9 @@ describe('PdfModule (e2e)', () => {
     await app.close();
   });
 
-  it('/candidates/resume/download (GET) - Job Seeker can download resume PDF', async () => {
+  it('/candidates/me/resume/pdf (GET) - Job Seeker can download resume PDF', async () => {
     const res = await request(app.getHttpServer())
-      .get('/candidates/resume/download')
+      .get('/candidates/me/resume/pdf')
       .set('Authorization', `Bearer ${jobSeekerToken}`)
       .expect(200);
 
@@ -65,9 +65,9 @@ describe('PdfModule (e2e)', () => {
     expect(res.body.length).toBeGreaterThan(0);
   }, 15000); // Allow more time for puppeteer
 
-  it('/candidates/resume/download (GET) - Unauthorized without token', async () => {
+  it('/candidates/me/resume/pdf (GET) - Unauthorized without token', async () => {
     await request(app.getHttpServer())
-      .get('/candidates/resume/download')
+      .get('/candidates/me/resume/pdf')
       .expect(401);
   });
 });

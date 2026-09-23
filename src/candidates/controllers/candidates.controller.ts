@@ -25,7 +25,7 @@ export class CandidatesController {
     return this.candidatesService.searchCandidates(searchDto);
   }
 
-  @Get('resume/download')
+  @Get('me/resume/pdf')
   @Roles(Role.JOB_SEEKER) // Only candidate can download their own resume
   async downloadResume(@Req() req: Request, @Res() res: Response) {
     const userId = (req.user as any).id;
@@ -35,15 +35,14 @@ export class CandidatesController {
       throw new NotFoundException('Candidate profile not found.');
     }
 
-    const pdfBuffer = await this.pdfService.generateResume(profile);
+    const pdfStream = this.pdfService.buildResumeStream(profile);
 
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename="curriculo.pdf"',
-      'Content-Length': pdfBuffer.length,
     });
 
-    res.end(pdfBuffer);
+    pdfStream.pipe(res);
   }
 
   @Patch('profile')

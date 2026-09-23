@@ -1,131 +1,81 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
-import * as ejs from 'ejs';
-import * as path from 'path';
-import sanitizeHtml from 'sanitize-html';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
+import PDFDocument from 'pdfkit';
+import { PassThrough } from 'stream';
 
 @Injectable()
 export class PdfService {
   private readonly logger = new Logger(PdfService.name);
 
-  /**
-   * Generates a PDF resume stream from candidate profile data.
-   * Defends against SSRF by strictly sanitizing all data injected into the template.
-   */
-  async generateResume(candidateProfile: any): Promise<Buffer> {
+  buildResumeStream(profile: any): PassThrough {
     try {
-      // 1. Strict Sanitization (Defense against SSRF via XSS in PDF renderer)
-      // We sanitize every text field to ensure no malicious tags (like <script>, <iframe>) 
-      // can be executed by Puppeteer.
-      const sanitizedData = this.sanitizeProfileData(candidateProfile);
+      const doc = new PDFDocument({ margin: 50 });
+      const pass = new PassThrough();
+      
+      doc.pipe(pass);
 
-      // 2. Resolve template path
-      const templatePath = path.join(__dirname, '..', 'templates', 'resume.ejs');
+      // Header
+      const userName = profile.user?.email ? profile.user.email.split('@')[0] : 'Candidato';
+      doc.fontSize(24).font('Helvetica-Bold').text(userName, { align: 'center' });
+      doc.moveDown(0.5);
+      
+      const contactInfo = [
+        profile.user?.email || '',
+        profile.telefone || '',
+        profile.address || ''
+      ].filter(Boolean).join(' | ');
+      
+      doc.fontSize(10).font('Helvetica').fillColor('gray').text(contactInfo, { align: 'center' });
+      doc.moveDown(2);
 
-      // 3. Render HTML using EJS
-      const htmlContent = await ejs.renderFile(templatePath, { profile: sanitizedData });
+      // Bio
+      if (profile.bio) {
+        doc.fontSize(14).fillColor('black').font('Helvetica-Bold').text('Resumo Profissional', { underline: true });
+        doc.moveDown(0.5);
+        doc.fontSize(10).font('Helvetica').text(profile.bio);
+        doc.moveDown(1);
+      }
 
-      // 4. Generate PDF using Puppeteer (configured safely for VPS)
-      const pdfBuffer = await this.generatePdfFromHtml(htmlContent);
+      // Habilidades
+      if (profile.skills && profile.skills.length > 0) {
+        doc.fontSize(14).fillColor('black').font('Helvetica-Bold').text('Habilidades', { underline: true });
+        doc.moveDown(0.5);
+        doc.fontSize(10).font('Helvetica').text(profile.skills.join(', '));
+        doc.moveDown(1);
+      }
 
-      // 5. Save copy to /uploads/Curriculos for organized storage
-      const { mkdir, writeFile } = await import('fs/promises');
-      const curriculosDir = path.join(process.cwd(), 'uploads', 'Curriculos');
-      await mkdir(curriculosDir, { recursive: true });
+      // Experiência
+      if (profile.experiences && profile.experiences.length > 0) {
+        doc.fontSize(14).fillColor('black').font('Helvetica-Bold').text('Experiência Profissional', { underline: true });
+        doc.moveDown(0.5);
+        
+        for (const exp of profile.experiences) {
+          doc.fontSize(12).font('Helvetica-Bold').text(exp.role || 'Cargo não especificado');
+          doc.fontSize(10).font('Helvetica-Oblique').text(`${exp.company || 'Empresa'} | ${exp.start_date} - ${exp.end_date || 'Atual'}`);
+          if (exp.description) {
+            doc.fontSize(10).font('Helvetica').text(exp.description);
+          }
+          doc.moveDown(0.5);
+        }
+        doc.moveDown(0.5);
+      }
 
-      const emailUsername = candidateProfile.user?.email?.split('@')[0] || 'usuario';
-      const safeName = emailUsername.replace(/[^a-zA-Z0-9_-]/g, '_');
-      const filename = `${safeName}-Curriculo-${Date.now()}.pdf`;
-      await writeFile(path.join(curriculosDir, filename), pdfBuffer);
+      // Formação
+      if (profile.educations && profile.educations.length > 0) {
+        doc.fontSize(14).fillColor('black').font('Helvetica-Bold').text('Formação Acadêmica', { underline: true });
+        doc.moveDown(0.5);
+        
+        for (const edu of profile.educations) {
+          doc.fontSize(12).font('Helvetica-Bold').text(`${edu.degree || ''} em ${edu.field_of_study || ''}`);
+          doc.fontSize(10).font('Helvetica-Oblique').text(`${edu.institution || ''} | ${edu.start_date} - ${edu.end_date || 'Atual'}`);
+          doc.moveDown(0.5);
+        }
+      }
 
-      return pdfBuffer;
+      doc.end();
+      return pass;
     } catch (error) {
       this.logger.error('Failed to generate PDF resume', error);
       throw new InternalServerErrorException('Error generating resume PDF');
-    }
-  }
-
-  private sanitizeProfileData(profile: any): any {
-    const sanitizeStr = (str: string | null | undefined) => 
-      str ? sanitizeHtml(str, { allowedTags: [], allowedAttributes: {} }) : str;
-
-    return {
-      ...profile,
-      bio: sanitizeStr(profile.bio),
-      telefone: sanitizeStr(profile.telefone),
-      address: sanitizeStr(profile.address),
-      skills: profile.skills ? profile.skills.map(sanitizeStr) : [],
-      experiences: profile.experiences ? profile.experiences.map((exp: any) => ({
-        ...exp,
-        company: sanitizeStr(exp.company),
-        role: sanitizeStr(exp.role),
-        description: sanitizeStr(exp.description),
-        start_date: sanitizeStr(exp.start_date),
-        end_date: sanitizeStr(exp.end_date),
-      })) : [],
-      educations: profile.educations ? profile.educations.map((edu: any) => ({
-        ...edu,
-        institution: sanitizeStr(edu.institution),
-        degree: sanitizeStr(edu.degree),
-        field_of_study: sanitizeStr(edu.field_of_study),
-        start_date: sanitizeStr(edu.start_date),
-        end_date: sanitizeStr(edu.end_date),
-      })) : [],
-      user: profile.user ? {
-        email: sanitizeStr(profile.user.email),
-      } : null,
-    };
-  }
-
-  private async generatePdfFromHtml(html: string): Promise<Buffer> {
-    let browser: puppeteer.Browser | null = null;
-    try {
-      // Launch Puppeteer with safe flags for VPS environments (no sandbox)
-      browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-        ],
-      });
-
-      const page = await browser.newPage();
-      
-      // Prevent SSRF by intercepting network requests and blocking anything 
-      // outside of local `data:` or necessary resources.
-      await page.setRequestInterception(true);
-      page.on('request', (request) => {
-        const url = request.url();
-        if (url.startsWith('data:') || url === 'about:blank') {
-          request.continue();
-        } else {
-          // Block external requests to prevent SSRF
-          request.abort();
-        }
-      });
-
-      // Set the HTML content
-      await page.setContent(html, { waitUntil: 'networkidle0' as any });
-
-      // Generate the PDF as a buffer
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
-      });
-
-      // return Buffer.from(pdfBuffer) because Puppeteer Uint8Array to Buffer compatibility
-      return Buffer.from(pdfBuffer);
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
     }
   }
 }
