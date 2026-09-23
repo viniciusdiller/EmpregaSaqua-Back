@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Delete, Param, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApplicationsService } from './applications.service.js';
 import { CreateApplicationDto } from './dtos/create-application.dto.js';
 import { UpdateApplicationStatusDto } from './dtos/update-application-status.dto.js';
@@ -14,6 +15,7 @@ export class ApplicationsController {
 
   @Post('jobs/:jobId/applications')
   @Roles(Role.JOB_SEEKER)
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   async applyForJob(
     @Param('jobId') jobId: string,
     @Body() data: CreateApplicationDto,

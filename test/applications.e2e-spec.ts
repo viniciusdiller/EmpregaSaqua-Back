@@ -25,6 +25,10 @@ describe('ApplicationsController (e2e)', () => {
         forbidNonWhitelisted: true,
       }),
     );
+    const httpAdapter = app.getHttpAdapter().getInstance();
+    if (httpAdapter && httpAdapter.set) {
+      httpAdapter.set('trust proxy', 1);
+    }
     await app.init();
 
     await clearDatabase();
@@ -152,5 +156,24 @@ describe('ApplicationsController (e2e)', () => {
       .expect(200);
 
     expect(response.body.status).toBe(ApplicationStatus.HIRED);
+  });
+
+  it('/jobs/:id/applications (POST) - should block spamming (Rate Limiting)', async () => {
+    let status = 200;
+    let iterations = 0;
+    
+    // Loop until we get a 429
+    while (status !== 429 && iterations < 10) {
+      const response = await request(app.getHttpServer())
+        .post(`/jobs/${jobId}/applications`)
+        .set('Authorization', `Bearer ${seekerToken}`)
+        .set('x-rate-limit-test', 'true')
+        .send({ cover_letter: `Spam ${iterations}` });
+      
+      status = response.status;
+      iterations++;
+    }
+
+    expect(status).toBe(429);
   });
 });

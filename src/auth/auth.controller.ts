@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dtos/login.dto.js';
 import { CreateUserDto } from '../users/dtos/create-user.dto.js';
@@ -9,6 +10,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 5, ttl: 900000 } })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }

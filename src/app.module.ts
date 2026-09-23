@@ -34,8 +34,20 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
       serveRoot: '/uploads',
     }),
     ThrottlerModule.forRoot([{
+      name: 'default',
       ttl: 60000,
-      limit: 100,
+      limit: 1000,
+      skipIf: (context) => process.env.NODE_ENV === 'test' && !context.switchToHttp().getRequest().headers['x-rate-limit-test'],
+    }, {
+      name: 'login',
+      ttl: 900000,
+      limit: 5,
+      skipIf: (context) => process.env.NODE_ENV === 'test' && !context.switchToHttp().getRequest().headers['x-rate-limit-test'],
+    }, {
+      name: 'applications',
+      ttl: 60000,
+      limit: 3,
+      skipIf: (context) => process.env.NODE_ENV === 'test' && !context.switchToHttp().getRequest().headers['x-rate-limit-test'],
     }]),
     ScheduleModule.forRoot(),
     PrismaModule,
