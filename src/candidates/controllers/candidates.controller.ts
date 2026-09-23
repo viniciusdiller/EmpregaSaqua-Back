@@ -4,6 +4,7 @@ import { PdfService } from '../../pdf/services/pdf.service.js';
 import { SearchCandidatesDto } from '../dtos/search-candidates.dto.js';
 import { UpdateCandidateProfileDto } from '../dtos/update-candidate-profile.dto.js';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
+import { UsersService } from '../../users/users.service.js';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { Role } from '../../prisma/db.js';
@@ -14,7 +15,8 @@ import type { Request, Response } from 'express';
 export class CandidatesController {
   constructor(
     private readonly candidatesService: CandidatesService,
-    private readonly pdfService: PdfService
+    private readonly pdfService: PdfService,
+    private readonly usersService: UsersService
   ) {}
 
   @Get()
@@ -56,6 +58,6 @@ export class CandidatesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAccount(@Req() req: Request) {
     const userId = (req.user as any).id;
-    await this.candidatesService.deleteMyAccount(userId);
+    await this.usersService.deleteAccount(userId);
   }
 }

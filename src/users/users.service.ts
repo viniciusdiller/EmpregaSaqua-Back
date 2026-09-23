@@ -1,9 +1,10 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateUserDto } from './dtos/create-user.dto.js';
 import { UpdateCompanyProfileDto } from './dtos/update-company-profile.dto.js';
-import { User } from '../prisma/db.js';
+import { User, db } from '../prisma/db.js';
 import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -46,8 +47,45 @@ export class UsersService {
   async deleteAccount(userId: string) {
     const user = await this.findById(userId);
     if (!user) throw new NotFoundException('Usuário não encontrado.');
-    // Cascade deletes all related data (company profile, jobs, etc.)
-    return this.prisma.user.where({ id: userId }).delete();
+    if (user.deleted_at) throw new UnauthorizedException('Token inválido');
+
+    return db.transaction(async (tx) => {
+      const now = new Date().toISOString();
+      const fakeUuid = randomUUID();
+      const fakeEmail = `anon_${fakeUuid}@deleted.local`;
+
+      // Update User
+      await tx.orm.public.User.where({ id: userId }).update({
+        email: fakeEmail,
+        password_hash: '',
+        deleted_at: now,
+      });
+
+      // Clear CompanyProfile if exists
+      const company = await tx.orm.public.CompanyProfile.where({ user_id: userId }).first();
+      if (company) {
+        await tx.orm.public.CompanyProfile.where({ id: company.id }).update({
+          nome_fantasia: 'Usuário Anonimizado',
+          cnpj: null,
+          endereco: null,
+          logo_url: null,
+          verification_document_url: null,
+        });
+      }
+
+      // Clear CandidateProfile if exists
+      const candidate = await tx.orm.public.CandidateProfile.where({ user_id: userId }).first();
+      if (candidate) {
+        await tx.orm.public.CandidateProfile.where({ id: candidate.id }).update({
+          bio: null,
+          telefone: null,
+          habilidades: null,
+          skills: [],
+          address: null,
+        });
+      }
+
+      return { message: 'Conta excluída (anonimizada) com sucesso.' };
+    });
   }
 }
-
