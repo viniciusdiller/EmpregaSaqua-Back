@@ -22,6 +22,7 @@ import { TalentPoolModule } from './talent-pool/talent-pool.module.js';
 import { AuditModule } from './audit/audit.module.js';
 import { AuditLogInterceptor } from './audit/interceptors/audit-log.interceptor.js';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
+import { CepModule } from './cep/cep.module.js';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
     AdminModule,
     TalentPoolModule,
     AuditModule,
+    CepModule,
   ],
   controllers: [AppController],
   providers: [
