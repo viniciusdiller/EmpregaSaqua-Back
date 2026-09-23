@@ -140,4 +140,54 @@ describe('ChatService', () => {
       });
     });
   });
+
+  describe('getUnreadCount', () => {
+    it('should return 0 if user has no rooms', async () => {
+      const mockRoomsWhere = vi.fn().mockReturnValue({ all: vi.fn().mockResolvedValue([]) });
+      (prisma.chatRoom.where as any) = mockRoomsWhere;
+
+      const count = await service.getUnreadCount('user-1');
+      expect(count).toBe(0);
+    });
+
+    it('should return the count of unread messages from other senders', async () => {
+      (prisma.chatRoom.where as any) = vi.fn().mockReturnValue({ 
+        all: vi.fn().mockResolvedValue([{ id: 'r1' }, { id: 'r2' }]) 
+      });
+
+      const mockMessagesWhere = vi.fn().mockReturnValue({ 
+        all: vi.fn().mockResolvedValue([{ id: 'm1' }, { id: 'm2' }, { id: 'm3' }]) 
+      });
+      (prisma.message.where as any) = mockMessagesWhere;
+
+      const count = await service.getUnreadCount('user-1');
+      
+      expect(count).toBe(6);
+      expect(prisma.message.where).toHaveBeenCalled(); // verified indirectly that it gets called
+    });
+  });
+
+  describe('markRoomAsRead', () => {
+    it('should throw ForbiddenException if room not found or user not participant', async () => {
+      (prisma.chatRoom.where as any) = vi.fn().mockReturnValue({ first: vi.fn().mockResolvedValue(null) });
+
+      await expect(service.markRoomAsRead('r1', 'u1')).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should update all unread messages in the room sent by others', async () => {
+      (prisma.chatRoom.where as any) = vi.fn().mockReturnValue({ 
+        first: vi.fn().mockResolvedValue({ id: 'r1', candidate_id: 'u1', employer_id: 'e1' }) 
+      });
+
+      (prisma.message.where as any) = vi.fn().mockReturnValue({ 
+        all: vi.fn().mockResolvedValue([{ id: 'm1' }, { id: 'm2' }]),
+        update: vi.fn().mockResolvedValue({})
+      });
+
+      await service.markRoomAsRead('r1', 'u1');
+
+      // message.where is called to fetch unread messages, and then called in the loop to update
+      expect(prisma.message.where).toHaveBeenCalled();
+    });
+  });
 });

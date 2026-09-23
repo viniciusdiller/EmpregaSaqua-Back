@@ -92,4 +92,41 @@ export class ChatService {
       .all()
       .then(msgs => msgs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()));
   }
+
+  /**
+   * Get unread messages count for a user across all their rooms
+   */
+  async getUnreadCount(userId: string): Promise<number> {
+    const candidateRooms = await this.prisma.chatRoom.where({ candidate_id: userId }).all();
+    const employerRooms = await this.prisma.chatRoom.where({ employer_id: userId }).all();
+    const userRooms = [...candidateRooms, ...employerRooms];
+    
+    const roomIds = [...new Set(userRooms.map(r => r.id))];
+    if (roomIds.length === 0) return 0;
+
+    let count = 0;
+    for (const id of roomIds) {
+      const unreadMsgs = await this.prisma.message.where({ room_id: id, is_read: false }).all();
+      count += unreadMsgs.filter(m => m.sender_id !== userId).length;
+    }
+
+    return count;
+  }
+
+  /**
+   * Mark all unread messages in a room as read
+   */
+  async markRoomAsRead(roomId: string, userId: string): Promise<void> {
+    const room = await this.prisma.chatRoom.where({ id: roomId }).first();
+    if (!room || (room.candidate_id !== userId && room.employer_id !== userId)) {
+      throw new ForbiddenException('Access denied to this room.');
+    }
+
+    const unreadMessages = await this.prisma.message.where({ room_id: roomId, is_read: false }).all();
+    const toUpdate = unreadMessages.filter(m => m.sender_id !== userId);
+
+    for (const msg of toUpdate) {
+      await this.prisma.message.where({ id: msg.id }).update({ is_read: true });
+    }
+  }
 }
