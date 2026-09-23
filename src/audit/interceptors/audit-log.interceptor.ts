@@ -32,12 +32,17 @@ export class AuditLogInterceptor implements NestInterceptor {
         try {
           const sanitizedPayload = this.sanitizePayload(body);
 
+          const parts = url.split('?')[0].split('/').filter(Boolean);
+          const entity = parts[0] ? `/${parts[0]}` : url;
+          const entity_id = parts.length > 1 ? parts[1] : null;
+
           await db.orm.public.AuditLog.create({
-            method,
-            url,
             user_id: user?.id || null,
-            payload: JSON.stringify(sanitizedPayload),
-            status_code: statusCode,
+            action: method,
+            entity,
+            entity_id,
+            ip_address: req.ip || req.connection?.remoteAddress || 'unknown',
+            payload: sanitizedPayload,
           });
         } catch (error) {
           this.logger.error(`Failed to save audit log: ${error instanceof Error ? error.message : String(error)}`);
