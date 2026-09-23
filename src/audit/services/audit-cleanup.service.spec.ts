@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuditCleanupService } from './audit-cleanup.service';
-import { db } from '../../prisma/db';
+import { AuditCleanupService } from './audit-cleanup.service.js';
+import { db } from '../../prisma/db.js';
 import { vi } from 'vitest';
+import * as fs from 'fs';
+import * as zlib from 'zlib';
+
+vi.mock('fs');
+vi.mock('zlib');
 
 describe('AuditCleanupService', () => {
   let service: AuditCleanupService;
@@ -15,7 +20,7 @@ describe('AuditCleanupService', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -23,45 +28,82 @@ describe('AuditCleanupService', () => {
   });
 
   describe('cleanupOldLogs', () => {
-    it('should delete logs older than 45 days', async () => {
-      // Create a mock chain for Prisma 8 where().delete()
-      const mockDelete = vi.fn().mockResolvedValue({ count: 5 });
-      const mockWhere = vi.spyOn(db.orm.public.AuditLog, 'where').mockReturnValue({ delete: mockDelete } as any);
+    it('should archive and delete logs older than 90 days', async () => {
+      const mockLogs = [{ id: '1', action: 'POST' }];
+      const mockDelete = vi.fn().mockResolvedValue({ count: 1 });
+      const mockAll = vi.fn().mockResolvedValue(mockLogs);
+      
+      const mockWhere = vi.spyOn(db.orm.public.AuditLog, 'where').mockReturnValue({ 
+        all: mockAll,
+        delete: mockDelete 
+      } as any);
 
-      // Mock date to freeze time
-      const mockDate = new Date('2026-09-22T12:00:00.000Z');
-      vi.useFakeTimers();
-      vi.setSystemTime(mockDate);
+      // Mock fs
+      vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+      const mockWriteStream = {
+        on: vi.fn((event, callback) => {
+          if (event === 'finish') callback();
+          return mockWriteStream;
+        })
+      };
+      vi.spyOn(fs, 'createWriteStream').mockReturnValue(mockWriteStream as any);
 
-      // Execute the method
+      // Mock zlib
+      const mockGzip = {
+        on: vi.fn(),
+        pipe: vi.fn(),
+        write: vi.fn(),
+        end: vi.fn()
+      };
+      vi.spyOn(zlib, 'createGzip').mockReturnValue(mockGzip as any);
+
       await service.cleanupOldLogs();
 
-      // Verify fortyFiveDaysAgo is correctly calculated
-      const expectedDate = new Date('2026-09-22T12:00:00.000Z');
-      expectedDate.setDate(expectedDate.getDate() - 45);
-
-      // Verify that where() was called with a lambda function
-      expect(mockWhere).toHaveBeenCalledWith(expect.any(Function));
-
-      // Verify that delete() was called
-      expect(mockDelete).toHaveBeenCalled();
-
-      // Restore time
-      vi.useRealTimers();
+      expect(mockAll).toHaveBeenCalled();
+      expect(fs.createWriteStream).toHaveBeenCalled();
+      expect(zlib.createGzip).toHaveBeenCalled();
+      expect(mockGzip.pipe).toHaveBeenCalledWith(mockWriteStream);
+      expect(mockGzip.write).toHaveBeenCalledWith(JSON.stringify(mockLogs, null, 2));
+      expect(mockDelete).toHaveBeenCalled(); // Only called after finish
     });
 
-    it('should handle errors gracefully without throwing', async () => {
-      const mockDelete = vi.fn().mockRejectedValue(new Error('DB Error'));
-      const mockWhere = vi.spyOn(db.orm.public.AuditLog, 'where').mockReturnValue({ delete: mockDelete } as any);
+    it('should skip if no logs exist', async () => {
+      const mockAll = vi.fn().mockResolvedValue([]);
+      vi.spyOn(db.orm.public.AuditLog, 'where').mockReturnValue({ all: mockAll } as any);
+      
+      const loggerSpy = vi.spyOn(service['logger'], 'log');
+      await service.cleanupOldLogs();
 
-      // Spying on logger directly
-      const loggerSpy = vi.spyOn(service['logger'], 'error');
+      expect(loggerSpy).toHaveBeenCalledWith('Nenhum log antigo para limpar.');
+      expect(fs.createWriteStream).not.toHaveBeenCalled();
+    });
 
-      // Execute the method, should not throw
-      await expect(service.cleanupOldLogs()).resolves.not.toThrow();
+    it('should not delete if compression fails', async () => {
+      const mockLogs = [{ id: '1', action: 'POST' }];
+      const mockDelete = vi.fn();
+      const mockAll = vi.fn().mockResolvedValue(mockLogs);
+      vi.spyOn(db.orm.public.AuditLog, 'where').mockReturnValue({ 
+        all: mockAll,
+        delete: mockDelete 
+      } as any);
 
-      // Verify the error was logged
-      expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining('DB Error'));
+      vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+      const mockWriteStream = {
+        on: vi.fn((event, callback) => {
+          if (event === 'error') callback(new Error('Write error'));
+          return mockWriteStream;
+        })
+      };
+      vi.spyOn(fs, 'createWriteStream').mockReturnValue(mockWriteStream as any);
+      
+      const mockGzip = {
+        on: vi.fn(), pipe: vi.fn(), write: vi.fn(), end: vi.fn()
+      };
+      vi.spyOn(zlib, 'createGzip').mockReturnValue(mockGzip as any);
+
+      await service.cleanupOldLogs();
+
+      expect(mockDelete).not.toHaveBeenCalled(); // Critical check!
     });
   });
 });
