@@ -25,6 +25,8 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@nestjs/axios": "^12.0.1",
+    "@nestjs/cache-manager": "^12.0.0",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",
     "@nestjs/core": "^12.0.1",
@@ -38,7 +40,9 @@
     "@nestjs/throttler": "^6.7.0",
     "@nestjs/websockets": "^12.0.4",
     "@prisma/orm-postgres": "^8.0.0-rc.11",
+    "axios": "^1.20.0",
     "bcrypt": "^6.0.0",
+    "cache-manager": "^7.2.9",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "dotenv": "^18.0.0",
