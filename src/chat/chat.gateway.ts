@@ -26,7 +26,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
   // Rate limiting map: Map<userId, { count: number, resetTime: number }>
   private rateLimits = new Map<string, { count: number; resetTime: number }>();
-  private readonly MAX_MESSAGES = 10;
+  private readonly MAX_MESSAGES = 5;
   private readonly RATE_LIMIT_WINDOW_MS = 10000; // 10 seconds
 
   constructor(
