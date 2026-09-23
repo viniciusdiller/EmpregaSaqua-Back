@@ -230,10 +230,11 @@ model SavedCandidate {
 
 model AuditLog {
   id         String            @id @default(uuid())
-  method     String
-  url        String
   user_id    String?
-  payload    String?
-  status_code Int
+  action     String
+  entity     String
+  entity_id  String?
+  ip_address String
+  payload    Json?
   created_at TimestamptzString @default(now())
 }

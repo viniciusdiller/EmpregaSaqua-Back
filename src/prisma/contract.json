@@ -436,10 +436,31 @@
           },
           "AuditLog": {
             "fields": {
+              "action": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "created_at": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "entity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "entity_id": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -450,7 +471,7 @@
                   "kind": "scalar"
                 }
               },
-              "method": {
+              "ip_address": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -460,21 +481,7 @@
               "payload": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "status_code": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "url": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/json@1",
                   "kind": "scalar"
                 }
               },
@@ -489,23 +496,26 @@
             "relations": {},
             "storage": {
               "fields": {
+                "action": {
+                  "column": "action"
+                },
                 "created_at": {
                   "column": "created_at"
+                },
+                "entity": {
+                  "column": "entity"
+                },
+                "entity_id": {
+                  "column": "entity_id"
                 },
                 "id": {
                   "column": "id"
                 },
-                "method": {
-                  "column": "method"
+                "ip_address": {
+                  "column": "ip_address"
                 },
                 "payload": {
                   "column": "payload"
-                },
-                "status_code": {
-                  "column": "status_code"
-                },
-                "url": {
-                  "column": "url"
                 },
                 "user_id": {
                   "column": "user_id"
@@ -2160,6 +2170,11 @@
             },
             "auditLog": {
               "columns": {
+                "action": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "created_at": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -2169,30 +2184,30 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "entity": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "entity_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
                 },
-                "method": {
+                "ip_address": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
                 },
                 "payload": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
                   "nullable": true
-                },
-                "status_code": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "url": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
                 },
                 "user_id": {
                   "codecId": "pg/text@1",
@@ -3308,7 +3323,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "cdc5ae1ec1677997887e7b1b36b2275aa9a07dba3973a17ab49f64395f59cfd1"
+    "storageHash": "9fc1c0d0feef7cac3352eda61868eaba78072f71c6cf42cc1ed1504a77899df2"
   },
   "execution": {
     "executionHash": "9923f9005cf2ee961465b9ff62a3504b994cc9409bd4431781e301a37808c669",
