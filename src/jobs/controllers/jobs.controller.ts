@@ -8,6 +8,7 @@ import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
 import { Role, JobStatus } from '../../prisma/db.js';
 
+import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard.js';
 import { VerifiedEmployerGuard } from '../../auth/guards/verified-employer.guard.js';
 
 @Controller('jobs')
@@ -25,12 +26,21 @@ export class JobsController {
     return this.jobsService.getPublicJobs(query);
   }
 
+  /** GET /jobs/mine — vagas do empregador logado, em qualquer status. Declarada antes de /:id. */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.EMPLOYER)
+  @Get('mine')
+  async mine(@Request() req: any, @Query() query: FindJobsQueryDto): Promise<any> {
+    return this.jobsService.getMyJobs(req.user.id, query);
+  }
+
   /**
    * GET /jobs/:id — Public endpoint to fetch a single job by ID.
    */
+  @UseGuards(OptionalJwtAuthGuard)
   @Get(':id')
-  async findOne(@Param('id') jobId: string): Promise<any> {
-    return this.jobsService.getJobById(jobId);
+  async findOne(@Param('id') jobId: string, @Request() req: any): Promise<any> {
+    return this.jobsService.getJobForViewer(jobId, req.user ?? null);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, VerifiedEmployerGuard)

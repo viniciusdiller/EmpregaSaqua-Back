@@ -8,6 +8,7 @@ export interface IJobsRepository {
   create(employerId: string, data: CreateJobDto): Promise<Job>;
   findAllPublic(query: FindJobsQueryDto): Promise<PaginatedJobsResponse>;
   findById(id: string): Promise<Job | null>;
+  findByEmployer(employerId: string, page: number, limit: number, status?: string): Promise<PaginatedJobsResponse>;
   softDelete(id: string): Promise<void>;
   updateStatus(id: string, status: string): Promise<Job>;
   update(id: string, data: UpdateJobDto): Promise<Job>;

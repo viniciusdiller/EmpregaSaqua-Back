@@ -6,9 +6,10 @@ import { MatchScoringService } from './services/match-scoring.service.js';
 import { JobsModule } from '../jobs/jobs.module.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
+import { MailModule } from '../mail/mail.module.js';
 
 @Module({
-  imports: [JobsModule, AuthModule, PrismaModule],
+  imports: [JobsModule, AuthModule, PrismaModule, MailModule],
   controllers: [ApplicationsController],
   providers: [
     ApplicationsService,

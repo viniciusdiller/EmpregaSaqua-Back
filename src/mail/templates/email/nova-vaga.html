@@ -1,0 +1,91 @@
+<!--
+  Template: nova-vaga
+  Disparado por: src/job-alerts/job-alerts.service.ts -> notifyMatchingAlerts()
+  Variáveis:
+    {{jobTitle}}      título da vaga
+    {{jobAddress}}    endereço/bairro da vaga
+    {{jobMeta}}        ex.: "Presencial · CLT" (já formatado em PT-BR)
+    {{jobLink}}       link para a vaga no site
+    {{frontendUrl}}   URL base do site (rodapé)
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Nova vaga no EmpregaSaquá</title>
+<style>
+  @media (prefers-color-scheme: dark) {
+    .body-bg { background:#0B0F0E !important; }
+    .card { background:#14201F !important; }
+    .text-primary { color:#F2F5F4 !important; }
+    .text-secondary { color:#9FB0AD !important; }
+    .divider { border-color:#233130 !important; }
+    .job-box { background:#0F1A19 !important; border-color:#233130 !important; }
+  }
+  @media (max-width: 600px) {
+    .container { width:100% !important; }
+    .px { padding-left:20px !important; padding-right:20px !important; }
+  }
+</style>
+</head>
+<body class="body-bg" style="margin:0; padding:0; background-color:#F1F4F3; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <span style="display:none; max-height:0; overflow:hidden; opacity:0;">Encontramos uma vaga que combina com o alerta que você criou.</span>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="body-bg" style="background-color:#F1F4F3;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" class="container" style="width:600px; max-width:600px;">
+
+          <!-- Marca -->
+          <tr>
+            <td style="background-color:#0F6664; border-radius:12px 12px 0 0; padding:28px 32px;">
+              <span style="font-size:18px; font-weight:700; color:#FFFFFF; letter-spacing:-0.2px;">EmpregaSaquá</span>
+            </td>
+          </tr>
+
+          <!-- Cartão -->
+          <tr>
+            <td class="card px" style="background-color:#FFFFFF; padding:40px 32px;">
+              <h1 class="text-primary" style="margin:0 0 16px; font-size:22px; line-height:1.3; color:#1A1D1C;">Nova vaga para você</h1>
+              <p class="text-secondary" style="margin:0 0 24px; font-size:15px; line-height:1.6; color:#5B6664;">
+                Encontramos uma vaga que combina com o alerta que você configurou.
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="job-box" style="background-color:#F7F9F8; border:1px solid #E4E9E7; border-radius:10px;">
+                <tr>
+                  <td style="padding:20px 24px;">
+                    <p class="text-primary" style="margin:0 0 6px; font-size:17px; font-weight:700; color:#1A1D1C;">{{jobTitle}}</p>
+                    <p class="text-secondary" style="margin:0 0 4px; font-size:14px; color:#5B6664;">{{jobAddress}}</p>
+                    <p class="text-secondary" style="margin:0; font-size:14px; color:#5B6664;">{{jobMeta}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+                <tr>
+                  <td style="border-radius:999px; background-color:#0F6664;">
+                    <a href="{{jobLink}}" style="display:inline-block; padding:14px 28px; font-size:15px; font-weight:600; color:#FFFFFF; text-decoration:none; border-radius:999px;">Ver vaga completa</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Rodapé -->
+          <tr>
+            <td class="card divider px" style="background-color:#FFFFFF; border-top:1px solid #E4E9E7; border-radius:0 0 12px 12px; padding:24px 32px;">
+              <p class="text-secondary" style="margin:0; font-size:12px; line-height:1.6; color:#8A9694;">
+                Você recebeu este e-mail porque criou um alerta de vagas no EmpregaSaquá.<br>
+                <a href="{{frontendUrl}}" style="color:#0F6664; text-decoration:none;">empregasaqua.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

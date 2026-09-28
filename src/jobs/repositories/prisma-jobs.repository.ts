@@ -49,10 +49,26 @@ export class PrismaJobsRepository implements IJobsRepository {
   async findById(id: string): Promise<Job | null> {
     const jobRow = await this.prisma.job
       .where({ id })
-      .include('employer', (e) => e.include('company_profile'))
+      .include('employer', (e) =>
+        e.select('id').include('company_profile', (cp) => cp.select('nome_fantasia', 'logo_url', 'verification_status', 'endereco')),
+      )
       .include('questions', (q) => q.select('id', 'question_text', 'expected_answer'))
       .first();
     return jobRow as unknown as Job | null;
+  }
+
+  /** Vagas do próprio empregador, em qualquer status (menos removidas), da mais recente para a mais antiga. */
+  async findByEmployer(employerId: string, page: number, limit: number, status?: string): Promise<PaginatedJobsResponse> {
+    let base = this.prisma.job.where({ employer_id: employerId }).where((j) => j.deleted_at.isNull());
+    if (status) base = base.where({ status: status as JobStatus });
+    const [jobs, countResult] = await Promise.all([
+      base.orderBy((j) => j.created_at.desc()).limit(limit).offset((page - 1) * limit).all(),
+      base.aggregate((a) => ({ total: a.count() })),
+    ]);
+    return {
+      data: jobs as Job[],
+      meta: { total_items: countResult.total, total_pages: Math.ceil(countResult.total / limit), current_page: page, per_page: limit },
+    };
   }
 
   async findAllPublic(query: FindJobsQueryDto): Promise<PaginatedJobsResponse> {
@@ -97,7 +113,7 @@ export class PrismaJobsRepository implements IJobsRepository {
              cp.select('nome_fantasia', 'logo_url')
            )
         )
-        .include('questions', (q) => q.select('id', 'question_text', 'expected_answer'))
+        .include('questions', (q) => q.select('id', 'question_text'))
         .orderBy((j) => j.created_at.desc())
         .limit(limit)
         .offset((page - 1) * limit)

@@ -11,11 +11,13 @@ export class CandidatesService {
     return this.candidatesRepository.searchCandidates(searchDto);
   }
 
+  /** Contas anteriores à criação de perfil no cadastro não têm a linha: cria vazia sob demanda. */
   async getMyProfile(userId: string) {
-    return this.candidatesRepository.getMyProfile(userId);
+    return (await this.candidatesRepository.getMyProfile(userId)) ?? (await this.candidatesRepository.createEmpty(userId));
   }
 
   async updateMyProfile(userId: string, data: UpdateCandidateProfileDto) {
+    await this.getMyProfile(userId);
     const result = await this.candidatesRepository.updateProfile(userId, data);
     if (!result) throw new NotFoundException('Perfil de candidato não encontrado.');
     return result;

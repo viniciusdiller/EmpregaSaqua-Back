@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, type Mocked } from 'vitest';
 import { ApplicationsService } from './applications.service.js';
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ApplicationStatus, JobStatus } from '../prisma/db.js';
 import { JobsService } from '../jobs/services/jobs.service.js';
 import { MatchScoringService } from './services/match-scoring.service.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { MailService } from '../mail/mail.service.js';
 import type { ApplicationsRepository } from './repositories/applications.repository.interface.js';
 
 const makeJob = (overrides: Record<string, unknown> = {}) => ({
@@ -37,8 +39,8 @@ const makeApplication = (overrides: Record<string, unknown> = {}) => ({
 
 describe('ApplicationsService', () => {
   let service: ApplicationsService;
-  let repo: jest.Mocked<ApplicationsRepository>;
-  let jobsService: jest.Mocked<JobsService>;
+  let repo: Mocked<ApplicationsRepository>;
+  let jobsService: Mocked<JobsService>;
 
   const mockRepo = {
     create: vi.fn(),
@@ -53,6 +55,16 @@ describe('ApplicationsService', () => {
     getJobById: vi.fn(),
   };
 
+  const mockPrisma = {
+    user: { where: vi.fn().mockReturnValue({ first: vi.fn().mockResolvedValue(null) }) },
+    candidateProfile: { where: vi.fn().mockReturnValue({ first: vi.fn().mockResolvedValue(null) }) },
+  };
+
+  const mockMail = {
+    renderTemplate: vi.fn().mockResolvedValue('<html></html>'),
+    send: vi.fn().mockResolvedValue(undefined),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -60,6 +72,8 @@ describe('ApplicationsService', () => {
         { provide: 'IApplicationsRepository', useValue: mockRepo },
         { provide: JobsService, useValue: mockJobsService },
         { provide: MatchScoringService, useValue: { calculateMatchScore: vi.fn() } },
+        { provide: PrismaService, useValue: mockPrisma },
+        { provide: MailService, useValue: mockMail },
       ],
     }).compile();
 

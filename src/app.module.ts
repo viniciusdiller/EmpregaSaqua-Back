@@ -23,6 +23,8 @@ import { AuditModule } from './audit/audit.module.js';
 import { AuditLogInterceptor } from './audit/interceptors/audit-log.interceptor.js';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
 import { CepModule } from './cep/cep.module.js';
+import { MailModule } from './mail/mail.module.js';
+import { JobAlertsModule } from './job-alerts/job-alerts.module.js';
 
 @Module({
   imports: [
@@ -65,6 +67,8 @@ import { CepModule } from './cep/cep.module.js';
     TalentPoolModule,
     AuditModule,
     CepModule,
+    MailModule,
+    JobAlertsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -22,7 +22,7 @@ export class PrismaTalentPoolRepository implements TalentPoolRepository {
 
     const [data, countResult] = await Promise.all([
       baseQuery
-        .include('candidate', (c) => c.include('candidate_profile'))
+        .include('candidate', (c) => c.select('id', 'email').include('candidate_profile'))
         .orderBy((s) => s.created_at.desc())
         .limit(limit)
         .offset((page - 1) * limit)

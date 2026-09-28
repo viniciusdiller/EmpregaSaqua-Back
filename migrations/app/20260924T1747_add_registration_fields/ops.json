@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.candidateProfile.full_name",
+    "label": "Add column \"full_name\" to \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "full_name",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"full_name\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "full_name"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"full_name\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD COLUMN \"full_name\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"full_name\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "full_name"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.companyProfile.telefone",
+    "label": "Add column \"telefone\" to \"companyProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "telefone",
+        "table": "companyProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"telefone\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "companyProfile",
+          "telefone"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"telefone\"",
+        "sql": "ALTER TABLE \"public\".\"companyProfile\" ADD COLUMN \"telefone\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"telefone\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "companyProfile",
+          "telefone"
+        ]
+      }
+    ]
+  }
+]

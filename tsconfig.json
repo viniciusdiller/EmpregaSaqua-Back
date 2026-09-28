@@ -21,6 +21,8 @@
       "vitest/globals",
       "node"
     ],
-    "resolveJsonModule": true
-  }
+    "resolveJsonModule": true,
+    "rewriteRelativeImportExtensions": true
+  },
+  "exclude": ["node_modules", "dist", "migrations"]
 }

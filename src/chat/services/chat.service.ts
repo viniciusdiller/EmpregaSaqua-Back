@@ -93,6 +93,48 @@ export class ChatService {
       .then(msgs => msgs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()));
   }
 
+  /** Conversas do usuário com vaga, nome do outro lado, última mensagem e não lidas (mais recentes primeiro). */
+  async getRoomsForUser(userId: string) {
+    const [asCandidate, asEmployer] = await Promise.all([
+      this.prisma.chatRoom.where({ candidate_id: userId }).all(),
+      this.prisma.chatRoom.where({ employer_id: userId }).all(),
+    ]);
+    const rooms = [...new Map([...asCandidate, ...asEmployer].map((r) => [r.id, r])).values()];
+
+    const summaries = await Promise.all(
+      rooms.map(async (room) => {
+        const iAmCandidate = room.candidate_id === userId;
+        const [job, msgs, counterpart] = await Promise.all([
+          this.prisma.job.where({ id: room.job_id }).first(),
+          this.prisma.message.where({ room_id: room.id }).all(),
+          iAmCandidate
+            ? this.prisma.companyProfile.where({ user_id: room.employer_id }).first()
+            : this.prisma.candidateProfile.where({ user_id: room.candidate_id }).first(),
+        ]);
+        const sorted = msgs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        const last = sorted[sorted.length - 1];
+        let counterpart_name = 'Conversa';
+        if (iAmCandidate) counterpart_name = (counterpart as any)?.nome_fantasia || 'Empresa';
+        else {
+          const cand: any = counterpart;
+          counterpart_name = cand?.full_name || (await this.prisma.user.where({ id: room.candidate_id }).first())?.email?.split('@')[0] || 'Candidato';
+        }
+        return {
+          id: room.id,
+          job_id: room.job_id,
+          candidate_id: room.candidate_id,
+          employer_id: room.employer_id,
+          job_title: job?.title ?? 'Vaga removida',
+          counterpart_name,
+          last_message: last ? { content: last.content, created_at: last.created_at, sender_id: last.sender_id } : null,
+          unread_count: msgs.filter((m) => !m.is_read && m.sender_id !== userId).length,
+          _at: last ? new Date(last.created_at).getTime() : new Date(room.created_at).getTime(),
+        };
+      }),
+    );
+    return summaries.sort((a, b) => b._at - a._at).map(({ _at, ...rest }) => rest);
+  }
+
   /**
    * Get unread messages count for a user across all their rooms
    */

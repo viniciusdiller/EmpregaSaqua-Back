@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, type Mocked } from 'vitest';
 import { JobsService } from './jobs.service.js';
 import type { IJobsRepository } from '../repositories/jobs.repository.interface.js';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { JobStatus } from '../../prisma/db.js';
+import { ContractType, JobStatus, WorkModel } from '../../prisma/db.js';
 import type { FindJobsQueryDto } from '../dtos/find-jobs-query.dto.js';
 import type { PaginatedJobsResponse } from '../dtos/paginated-jobs-response.dto.js';
 
@@ -29,7 +29,7 @@ const makeJob = (overrides: Partial<Record<string, unknown>> = {}) => ({
 
 describe('JobsService', () => {
   let service: JobsService;
-  let repo: jest.Mocked<IJobsRepository>;
+  let repo: Mocked<IJobsRepository>;
 
   const mockRepo = {
     create: vi.fn(),
@@ -60,10 +60,15 @@ describe('JobsService', () => {
       repo.create.mockResolvedValue(job as any);
 
       const result = await service.createJob('user-1', {
-        company_name: 'Acme',
         title: 'Dev',
         description: 'desc',
-        location: 'Saquarema',
+        address: 'Saquarema',
+        work_schedule: 'Comercial',
+        mandatory_qualifications: [],
+        differential_qualifications: [],
+        benefits: [],
+        work_model: WorkModel.ON_SITE,
+        contract_type: ContractType.CLT,
       });
 
       expect(repo.create).toHaveBeenCalledWith('user-1', expect.objectContaining({ title: 'Dev' }));

@@ -41,7 +41,7 @@ export class PrismaApplicationsRepository implements ApplicationsRepository {
   async findByJob(jobId: string): Promise<any[]> {
     return await this.prisma.application
       .where({ job_id: jobId })
-      .include('applicant', (a) => a.include('candidate_profile'))
+      .include('applicant', (a) => a.select('id', 'email').include('candidate_profile'))
       .all();
   }
 

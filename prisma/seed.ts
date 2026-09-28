@@ -1,4 +1,4 @@
-import { db, Role, JobStatus, VerificationStatus } from '../src/prisma/db.ts';
+import { db, Role, JobStatus, VerificationStatus, WorkModel, ContractType } from '../src/prisma/db.ts';
 import * as bcrypt from 'bcrypt';
 
 async function main() {
@@ -63,6 +63,8 @@ async function main() {
     mandatory_qualifications: ['Ensino Médio Completo'],
     differential_qualifications: ['Experiência anterior'],
     benefits: ['Vale Transporte', 'Lanche no local'],
+    work_model: WorkModel.ON_SITE,
+    contract_type: ContractType.CLT,
     status: JobStatus.ACTIVE,
   });
 
@@ -76,6 +78,8 @@ async function main() {
     mandatory_qualifications: ['Experiência de 2 anos na área'],
     differential_qualifications: [],
     benefits: ['Adicional Noturno', 'Vale Transporte'],
+    work_model: WorkModel.ON_SITE,
+    contract_type: ContractType.CLT,
     status: JobStatus.PENDING,
   });
 
@@ -89,6 +93,8 @@ async function main() {
     mandatory_qualifications: ['Ensino Médio Completo'],
     differential_qualifications: ['Experiência em supermercado'],
     benefits: ['Vale Alimentação', 'Vale Transporte'],
+    work_model: WorkModel.ON_SITE,
+    contract_type: ContractType.CLT,
     status: JobStatus.ACTIVE,
   });
 
@@ -102,6 +108,8 @@ async function main() {
     mandatory_qualifications: ['Disposição Física'],
     differential_qualifications: [],
     benefits: ['Vale Transporte', 'Refeição no local'],
+    work_model: WorkModel.ON_SITE,
+    contract_type: ContractType.CLT,
     status: JobStatus.ACTIVE,
   });
 
@@ -115,6 +123,8 @@ async function main() {
     mandatory_qualifications: ['Superior em Administração ou áreas correlatas', 'Experiência de 3 anos'],
     differential_qualifications: ['Pós-graduação', 'Cursos de Liderança'],
     benefits: ['Vale Alimentação', 'Vale Combustível', 'Plano de Saúde'],
+    work_model: WorkModel.ON_SITE,
+    contract_type: ContractType.CLT,
     status: JobStatus.PENDING,
   });
 

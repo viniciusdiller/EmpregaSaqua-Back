@@ -5,10 +5,9 @@ import { CandidatesRepository } from './repositories/candidates.repository.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { PdfModule } from '../pdf/pdf.module.js';
-import { UsersModule } from '../users/users.module.js';
 
 @Module({
-  imports: [PrismaModule, AuthModule, PdfModule, UsersModule],
+  imports: [PrismaModule, AuthModule, PdfModule],
   controllers: [CandidatesController],
   providers: [CandidatesService, CandidatesRepository],
   exports: [CandidatesService],

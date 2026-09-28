@@ -14,7 +14,7 @@ export class PdfService {
       doc.pipe(pass);
 
       // Header
-      const userName = profile.user?.email ? profile.user.email.split('@')[0] : 'Candidato';
+      const userName = profile.full_name || (profile.user?.email ? profile.user.email.split('@')[0] : 'Candidato');
       doc.fontSize(24).font('Helvetica-Bold').text(userName, { align: 'center' });
       doc.moveDown(0.5);
       

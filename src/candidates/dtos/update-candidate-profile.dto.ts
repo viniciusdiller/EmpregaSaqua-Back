@@ -52,6 +52,11 @@ export class UpdateCandidateProfileDto {
   @IsOptional()
   @IsString()
   @Sanitize()
+  full_name?: string;
+
+  @IsOptional()
+  @IsString()
+  @Sanitize()
   bio?: string;
 
   @IsOptional()

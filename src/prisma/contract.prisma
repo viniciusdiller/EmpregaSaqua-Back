@@ -47,7 +47,11 @@ model User {
   role          Role     @default(EMPLOYER)
   created_at    TimestamptzString @default(now())
   deleted_at    TimestamptzString?
-  
+
+  // Token de confirmação por e-mail para excluir a conta (ver UsersService#requestAccountDeletion).
+  deletion_token             String? @unique
+  deletion_token_expires_at  TimestamptzString?
+
   jobs              Job[]
   applications      Application[]
   company_profile   CompanyProfile?
@@ -59,6 +63,7 @@ model User {
 
   saved_by_employers SavedCandidate[] @relation("CandidateSaved")
   saved_candidates   SavedCandidate[] @relation("EmployerSaved")
+  job_alerts         JobAlert[]
 }
 
 model CompanyProfile {
@@ -67,6 +72,7 @@ model CompanyProfile {
   nome_fantasia String
   cnpj          String? @unique
   endereco      String?
+  telefone      String?
   logo_url      String?
   verification_status       VerificationStatus @default(PENDING)
   verification_document_url String?
@@ -79,6 +85,7 @@ model CompanyProfile {
 model CandidateProfile {
   id          String  @id @default(uuid())
   user_id     String  @unique
+  full_name   String?
   bio         String?
   telefone    String?
   habilidades String?
@@ -226,6 +233,21 @@ model SavedCandidate {
   candidate    User              @relation("CandidateSaved", fields: [candidate_id], references: [id], onDelete: Cascade)
 
   @@unique([employer_id, candidate_id])
+}
+
+// Alerta de vaga: a pessoa candidata escolhe critérios (opcionais, combinam em E) e recebe um
+// e-mail assim que uma vaga é aprovada e combina com os critérios.
+model JobAlert {
+  id            String    @id @default(uuid())
+  candidate_id  String
+  keyword       String?
+  address       String?
+  work_model    WorkModel?
+  contract_type ContractType?
+  is_pcd        Boolean   @default(false)
+  created_at    TimestamptzString @default(now())
+
+  candidate     User      @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
 }
 
 model AuditLog {

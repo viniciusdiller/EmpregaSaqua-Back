@@ -1,0 +1,122 @@
+[
+  {
+    "id": "table.jobAlert",
+    "label": "Create table \"jobAlert\"",
+    "summary": "Creates table \"jobAlert\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "jobAlert"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"jobAlert\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"jobAlert\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"jobAlert\"",
+        "sql": "CREATE TABLE \"public\".\"jobAlert\" (\n  \"address\" text,\n  \"candidate_id\" text NOT NULL,\n  \"contract_type\" text,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"is_pcd\" bool DEFAULT false NOT NULL,\n  \"keyword\" text,\n  \"work_model\" text,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"jobAlert_contract_type_check_fd665d87\" CHECK (\"contract_type\" IN ('CLT', 'PJ', 'INTERNSHIP', 'FREELANCE', 'APPRENTICE')),\n  CONSTRAINT \"jobAlert_work_model_check_8396d0c5\" CHECK (\"work_model\" IN ('ON_SITE', 'HYBRID', 'REMOTE'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"jobAlert\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"jobAlert\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.jobAlert.jobAlert_candidate_id_idx_2164cd9a",
+    "label": "Create index \"jobAlert_candidate_id_idx_2164cd9a\" on \"jobAlert\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "jobAlert_candidate_id_idx_2164cd9a",
+        "table": "jobAlert"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"jobAlert_candidate_id_idx_2164cd9a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"jobAlert_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"jobAlert_candidate_id_idx_2164cd9a\"",
+        "sql": "CREATE INDEX \"jobAlert_candidate_id_idx_2164cd9a\" ON \"public\".\"jobAlert\" (\"candidate_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"jobAlert_candidate_id_idx_2164cd9a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"jobAlert_candidate_id_idx_2164cd9a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.jobAlert.jobAlert_candidate_id_fkey",
+    "label": "Add foreign key \"jobAlert_candidate_id_fkey\" on \"jobAlert\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "jobAlert_candidate_id_fkey",
+        "table": "jobAlert"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"jobAlert_candidate_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "jobAlert_candidate_id_fkey",
+          "public",
+          "\"public\".\"jobAlert\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"jobAlert_candidate_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"jobAlert\"\nADD CONSTRAINT \"jobAlert_candidate_id_fkey\"\nFOREIGN KEY (\"candidate_id\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"jobAlert_candidate_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "jobAlert_candidate_id_fkey",
+          "public",
+          "\"public\".\"jobAlert\""
+        ]
+      }
+    ]
+  }
+]

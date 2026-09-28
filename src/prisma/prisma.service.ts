@@ -15,6 +15,7 @@ export class PrismaService implements OnModuleInit {
   public jobQuestion = db.orm.public.JobQuestion;
   public applicationAnswer = db.orm.public.ApplicationAnswer;
   public savedCandidate = db.orm.public.SavedCandidate;
+  public jobAlert = db.orm.public.JobAlert;
 
   async onModuleInit() {
     // Connection happens automatically when querying

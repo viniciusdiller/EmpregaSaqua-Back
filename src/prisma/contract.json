@@ -40,6 +40,10 @@
       "model": "Job",
       "namespace": "public"
     },
+    "jobAlert": {
+      "model": "JobAlert",
+      "namespace": "public"
+    },
     "jobQuestion": {
       "model": "JobQuestion",
       "namespace": "public"
@@ -548,6 +552,13 @@
                   "kind": "scalar"
                 }
               },
+              "full_name": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "habilidades": {
                 "nullable": true,
                 "type": {
@@ -650,6 +661,9 @@
                 },
                 "created_at": {
                   "column": "created_at"
+                },
+                "full_name": {
+                  "column": "full_name"
                 },
                 "habilidades": {
                   "column": "habilidades"
@@ -843,6 +857,13 @@
                   "kind": "scalar"
                 }
               },
+              "telefone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "updated_at": {
                 "nullable": false,
                 "type": {
@@ -915,6 +936,9 @@
                 },
                 "nome_fantasia": {
                   "column": "nome_fantasia"
+                },
+                "telefone": {
+                  "column": "telefone"
                 },
                 "updated_at": {
                   "column": "updated_at"
@@ -1433,6 +1457,126 @@
               "table": "job"
             }
           },
+          "JobAlert": {
+            "fields": {
+              "address": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "candidate_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "contract_type": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ContractType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "created_at": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "is_pcd": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "keyword": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "work_model": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "WorkModel",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "candidate": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "candidate_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "address": {
+                  "column": "address"
+                },
+                "candidate_id": {
+                  "column": "candidate_id"
+                },
+                "contract_type": {
+                  "column": "contract_type"
+                },
+                "created_at": {
+                  "column": "created_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "is_pcd": {
+                  "column": "is_pcd"
+                },
+                "keyword": {
+                  "column": "keyword"
+                },
+                "work_model": {
+                  "column": "work_model"
+                }
+              },
+              "namespaceId": "public",
+              "table": "jobAlert"
+            }
+          },
           "JobQuestion": {
             "fields": {
               "expected_answer": {
@@ -1730,6 +1874,20 @@
                   "kind": "scalar"
                 }
               },
+              "deletion_token": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "deletion_token_expires_at": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "email": {
                 "nullable": false,
                 "type": {
@@ -1843,6 +2001,21 @@
                   "namespace": "public"
                 }
               },
+              "job_alerts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "candidate_id"
+                  ]
+                },
+                "to": {
+                  "model": "JobAlert",
+                  "namespace": "public"
+                }
+              },
               "jobs": {
                 "cardinality": "1:N",
                 "on": {
@@ -1911,6 +2084,12 @@
                 },
                 "deleted_at": {
                   "column": "deleted_at"
+                },
+                "deletion_token": {
+                  "column": "deletion_token"
+                },
+                "deletion_token_expires_at": {
+                  "column": "deletion_token_expires_at"
                 },
                 "email": {
                   "column": "email"
@@ -2252,6 +2431,11 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "full_name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "habilidades": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -2481,6 +2665,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "telefone": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "updated_at": {
                   "codecId": "pg/timestamptz-string@1",
@@ -2932,6 +3121,117 @@
               },
               "uniques": []
             },
+            "jobAlert": {
+              "checks": [
+                {
+                  "expression": "\"contract_type\" IN ('CLT', 'PJ', 'INTERNSHIP', 'FREELANCE', 'APPRENTICE')",
+                  "name": "jobAlert_contract_type_check_fd665d87",
+                  "prefix": "jobAlert_contract_type_check"
+                },
+                {
+                  "expression": "\"work_model\" IN ('ON_SITE', 'HYBRID', 'REMOTE')",
+                  "name": "jobAlert_work_model_check_8396d0c5",
+                  "prefix": "jobAlert_work_model_check"
+                }
+              ],
+              "columns": {
+                "address": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "candidate_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "contract_type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ContractType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "is_pcd": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "keyword": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "work_model": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "WorkModel",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "candidate_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "jobAlert"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "candidate_id"
+                  ],
+                  "name": "jobAlert_candidate_id_idx_2164cd9a",
+                  "prefix": "jobAlert_candidate_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "jobQuestion": {
               "columns": {
                 "expected_answer": {
@@ -3216,6 +3516,16 @@
                   "nativeType": "timestamptz",
                   "nullable": true
                 },
+                "deletion_token": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "deletion_token_expires_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "email": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -3258,6 +3568,11 @@
                 {
                   "columns": [
                     "email"
+                  ]
+                },
+                {
+                  "columns": [
+                    "deletion_token"
                   ]
                 }
               ]
@@ -3323,10 +3638,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9fc1c0d0feef7cac3352eda61868eaba78072f71c6cf42cc1ed1504a77899df2"
+    "storageHash": "616df3be643eae88142b358571a74142ef19944e951eec0bc9a08bf89862a662"
   },
   "execution": {
-    "executionHash": "9923f9005cf2ee961465b9ff62a3504b994cc9409bd4431781e301a37808c669",
+    "executionHash": "0e0f6985910590c64ddad14e2b60e2866029107e8241206e40bc8027bdfb3a88",
     "mutations": {
       "defaults": [
         {
@@ -3486,6 +3801,17 @@
             "column": "updated_at",
             "namespace": "public",
             "table": "job"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "jobAlert"
           }
         },
         {

@@ -1,4 +1,4 @@
-import { Controller, Patch, Delete, Body, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, UseGuards, Request, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { UpdateCompanyProfileDto } from './dtos/update-company-profile.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
@@ -12,6 +12,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   /**
+   * GET /users/company-profile
+   * Allows an Employer to read their own company profile.
+   */
+  @Get('company-profile')
+  @Roles(Role.EMPLOYER)
+  async getCompanyProfile(@Request() req: any) {
+    const profile = await this.usersService.getMyCompanyProfile(req.user.id);
+    if (!profile) throw new NotFoundException('Perfil de empresa não encontrado.');
+    return profile;
+  }
+
+  /**
    * PATCH /users/company-profile
    * Allows an Employer to update their own company profile fields (name, address).
    */
@@ -22,14 +34,14 @@ export class UsersController {
   }
 
   /**
-   * DELETE /users/account
-   * Allows any authenticated user (Employer or Candidate) to delete their own account.
-   * This triggers a cascade delete on all related data.
+   * POST /users/account/request-deletion
+   * Envia um e-mail de confirmação; nada é excluído até o link ser confirmado
+   * (ver AccountDeletionController#confirm, endpoint público).
    */
-  @Delete('account')
+  @Post('account/request-deletion')
   @Roles(Role.EMPLOYER, Role.JOB_SEEKER)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteAccount(@Request() req: any): Promise<void> {
-    await this.usersService.deleteAccount(req.user.id);
+  @HttpCode(HttpStatus.OK)
+  async requestAccountDeletion(@Request() req: any) {
+    return this.usersService.requestAccountDeletion(req.user.id);
   }
 }

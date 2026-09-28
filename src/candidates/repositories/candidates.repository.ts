@@ -94,6 +94,11 @@ export class CandidatesRepository {
       .first();
   }
 
+  async createEmpty(userId: string) {
+    await this.prisma.candidateProfile.create({ user_id: userId });
+    return this.getMyProfile(userId);
+  }
+
   async updateProfile(userId: string, data: UpdateCandidateProfileDto) {
     const profile = await this.prisma.candidateProfile.where({ user_id: userId }).first();
     if (!profile) return null;
