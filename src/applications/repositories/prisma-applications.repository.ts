@@ -23,7 +23,7 @@ export class PrismaApplicationsRepository implements ApplicationsRepository {
         await this.prisma.applicationAnswer.create({
           application_id: app.id,
           question_id: answer.question_id,
-          answer: answer.answer,
+          option_id: answer.option_id,
         });
       }
     }

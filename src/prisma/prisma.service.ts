@@ -13,6 +13,7 @@ export class PrismaService implements OnModuleInit {
   public chatRoom = db.orm.public.ChatRoom;
   public message = db.orm.public.Message;
   public jobQuestion = db.orm.public.JobQuestion;
+  public questionOption = db.orm.public.QuestionOption;
   public applicationAnswer = db.orm.public.ApplicationAnswer;
   public savedCandidate = db.orm.public.SavedCandidate;
   public jobAlert = db.orm.public.JobAlert;

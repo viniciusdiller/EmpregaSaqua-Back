@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'86303abe25aff9c5866660eaabf7a9de16eabf98f3d1670c25bbdc4c654dc380'>;
+  StorageHashBase<'802fe0231e9ee0803b74c1ea4cc5c3e78bb6d9f98116a6a059aad988721aed28'>;
 export type ExecutionHash =
-  ExecutionHashBase<'707b50b8f94f1ec590b78bc4752559da9e7661db648a85d9714ebc68c4048d94'>;
+  ExecutionHashBase<'0e0f6985910590c64ddad14e2b60e2866029107e8241206e40bc8027bdfb3a88'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -258,7 +258,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly application_id: CodecTypes['pg/text@1']['output'];
       readonly question_id: CodecTypes['pg/text@1']['output'];
-      readonly option_id: CodecTypes['pg/text@1']['output'];
+      readonly answer: CodecTypes['pg/bool@1']['output'];
     };
     readonly AuditLog: {
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -385,6 +385,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly job_id: CodecTypes['pg/text@1']['output'];
       readonly question_text: CodecTypes['pg/text@1']['output'];
+      readonly expected_answer: CodecTypes['pg/bool@1']['output'];
     };
     readonly Message: {
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -398,12 +399,6 @@ export type FieldOutputTypes = {
       readonly attachment_type: CodecTypes['pg/text@1']['output'] | null;
       readonly edited_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-    };
-    readonly QuestionOption: {
-      readonly id: CodecTypes['pg/text@1']['output'];
-      readonly question_id: CodecTypes['pg/text@1']['output'];
-      readonly option_text: CodecTypes['pg/text@1']['output'];
-      readonly eliminates: CodecTypes['pg/bool@1']['output'];
     };
     readonly SavedCandidate: {
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -442,7 +437,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly application_id: CodecTypes['pg/text@1']['input'];
       readonly question_id: CodecTypes['pg/text@1']['input'];
-      readonly option_id: CodecTypes['pg/text@1']['input'];
+      readonly answer: CodecTypes['pg/bool@1']['input'];
     };
     readonly AuditLog: {
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -569,6 +564,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly job_id: CodecTypes['pg/text@1']['input'];
       readonly question_text: CodecTypes['pg/text@1']['input'];
+      readonly expected_answer: CodecTypes['pg/bool@1']['input'];
     };
     readonly Message: {
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -582,12 +578,6 @@ export type FieldInputTypes = {
       readonly attachment_type: CodecTypes['pg/text@1']['input'] | null;
       readonly edited_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly deleted_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
-    };
-    readonly QuestionOption: {
-      readonly id: CodecTypes['pg/text@1']['input'];
-      readonly question_id: CodecTypes['pg/text@1']['input'];
-      readonly option_text: CodecTypes['pg/text@1']['input'];
-      readonly eliminates: CodecTypes['pg/bool@1']['input'];
     };
     readonly SavedCandidate: {
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -623,9 +613,9 @@ export type StorageColumnTypes = {
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly applicationAnswer: {
+      readonly answer: CodecTypes['pg/bool@1']['output'];
       readonly application_id: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
-      readonly option_id: CodecTypes['pg/text@1']['output'];
       readonly question_id: CodecTypes['pg/text@1']['output'];
     };
     readonly auditLog: {
@@ -750,6 +740,7 @@ export type StorageColumnTypes = {
       readonly work_model: 'ON_SITE' | 'HYBRID' | 'REMOTE' | null;
     };
     readonly jobQuestion: {
+      readonly expected_answer: CodecTypes['pg/bool@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly job_id: CodecTypes['pg/text@1']['output'];
       readonly question_text: CodecTypes['pg/text@1']['output'];
@@ -766,12 +757,6 @@ export type StorageColumnTypes = {
       readonly is_read: CodecTypes['pg/bool@1']['output'];
       readonly room_id: CodecTypes['pg/text@1']['output'];
       readonly sender_id: CodecTypes['pg/text@1']['output'];
-    };
-    readonly questionOption: {
-      readonly eliminates: CodecTypes['pg/bool@1']['output'];
-      readonly id: CodecTypes['pg/text@1']['output'];
-      readonly option_text: CodecTypes['pg/text@1']['output'];
-      readonly question_id: CodecTypes['pg/text@1']['output'];
     };
     readonly savedCandidate: {
       readonly candidate_id: CodecTypes['pg/text@1']['output'];
@@ -807,9 +792,9 @@ export type StorageColumnInputTypes = {
       readonly updated_at: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly applicationAnswer: {
+      readonly answer: CodecTypes['pg/bool@1']['input'];
       readonly application_id: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
-      readonly option_id: CodecTypes['pg/text@1']['input'];
       readonly question_id: CodecTypes['pg/text@1']['input'];
     };
     readonly auditLog: {
@@ -934,6 +919,7 @@ export type StorageColumnInputTypes = {
       readonly work_model: 'ON_SITE' | 'HYBRID' | 'REMOTE' | null;
     };
     readonly jobQuestion: {
+      readonly expected_answer: CodecTypes['pg/bool@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly job_id: CodecTypes['pg/text@1']['input'];
       readonly question_text: CodecTypes['pg/text@1']['input'];
@@ -950,12 +936,6 @@ export type StorageColumnInputTypes = {
       readonly is_read: CodecTypes['pg/bool@1']['input'];
       readonly room_id: CodecTypes['pg/text@1']['input'];
       readonly sender_id: CodecTypes['pg/text@1']['input'];
-    };
-    readonly questionOption: {
-      readonly eliminates: CodecTypes['pg/bool@1']['input'];
-      readonly id: CodecTypes['pg/text@1']['input'];
-      readonly option_text: CodecTypes['pg/text@1']['input'];
-      readonly question_id: CodecTypes['pg/text@1']['input'];
     };
     readonly savedCandidate: {
       readonly candidate_id: CodecTypes['pg/text@1']['input'];
@@ -1122,19 +1102,10 @@ export namespace Models {
     id: CodecTypes['pg/text@1']['output'];
     job_id: CodecTypes['pg/text@1']['output'];
     question_text: CodecTypes['pg/text@1']['output'];
+    expected_answer: CodecTypes['pg/bool@1']['output'];
     answers: public_ApplicationAnswer[];
     job: public_Job;
-    options: public_QuestionOption[];
-    readonly [RelationKeys]?: 'answers' | 'job' | 'options';
-  };
-  export type public_QuestionOption = {
-    id: CodecTypes['pg/text@1']['output'];
-    question_id: CodecTypes['pg/text@1']['output'];
-    option_text: CodecTypes['pg/text@1']['output'];
-    eliminates: CodecTypes['pg/bool@1']['output'];
-    answers: public_ApplicationAnswer[];
-    question: public_JobQuestion;
-    readonly [RelationKeys]?: 'answers' | 'question';
+    readonly [RelationKeys]?: 'answers' | 'job';
   };
   export type public_Application = {
     id: CodecTypes['pg/text@1']['output'];
@@ -1156,11 +1127,10 @@ export namespace Models {
     id: CodecTypes['pg/text@1']['output'];
     application_id: CodecTypes['pg/text@1']['output'];
     question_id: CodecTypes['pg/text@1']['output'];
-    option_id: CodecTypes['pg/text@1']['output'];
+    answer: CodecTypes['pg/bool@1']['output'];
     application: public_Application;
-    option: public_QuestionOption;
     question: public_JobQuestion;
-    readonly [RelationKeys]?: 'application' | 'option' | 'question';
+    readonly [RelationKeys]?: 'application' | 'question';
   };
   export type public_ChatRoom = {
     id: CodecTypes['pg/text@1']['output'];
@@ -1234,7 +1204,6 @@ export declare const models: {
     Education: Models.public_Education;
     Job: Models.public_Job;
     JobQuestion: Models.public_JobQuestion;
-    QuestionOption: Models.public_QuestionOption;
     Application: Models.public_Application;
     ApplicationAnswer: Models.public_ApplicationAnswer;
     ChatRoom: Models.public_ChatRoom;
@@ -1385,9 +1354,9 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
-                readonly option_id: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
+                readonly answer: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
                   readonly nullable: false;
                 };
               };
@@ -1404,12 +1373,6 @@ type ContractBase = Omit<
                   readonly name: 'applicationAnswer_question_id_idx_fcfb223c';
                   readonly prefix: 'applicationAnswer_question_id_idx';
                   readonly columns: readonly ['question_id'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'applicationAnswer_option_id_idx_0c2968fe';
-                  readonly prefix: 'applicationAnswer_option_id_idx';
-                  readonly columns: readonly ['option_id'];
                   readonly unique: false;
                 },
               ];
@@ -1435,18 +1398,6 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'jobQuestion';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'applicationAnswer';
-                    readonly columns: readonly ['option_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'questionOption';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -2159,6 +2110,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
+                readonly expected_answer: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [];
@@ -2286,58 +2242,6 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'user';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly questionOption: {
-              columns: {
-                readonly id: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly question_id: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly option_text: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly eliminates: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'questionOption_question_id_idx_fcfb223c';
-                  readonly prefix: 'questionOption_question_id_idx';
-                  readonly columns: readonly ['question_id'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'questionOption';
-                    readonly columns: readonly ['question_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'jobQuestion';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -2543,10 +2447,6 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'JobQuestion';
     };
-    readonly questionOption: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'QuestionOption';
-    };
     readonly application: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Application';
@@ -2679,9 +2579,9 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly option_id: {
+              readonly answer: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
             };
             readonly relations: {
@@ -2694,18 +2594,6 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['application_id'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly option: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'QuestionOption';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['option_id'];
                   readonly targetFields: readonly ['id'];
                 };
               };
@@ -2729,7 +2617,7 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly application_id: { readonly column: 'application_id' };
                 readonly question_id: { readonly column: 'question_id' };
-                readonly option_id: { readonly column: 'option_id' };
+                readonly answer: { readonly column: 'answer' };
               };
             };
           };
@@ -3442,6 +3330,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly expected_answer: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
             };
             readonly relations: {
               readonly answers: {
@@ -3464,17 +3356,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly options: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'QuestionOption';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['question_id'];
-                };
-              };
             };
             readonly storage: {
               readonly table: 'jobQuestion';
@@ -3483,6 +3364,7 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly job_id: { readonly column: 'job_id' };
                 readonly question_text: { readonly column: 'question_text' };
+                readonly expected_answer: { readonly column: 'expected_answer' };
               };
             };
           };
@@ -3580,61 +3462,6 @@ type ContractBase = Omit<
                 readonly attachment_type: { readonly column: 'attachment_type' };
                 readonly edited_at: { readonly column: 'edited_at' };
                 readonly deleted_at: { readonly column: 'deleted_at' };
-              };
-            };
-          };
-          readonly QuestionOption: {
-            readonly fields: {
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly question_id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly option_text: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly eliminates: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-            };
-            readonly relations: {
-              readonly answers: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ApplicationAnswer';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['option_id'];
-                };
-              };
-              readonly question: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'JobQuestion';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['question_id'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'questionOption';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly id: { readonly column: 'id' };
-                readonly question_id: { readonly column: 'question_id' };
-                readonly option_text: { readonly column: 'option_text' };
-                readonly eliminates: { readonly column: 'eliminates' };
               };
             };
           };
@@ -4097,14 +3924,6 @@ type ContractBase = Omit<
           readonly ref: {
             readonly namespace: 'public';
             readonly table: 'message';
-            readonly column: 'id';
-          };
-          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
-        },
-        {
-          readonly ref: {
-            readonly namespace: 'public';
-            readonly table: 'questionOption';
             readonly column: 'id';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };

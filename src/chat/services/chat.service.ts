@@ -7,40 +7,53 @@ export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Ensures the candidate and employer have a valid connection (an application exists).
-   * Returns the chat room or creates it if it doesn't exist yet.
+   * Com jobId: exige candidatura ativa do candidato naquela vaga (fluxo normal).
+   * Sem jobId: conversa direta "banco de talentos" — qualquer empresa pode chamar qualquer
+   * candidato, igual mensagem direta de LinkedIn, sem precisar de candidatura.
+   * Retorna a sala existente ou cria uma nova.
    */
-  async getOrCreateRoom(candidateId: string, employerId: string, jobId: string) {
-    // 1. Verify business logic: does the candidate have an application for this job?
-    const application = await this.prisma.application
-      .where({ applicant_id: candidateId, job_id: jobId })
-      .first();
+  async getOrCreateRoom(candidateId: string, employerId: string, jobId?: string | null) {
+    if (jobId) {
+      // Verify business logic: does the candidate have an application for this job?
+      const application = await this.prisma.application
+        .where({ applicant_id: candidateId, job_id: jobId })
+        .first();
 
-    if (!application) {
-      throw new ForbiddenException('Cannot start a chat without an active application for this job.');
+      if (!application) {
+        throw new ForbiddenException('Cannot start a chat without an active application for this job.');
+      }
+
+      // Verify the job belongs to the employer
+      const job = await this.prisma.job.where({ id: jobId }).first();
+      if (!job || job.employer_id !== employerId) {
+        throw new ForbiddenException('Invalid job or employer mismatch.');
+      }
+    } else {
+      // Conversa direta: só confere que os dois existem e têm os papéis certos.
+      const [candidate, employer] = await Promise.all([
+        this.prisma.user.where({ id: candidateId }).first(),
+        this.prisma.user.where({ id: employerId }).first(),
+      ]);
+      if (!candidate || candidate.role !== 'JOB_SEEKER' || !employer || employer.role !== 'EMPLOYER') {
+        throw new ForbiddenException('Candidato ou empresa inválidos.');
+      }
     }
 
-    // 2. Verify the job belongs to the employer
-    const job = await this.prisma.job.where({ id: jobId }).first();
-    if (!job || job.employer_id !== employerId) {
-      throw new ForbiddenException('Invalid job or employer mismatch.');
-    }
+    // Find existing room (job_id null em SQL não bate com "=", então procuramos à parte quando é direto)
+    let room = jobId
+      ? await this.prisma.chatRoom.where({ candidate_id: candidateId, employer_id: employerId, job_id: jobId }).first()
+      : await this.prisma.chatRoom
+          .where((r) => r.candidate_id.eq(candidateId))
+          .where((r) => r.employer_id.eq(employerId))
+          .where((r) => r.job_id.isNull())
+          .first();
 
-    // 3. Find existing room
-    let room = await this.prisma.chatRoom
-      .where({
-        candidate_id: candidateId,
-        employer_id: employerId,
-        job_id: jobId,
-      })
-      .first();
-
-    // 4. Create if not exists
+    // Create if not exists
     if (!room) {
       room = await this.prisma.chatRoom.create({
         candidate_id: candidateId,
         employer_id: employerId,
-        job_id: jobId,
+        job_id: jobId ?? null,
       });
     }
 
@@ -48,13 +61,19 @@ export class ChatService {
   }
 
   /**
-   * Saves a message to the database with strict XSS sanitization.
+   * Saves a message to the database with strict XSS sanitization. A message needs text OR an
+   * attachment (or both) — never neither.
    */
-  async saveMessage(roomId: string, senderId: string, rawContent: string) {
+  async saveMessage(
+    roomId: string,
+    senderId: string,
+    rawContent?: string,
+    attachment?: { url: string; name?: string; type?: string },
+  ) {
     // Sanitize message content to prevent XSS attacks when rendering in frontend
-    const sanitizedContent = sanitizeHtml(rawContent, { allowedTags: [], allowedAttributes: {} });
+    const sanitizedContent = rawContent ? sanitizeHtml(rawContent, { allowedTags: [], allowedAttributes: {} }).trim() : '';
 
-    if (!sanitizedContent || sanitizedContent.trim().length === 0) {
+    if (!sanitizedContent && !attachment?.url) {
       throw new Error('Message content cannot be empty.');
     }
 
@@ -72,25 +91,74 @@ export class ChatService {
       room_id: roomId,
       sender_id: senderId,
       content: sanitizedContent,
+      ...(attachment?.url
+        ? { attachment_url: attachment.url, attachment_name: attachment.name ?? null, attachment_type: attachment.type ?? null }
+        : {}),
+    });
+  }
+
+  /** Só quem mandou pode editar, e só se a mensagem não tiver sido apagada. */
+  async editMessage(messageId: string, userId: string, rawContent: string) {
+    const message = await this.prisma.message.where((m) => m.id.eq(messageId)).first();
+    if (!message) {
+      throw new NotFoundException('Mensagem não encontrada.');
+    }
+    if (message.sender_id !== userId) {
+      throw new ForbiddenException('Você só pode editar suas próprias mensagens.');
+    }
+    if (message.deleted_at) {
+      throw new ForbiddenException('Não é possível editar uma mensagem apagada.');
+    }
+
+    const sanitizedContent = sanitizeHtml(rawContent, { allowedTags: [], allowedAttributes: {} }).trim();
+    if (!sanitizedContent) {
+      throw new Error('Message content cannot be empty.');
+    }
+
+    return this.prisma.message.where({ id: messageId }).update({
+      content: sanitizedContent,
+      edited_at: new Date().toISOString(),
+    });
+  }
+
+  /** Soft delete: zera conteúdo/anexo e marca `deleted_at`. O front mostra "Mensagem apagada". */
+  async deleteMessage(messageId: string, userId: string) {
+    const message = await this.prisma.message.where((m) => m.id.eq(messageId)).first();
+    if (!message) {
+      throw new NotFoundException('Mensagem não encontrada.');
+    }
+    if (message.sender_id !== userId) {
+      throw new ForbiddenException('Você só pode apagar suas próprias mensagens.');
+    }
+
+    return this.prisma.message.where({ id: messageId }).update({
+      content: '',
+      attachment_url: null,
+      attachment_name: null,
+      attachment_type: null,
+      deleted_at: new Date().toISOString(),
     });
   }
 
   /**
-   * Fetch chat history
+   * Histórico paginado: por padrão, as `limit` mensagens mais recentes. Com `before` (ISO date de
+   * uma mensagem já carregada), busca a página anterior (mais antiga que o cursor) — "carregar
+   * mensagens mais antigas" no front. Retorna sempre em ordem cronológica (mais antiga primeiro).
    */
-  async getRoomMessages(roomId: string, userId: string) {
+  async getRoomMessages(roomId: string, userId: string, opts: { before?: string; limit?: number } = {}) {
     const room = await this.prisma.chatRoom.where((r) => r.id.eq(roomId)).first();
     if (!room || (room.candidate_id !== userId && room.employer_id !== userId)) {
       throw new ForbiddenException('Access denied to this room.');
     }
 
-    return this.prisma.message
+    const limit = opts.limit ?? 50;
+    const base = this.prisma.message
       .where((m) => m.room_id.eq(roomId))
-      // Prisma 8 orderBy requires db.sql or wait, orderBy is via methods?
-      // Actually we will just fetch all and sort in memory if needed, or rely on created_at order natively.
-      // We will sort them in memory just to be safe if order method is complex
-      .all()
-      .then(msgs => msgs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()));
+      .orderBy((m) => m.created_at.desc())
+      .limit(limit);
+
+    const page = await (opts.before ? base.cursor({ created_at: opts.before }) : base).all();
+    return page.reverse();
   }
 
   /** Conversas do usuário com vaga, nome do outro lado, última mensagem e não lidas (mais recentes primeiro). */
@@ -105,7 +173,7 @@ export class ChatService {
       rooms.map(async (room) => {
         const iAmCandidate = room.candidate_id === userId;
         const [job, msgs, counterpart] = await Promise.all([
-          this.prisma.job.where({ id: room.job_id }).first(),
+          room.job_id ? this.prisma.job.where({ id: room.job_id }).first() : Promise.resolve(null),
           this.prisma.message.where({ room_id: room.id }).all(),
           iAmCandidate
             ? this.prisma.companyProfile.where({ user_id: room.employer_id }).first()
@@ -124,7 +192,7 @@ export class ChatService {
           job_id: room.job_id,
           candidate_id: room.candidate_id,
           employer_id: room.employer_id,
-          job_title: job?.title ?? 'Vaga removida',
+          job_title: room.job_id ? job?.title ?? 'Vaga removida' : 'Conversa direta',
           counterpart_name,
           last_message: last ? { content: last.content, created_at: last.created_at, sender_id: last.sender_id } : null,
           unread_count: msgs.filter((m) => !m.is_read && m.sender_id !== userId).length,

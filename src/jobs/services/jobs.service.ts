@@ -45,7 +45,7 @@ export class JobsService {
 
   /**
    * Leitura pública: só vagas ACTIVE e não removidas; dono e admin veem em qualquer status.
-   * O gabarito das perguntas de triagem (expected_answer) nunca sai daqui.
+   * O gabarito das perguntas de triagem (opção que elimina) nunca sai daqui.
    */
   async getJobForViewer(jobId: string, viewer: { id: string; role: string } | null): Promise<any> {
     const job = (await this.getJobById(jobId)) as any;
@@ -53,7 +53,14 @@ export class JobsService {
     if (!privileged && (job.status !== 'ACTIVE' || job.deleted_at)) {
       throw new NotFoundException('Vaga não encontrada');
     }
-    return { ...job, questions: (job.questions ?? []).map((q: any) => ({ id: q.id, question_text: q.question_text })) };
+    return {
+      ...job,
+      questions: (job.questions ?? []).map((q: any) => ({
+        id: q.id,
+        question_text: q.question_text,
+        options: (q.options ?? []).map((o: any) => ({ id: o.id, option_text: o.option_text })),
+      })),
+    };
   }
 
   async updateEmployerJob(employerId: string, jobId: string, data: any): Promise<Job> {

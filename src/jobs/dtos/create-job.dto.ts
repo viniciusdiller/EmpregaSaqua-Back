@@ -1,19 +1,41 @@
-import { IsString, IsNotEmpty, MaxLength, IsOptional, IsEmail, Matches, IsArray, ArrayMaxSize, ValidateNested, IsBoolean, IsEnum, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, IsEmail, Matches, IsArray, ArrayMaxSize, ArrayMinSize, ValidateNested, IsBoolean, IsEnum, IsDateString } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import sanitizeHtml from 'sanitize-html';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { WorkModel, ContractType } from '../../prisma/db.js';
+import { WorkModel, ContractType, JobArea } from '../../prisma/db.js';
+
+export class QuestionOptionDto {
+  @ApiProperty({ example: 'Sim' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(150)
+  @Transform(({ value }) => sanitizeHtml(value))
+  option_text: string;
+
+  @ApiProperty({ example: false, description: 'Se o candidato escolher esta opção, é eliminado automaticamente.' })
+  @IsBoolean()
+  eliminates: boolean;
+}
 
 export class JobQuestionDto {
   @ApiProperty({ example: 'Tem experiência com CNH D?' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(300)
+  @Transform(({ value }) => sanitizeHtml(value))
   question_text: string;
 
-  @ApiProperty({ example: true })
-  @IsBoolean()
-  expected_answer: boolean;
+  @ApiProperty({
+    example: [{ option_text: 'Sim', eliminates: false }, { option_text: 'Não', eliminates: true }],
+    description: 'Opções de resposta (mínimo 2, máximo 6). Cada uma marca se elimina o candidato ou não.',
+    isArray: true,
+  })
+  @IsArray()
+  @ArrayMinSize(2, { message: 'Cada pergunta precisa de pelo menos 2 opções.' })
+  @ArrayMaxSize(6)
+  @ValidateNested({ each: true })
+  @Type(() => QuestionOptionDto)
+  options: QuestionOptionDto[];
 }
 
 export class CreateJobDto {
@@ -87,6 +109,11 @@ export class CreateJobDto {
   @IsEnum(ContractType)
   contract_type: ContractType;
 
+  @ApiPropertyOptional({ enum: JobArea, example: JobArea.TI, description: 'Área/segmento da vaga — usado para bloquear candidaturas fora da área do candidato' })
+  @IsOptional()
+  @IsEnum(JobArea)
+  area?: JobArea;
+
   @ApiPropertyOptional({ example: true, description: 'Visibilidade do salário para os candidatos' })
   @IsOptional()
   @IsBoolean()
@@ -114,7 +141,7 @@ export class CreateJobDto {
   contact_email?: string;
 
   @ApiPropertyOptional({ 
-    example: [{ question_text: 'Você tem disponibilidade para trabalhar aos finais de semana?', expected_answer: true }], 
+    example: [{ question_text: 'Você tem disponibilidade para trabalhar aos finais de semana?', options: [{ option_text: 'Sim', eliminates: false }, { option_text: 'Não', eliminates: true }] }],
     description: 'Perguntas de triagem (Knockout questions)',
     isArray: true
   })

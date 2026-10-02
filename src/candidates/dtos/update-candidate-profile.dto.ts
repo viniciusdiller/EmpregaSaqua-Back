@@ -1,6 +1,7 @@
-import { IsString, IsArray, IsOptional, ValidateNested } from 'class-validator';
+import { IsString, IsArray, IsOptional, IsEnum, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Sanitize } from '../../common/decorators/sanitize.decorator.js';
+import { JobArea } from '../../prisma/db.js';
 
 export class CreateExperienceDto {
   @IsString()
@@ -69,6 +70,16 @@ export class UpdateCandidateProfileDto {
   @IsString({ each: true })
   @Sanitize()
   skills?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @Sanitize()
+  languages?: string[];
+
+  @IsOptional()
+  @IsEnum(JobArea)
+  area?: JobArea;
 
   @IsOptional()
   @IsString()

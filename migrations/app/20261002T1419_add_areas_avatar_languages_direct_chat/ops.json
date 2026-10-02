@@ -1,0 +1,381 @@
+[
+  {
+    "id": "column.public.candidateProfile.area",
+    "label": "Add column \"area\" to \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "area",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"area\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "area"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"area\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD COLUMN \"area\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"area\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "area"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.candidateProfile.avatar_url",
+    "label": "Add column \"avatar_url\" to \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "avatar_url",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"avatar_url\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "avatar_url"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"avatar_url\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD COLUMN \"avatar_url\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"avatar_url\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "avatar_url"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.candidateProfile.languages",
+    "label": "Add column \"languages\" to \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "languages",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"languages\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "languages"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"languages\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD COLUMN \"languages\" text[] DEFAULT '{}' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"languages\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "candidateProfile",
+          "languages"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.area",
+    "label": "Add column \"area\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "area",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"area\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "area"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"area\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"area\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"area\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "area"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.chatRoom.job_id",
+    "label": "Drop NOT NULL on \"chatRoom\".\"job_id\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "job_id",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"job_id\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "chatRoom",
+          "job_id"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"job_id\"",
+        "sql": "ALTER TABLE \"public\".\"chatRoom\" ALTER COLUMN \"job_id\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"job_id\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "chatRoom",
+          "job_id",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.candidateProfile.candidateProfile_area_check_fc1a8ede",
+    "label": "Add check constraint \"candidateProfile_area_check_fc1a8ede\" on \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "candidateProfile_area_check_fc1a8ede",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"candidateProfile_area_check_fc1a8ede\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_area_check_fc1a8ede",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"candidateProfile_area_check_fc1a8ede\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD CONSTRAINT \"candidateProfile_area_check_fc1a8ede\" CHECK (\"area\" IN ('ADMINISTRACAO', 'TI', 'SAUDE', 'EDUCACAO', 'COMERCIO_VENDAS', 'ALIMENTACAO', 'CONSTRUCAO', 'LIMPEZA_SERVICOS_GERAIS', 'LOGISTICA_TRANSPORTE', 'TURISMO_HOTELARIA', 'OUTROS'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"candidateProfile_area_check_fc1a8ede\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_area_check_fc1a8ede",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.candidateProfile.candidateProfile_languages_elem_not_null_d4aa0a00",
+    "label": "Add check constraint \"candidateProfile_languages_elem_not_null_d4aa0a00\" on \"candidateProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "candidateProfile_languages_elem_not_null_d4aa0a00",
+        "table": "candidateProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"candidateProfile_languages_elem_not_null_d4aa0a00\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_languages_elem_not_null_d4aa0a00",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"candidateProfile_languages_elem_not_null_d4aa0a00\"",
+        "sql": "ALTER TABLE \"public\".\"candidateProfile\" ADD CONSTRAINT \"candidateProfile_languages_elem_not_null_d4aa0a00\" CHECK (array_position(\"languages\", NULL) IS NULL)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"candidateProfile_languages_elem_not_null_d4aa0a00\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "candidateProfile_languages_elem_not_null_d4aa0a00",
+          "public",
+          "\"public\".\"candidateProfile\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.chatRoom.chatRoom_candidate_id_employer_id_job_id_key",
+    "label": "Add unique constraint on \"chatRoom\" (candidate_id, employer_id, job_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "chatRoom_candidate_id_employer_id_job_id_key",
+        "table": "chatRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chatRoom_candidate_id_employer_id_job_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_candidate_id_employer_id_job_id_key",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"chatRoom_candidate_id_employer_id_job_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"chatRoom\" ADD CONSTRAINT \"chatRoom_candidate_id_employer_id_job_id_key\" UNIQUE (\"candidate_id\", \"employer_id\", \"job_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chatRoom_candidate_id_employer_id_job_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chatRoom_candidate_id_employer_id_job_id_key",
+          "public",
+          "\"public\".\"chatRoom\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.job.job_area_check_fc1a8ede",
+    "label": "Add check constraint \"job_area_check_fc1a8ede\" on \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "job_area_check_fc1a8ede",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"job_area_check_fc1a8ede\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_area_check_fc1a8ede",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"job_area_check_fc1a8ede\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD CONSTRAINT \"job_area_check_fc1a8ede\" CHECK (\"area\" IN ('ADMINISTRACAO', 'TI', 'SAUDE', 'EDUCACAO', 'COMERCIO_VENDAS', 'ALIMENTACAO', 'CONSTRUCAO', 'LIMPEZA_SERVICOS_GERAIS', 'LOGISTICA_TRANSPORTE', 'TURISMO_HOTELARIA', 'OUTROS'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"job_area_check_fc1a8ede\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "job_area_check_fc1a8ede",
+          "public",
+          "\"public\".\"job\""
+        ]
+      }
+    ]
+  }
+]

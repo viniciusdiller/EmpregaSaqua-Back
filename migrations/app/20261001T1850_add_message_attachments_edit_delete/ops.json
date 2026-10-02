@@ -1,0 +1,212 @@
+[
+  {
+    "id": "column.public.message.attachment_name",
+    "label": "Add column \"attachment_name\" to \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "attachment_name",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"attachment_name\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "attachment_name"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"attachment_name\"",
+        "sql": "ALTER TABLE \"public\".\"message\" ADD COLUMN \"attachment_name\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"attachment_name\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "attachment_name"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.message.attachment_type",
+    "label": "Add column \"attachment_type\" to \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "attachment_type",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"attachment_type\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "attachment_type"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"attachment_type\"",
+        "sql": "ALTER TABLE \"public\".\"message\" ADD COLUMN \"attachment_type\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"attachment_type\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "attachment_type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.message.attachment_url",
+    "label": "Add column \"attachment_url\" to \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "attachment_url",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"attachment_url\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "attachment_url"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"attachment_url\"",
+        "sql": "ALTER TABLE \"public\".\"message\" ADD COLUMN \"attachment_url\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"attachment_url\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "attachment_url"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.message.deleted_at",
+    "label": "Add column \"deleted_at\" to \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "deleted_at",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"deleted_at\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "deleted_at"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"deleted_at\"",
+        "sql": "ALTER TABLE \"public\".\"message\" ADD COLUMN \"deleted_at\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"deleted_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "deleted_at"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.message.edited_at",
+    "label": "Add column \"edited_at\" to \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "edited_at",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"edited_at\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "edited_at"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"edited_at\"",
+        "sql": "ALTER TABLE \"public\".\"message\" ADD COLUMN \"edited_at\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"edited_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "message",
+          "edited_at"
+        ]
+      }
+    ]
+  }
+]

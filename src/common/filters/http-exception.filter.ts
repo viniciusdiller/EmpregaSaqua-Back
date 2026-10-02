@@ -6,13 +6,26 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
 import { Request, Response } from 'express';
 
+/**
+ * `@Catch()` sem argumentos pega TUDO, inclusive exceções de dentro do ChatGateway (WS) — mas o
+ * corpo abaixo assume `host.switchToHttp()`, que não existe de verdade num contexto de socket.
+ * Sem este desvio, toda WsException (ex.: "Dados inválidos.", "Rate limit exceeded...") virava
+ * um "Internal server error" genérico no cliente, mascarando a mensagem real.
+ */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private readonly wsFilter = new BaseWsExceptionFilter();
 
   catch(exception: any, host: ArgumentsHost) {
+    if (host.getType() === 'ws') {
+      this.wsFilter.catch(exception, host);
+      return;
+    }
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();

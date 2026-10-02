@@ -28,6 +28,7 @@ export class PrismaJobsRepository implements IJobsRepository {
       status: JobStatus.PENDING,
       work_model: data.work_model,
       contract_type: data.contract_type,
+      area: data.area ?? null,
       is_salary_visible: data.is_salary_visible ?? true,
       is_pcd: data.is_pcd ?? false,
       expires_at: data.expires_at ?? null,
@@ -35,11 +36,17 @@ export class PrismaJobsRepository implements IJobsRepository {
     
     if (data.questions && data.questions.length > 0) {
       for (const q of data.questions) {
-        await this.prisma.jobQuestion.create({
+        const question = await this.prisma.jobQuestion.create({
           job_id: jobRow.id,
           question_text: q.question_text,
-          expected_answer: q.expected_answer,
         });
+        for (const o of q.options) {
+          await this.prisma.questionOption.create({
+            question_id: question.id,
+            option_text: o.option_text,
+            eliminates: o.eliminates,
+          });
+        }
       }
     }
 
@@ -52,7 +59,7 @@ export class PrismaJobsRepository implements IJobsRepository {
       .include('employer', (e) =>
         e.select('id').include('company_profile', (cp) => cp.select('nome_fantasia', 'logo_url', 'verification_status', 'endereco')),
       )
-      .include('questions', (q) => q.select('id', 'question_text', 'expected_answer'))
+      .include('questions', (q) => q.select('id', 'question_text').include('options', (o) => o.select('id', 'option_text', 'eliminates')))
       .first();
     return jobRow as unknown as Job | null;
   }
@@ -113,7 +120,7 @@ export class PrismaJobsRepository implements IJobsRepository {
              cp.select('nome_fantasia', 'logo_url')
            )
         )
-        .include('questions', (q) => q.select('id', 'question_text'))
+        .include('questions', (q) => q.select('id', 'question_text').include('options', (o) => o.select('id', 'option_text')))
         .orderBy((j) => j.created_at.desc())
         .limit(limit)
         .offset((page - 1) * limit)
@@ -175,11 +182,17 @@ export class PrismaJobsRepository implements IJobsRepository {
     if (questions) {
       await this.prisma.jobQuestion.where({ job_id: id }).delete();
       for (const q of questions) {
-        await this.prisma.jobQuestion.create({
+        const question = await this.prisma.jobQuestion.create({
           job_id: id,
           question_text: q.question_text,
-          expected_answer: q.expected_answer,
         });
+        for (const o of q.options) {
+          await this.prisma.questionOption.create({
+            question_id: question.id,
+            option_text: o.option_text,
+            eliminates: o.eliminates,
+          });
+        }
       }
     }
 

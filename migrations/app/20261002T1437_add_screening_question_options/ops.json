@@ -1,0 +1,406 @@
+[
+  {
+    "id": "dropColumn.applicationAnswer.answer",
+    "label": "Drop column \"answer\" from \"applicationAnswer\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "answer",
+        "table": "applicationAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"answer\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "applicationAnswer",
+          "answer"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"answer\"",
+        "sql": "ALTER TABLE \"public\".\"applicationAnswer\" DROP COLUMN \"answer\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"answer\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "applicationAnswer",
+          "answer"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.jobQuestion.expected_answer",
+    "label": "Drop column \"expected_answer\" from \"jobQuestion\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "expected_answer",
+        "table": "jobQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"expected_answer\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobQuestion",
+          "expected_answer"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"expected_answer\"",
+        "sql": "ALTER TABLE \"public\".\"jobQuestion\" DROP COLUMN \"expected_answer\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"expected_answer\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "jobQuestion",
+          "expected_answer"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.questionOption",
+    "label": "Create table \"questionOption\"",
+    "summary": "Creates table \"questionOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "questionOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"questionOption\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"questionOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"questionOption\"",
+        "sql": "CREATE TABLE \"public\".\"questionOption\" (\n  \"eliminates\" bool DEFAULT false NOT NULL,\n  \"id\" text NOT NULL,\n  \"option_text\" text NOT NULL,\n  \"question_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"questionOption\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"questionOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.applicationAnswer.option_id",
+    "label": "Add column \"option_id\" to \"applicationAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "option_id",
+        "table": "applicationAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"option_id\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "applicationAnswer",
+          "option_id"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"option_id\"",
+        "sql": "ALTER TABLE \"public\".\"applicationAnswer\" ADD COLUMN \"option_id\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"option_id\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "applicationAnswer",
+          "option_id"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data_migration.backfill-applicationAnswer-option_id",
+    "label": "Data transform: backfill-applicationAnswer-option_id",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [
+      {
+        "description": "Check backfill-applicationAnswer-option_id has work to do",
+        "sql": "SELECT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"applicationAnswer\" WHERE \"option_id\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "Run backfill-applicationAnswer-option_id",
+        "sql": "DELETE FROM \"public\".\"applicationAnswer\" WHERE \"option_id\" IS NULL",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "Verify backfill-applicationAnswer-option_id resolved all violations",
+        "sql": "SELECT NOT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"applicationAnswer\" WHERE \"option_id\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.setNotNull.applicationAnswer.option_id",
+    "label": "Set NOT NULL on \"applicationAnswer\".\"option_id\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "option_id",
+        "table": "applicationAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"option_id\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "applicationAnswer",
+          "option_id"
+        ]
+      },
+      {
+        "description": "ensure no NULL values in \"option_id\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"applicationAnswer\" WHERE \"option_id\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"option_id\"",
+        "sql": "ALTER TABLE \"public\".\"applicationAnswer\" ALTER COLUMN \"option_id\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"option_id\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "applicationAnswer",
+          "option_id",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.applicationAnswer.applicationAnswer_option_id_idx_0c2968fe",
+    "label": "Create index \"applicationAnswer_option_id_idx_0c2968fe\" on \"applicationAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "applicationAnswer_option_id_idx_0c2968fe",
+        "table": "applicationAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"applicationAnswer_option_id_idx_0c2968fe\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"applicationAnswer_option_id_idx_0c2968fe\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"applicationAnswer_option_id_idx_0c2968fe\"",
+        "sql": "CREATE INDEX \"applicationAnswer_option_id_idx_0c2968fe\" ON \"public\".\"applicationAnswer\" (\"option_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"applicationAnswer_option_id_idx_0c2968fe\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"applicationAnswer_option_id_idx_0c2968fe\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.questionOption.questionOption_question_id_idx_fcfb223c",
+    "label": "Create index \"questionOption_question_id_idx_fcfb223c\" on \"questionOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "questionOption_question_id_idx_fcfb223c",
+        "table": "questionOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"questionOption_question_id_idx_fcfb223c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"questionOption_question_id_idx_fcfb223c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"questionOption_question_id_idx_fcfb223c\"",
+        "sql": "CREATE INDEX \"questionOption_question_id_idx_fcfb223c\" ON \"public\".\"questionOption\" (\"question_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"questionOption_question_id_idx_fcfb223c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"questionOption_question_id_idx_fcfb223c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.questionOption.questionOption_question_id_fkey",
+    "label": "Add foreign key \"questionOption_question_id_fkey\" on \"questionOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "questionOption_question_id_fkey",
+        "table": "questionOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"questionOption_question_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "questionOption_question_id_fkey",
+          "public",
+          "\"public\".\"questionOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"questionOption_question_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"questionOption\"\nADD CONSTRAINT \"questionOption_question_id_fkey\"\nFOREIGN KEY (\"question_id\")\nREFERENCES \"public\".\"jobQuestion\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"questionOption_question_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "questionOption_question_id_fkey",
+          "public",
+          "\"public\".\"questionOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.applicationAnswer.applicationAnswer_option_id_fkey",
+    "label": "Add foreign key \"applicationAnswer_option_id_fkey\" on \"applicationAnswer\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "applicationAnswer_option_id_fkey",
+        "table": "applicationAnswer"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"applicationAnswer_option_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "applicationAnswer_option_id_fkey",
+          "public",
+          "\"public\".\"applicationAnswer\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"applicationAnswer_option_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"applicationAnswer\"\nADD CONSTRAINT \"applicationAnswer_option_id_fkey\"\nFOREIGN KEY (\"option_id\")\nREFERENCES \"public\".\"questionOption\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"applicationAnswer_option_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "applicationAnswer_option_id_fkey",
+          "public",
+          "\"public\".\"applicationAnswer\""
+        ]
+      }
+    ]
+  }
+]

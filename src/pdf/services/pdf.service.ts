@@ -43,6 +43,14 @@ export class PdfService {
         doc.moveDown(1);
       }
 
+      // Idiomas
+      if (profile.languages && profile.languages.length > 0) {
+        doc.fontSize(14).fillColor('black').font('Helvetica-Bold').text('Idiomas', { underline: true });
+        doc.moveDown(0.5);
+        doc.fontSize(10).font('Helvetica').text(profile.languages.join(', '));
+        doc.moveDown(1);
+      }
+
       // Experiência
       if (profile.experiences && profile.experiences.length > 0) {
         doc.fontSize(14).fillColor('black').font('Helvetica-Bold').text('Experiência Profissional', { underline: true });

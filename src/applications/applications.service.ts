@@ -52,6 +52,14 @@ export class ApplicationsService {
       throw new ConflictException('Você já se candidatou a esta vaga.');
     }
 
+    // Bloqueia candidatura fora da área: só quando AMBOS (vaga e perfil) têm área definida.
+    if (job.area) {
+      const candidate = await this.prisma.candidateProfile.where({ user_id: applicantId }).first();
+      if (candidate?.area && candidate.area !== job.area) {
+        throw new ForbiddenException('Essa vaga é de uma área diferente da área de atuação do seu perfil.');
+      }
+    }
+
     let isKnockedOut = false;
     let initialStatus = ApplicationStatus.APPLIED;
 
@@ -63,8 +71,11 @@ export class ApplicationsService {
         if (!candidateAnswer) {
           throw new BadRequestException('Responda todas as perguntas da vaga.');
         }
-        // Resposta diferente do gabarito = eliminado
-        if (candidateAnswer.answer !== question.expected_answer) {
+        const chosenOption = (question.options ?? []).find((o: any) => o.id === candidateAnswer.option_id);
+        if (!chosenOption) {
+          throw new BadRequestException('Opção de resposta inválida.');
+        }
+        if (chosenOption.eliminates) {
           isKnockedOut = true;
           initialStatus = ApplicationStatus.REJECTED;
           break;

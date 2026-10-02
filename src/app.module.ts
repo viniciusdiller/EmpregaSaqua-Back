@@ -36,21 +36,19 @@ import { JobAlertsModule } from './job-alerts/job-alerts.module.js';
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
+    // Um único throttler nomeado "default": por padrão o NestJS aplica TODO throttler
+    // registrado aqui a TODA rota do app, a não ser que a rota pule/sobrescreva pelo nome.
+    // Rotas que precisam de um limite mais apertado (ex.: login, candidatura) sobrescrevem
+    // só o "default" para si mesmas via @Throttle({ default: {...} }) — ver auth.controller.ts
+    // e applications.controller.ts. Não cadastrar outro throttler nomeado aqui sem também
+    // decorar com @SkipThrottle as rotas que não devem ser limitadas por ele.
     ThrottlerModule.forRoot([{
       name: 'default',
       ttl: 60000,
       limit: 1000,
-      skipIf: (context) => process.env.NODE_ENV === 'test' && !context.switchToHttp().getRequest().headers['x-rate-limit-test'],
-    }, {
-      name: 'login',
-      ttl: 900000,
-      limit: 5,
-      skipIf: (context) => process.env.NODE_ENV === 'test' && !context.switchToHttp().getRequest().headers['x-rate-limit-test'],
-    }, {
-      name: 'applications',
-      ttl: 60000,
-      limit: 3,
-      skipIf: (context) => process.env.NODE_ENV === 'test' && !context.switchToHttp().getRequest().headers['x-rate-limit-test'],
+      // ThrottlerGuard assume um Response HTTP (chama res.header(...)) — fora de um request HTTP
+      // isso quebra com TypeError. O ChatGateway (WS) já tem seu próprio rate limit manual.
+      skipIf: (context) => context.getType() !== 'http' || (process.env.NODE_ENV === 'test' && !context.switchToHttp().getRequest().headers['x-rate-limit-test']),
     }]),
     ScheduleModule.forRoot(),
     PrismaModule,

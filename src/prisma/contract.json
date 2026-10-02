@@ -52,6 +52,10 @@
       "model": "Message",
       "namespace": "public"
     },
+    "questionOption": {
+      "model": "QuestionOption",
+      "namespace": "public"
+    },
     "savedCandidate": {
       "model": "SavedCandidate",
       "namespace": "public"
@@ -112,6 +116,55 @@
               {
                 "name": "APPRENTICE",
                 "value": "APPRENTICE"
+              }
+            ]
+          },
+          "JobArea": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ADMINISTRACAO",
+                "value": "ADMINISTRACAO"
+              },
+              {
+                "name": "TI",
+                "value": "TI"
+              },
+              {
+                "name": "SAUDE",
+                "value": "SAUDE"
+              },
+              {
+                "name": "EDUCACAO",
+                "value": "EDUCACAO"
+              },
+              {
+                "name": "COMERCIO_VENDAS",
+                "value": "COMERCIO_VENDAS"
+              },
+              {
+                "name": "ALIMENTACAO",
+                "value": "ALIMENTACAO"
+              },
+              {
+                "name": "CONSTRUCAO",
+                "value": "CONSTRUCAO"
+              },
+              {
+                "name": "LIMPEZA_SERVICOS_GERAIS",
+                "value": "LIMPEZA_SERVICOS_GERAIS"
+              },
+              {
+                "name": "LOGISTICA_TRANSPORTE",
+                "value": "LOGISTICA_TRANSPORTE"
+              },
+              {
+                "name": "TURISMO_HOTELARIA",
+                "value": "TURISMO_HOTELARIA"
+              },
+              {
+                "name": "OUTROS",
+                "value": "OUTROS"
               }
             ]
           },
@@ -356,13 +409,6 @@
           },
           "ApplicationAnswer": {
             "fields": {
-              "answer": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
               "application_id": {
                 "nullable": false,
                 "type": {
@@ -371,6 +417,13 @@
                 }
               },
               "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "option_id": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -402,6 +455,22 @@
                   "namespace": "public"
                 }
               },
+              "option": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "option_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "QuestionOption",
+                  "namespace": "public"
+                }
+              },
               "question": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -421,14 +490,14 @@
             },
             "storage": {
               "fields": {
-                "answer": {
-                  "column": "answer"
-                },
                 "application_id": {
                   "column": "application_id"
                 },
                 "id": {
                   "column": "id"
+                },
+                "option_id": {
+                  "column": "option_id"
                 },
                 "question_id": {
                   "column": "question_id"
@@ -538,6 +607,26 @@
                   "kind": "scalar"
                 }
               },
+              "area": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "JobArea",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "avatar_url": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "bio": {
                 "nullable": true,
                 "type": {
@@ -567,6 +656,14 @@
                 }
               },
               "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "languages": {
+                "many": true,
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -656,6 +753,12 @@
                 "address": {
                   "column": "address"
                 },
+                "area": {
+                  "column": "area"
+                },
+                "avatar_url": {
+                  "column": "avatar_url"
+                },
                 "bio": {
                   "column": "bio"
                 },
@@ -670,6 +773,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "languages": {
+                  "column": "languages"
                 },
                 "skills": {
                   "column": "skills"
@@ -719,7 +825,7 @@
                 }
               },
               "job_id": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -761,7 +867,7 @@
               },
               "job": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "job_id"
@@ -1162,6 +1268,19 @@
                   "kind": "scalar"
                 }
               },
+              "area": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "JobArea",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "benefits": {
                 "many": true,
                 "nullable": false,
@@ -1392,6 +1511,9 @@
                 "address": {
                   "column": "address"
                 },
+                "area": {
+                  "column": "area"
+                },
                 "benefits": {
                   "column": "benefits"
                 },
@@ -1579,13 +1701,6 @@
           },
           "JobQuestion": {
             "fields": {
-              "expected_answer": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -1639,13 +1754,25 @@
                   "model": "Job",
                   "namespace": "public"
                 }
+              },
+              "options": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "question_id"
+                  ]
+                },
+                "to": {
+                  "model": "QuestionOption",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
               "fields": {
-                "expected_answer": {
-                  "column": "expected_answer"
-                },
                 "id": {
                   "column": "id"
                 },
@@ -1662,6 +1789,27 @@
           },
           "Message": {
             "fields": {
+              "attachment_name": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "attachment_type": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "attachment_url": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "content": {
                 "nullable": false,
                 "type": {
@@ -1671,6 +1819,20 @@
               },
               "created_at": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deleted_at": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "edited_at": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
@@ -1741,11 +1903,26 @@
             },
             "storage": {
               "fields": {
+                "attachment_name": {
+                  "column": "attachment_name"
+                },
+                "attachment_type": {
+                  "column": "attachment_type"
+                },
+                "attachment_url": {
+                  "column": "attachment_url"
+                },
                 "content": {
                   "column": "content"
                 },
                 "created_at": {
                   "column": "created_at"
+                },
+                "deleted_at": {
+                  "column": "deleted_at"
+                },
+                "edited_at": {
+                  "column": "edited_at"
                 },
                 "id": {
                   "column": "id"
@@ -1762,6 +1939,89 @@
               },
               "namespaceId": "public",
               "table": "message"
+            }
+          },
+          "QuestionOption": {
+            "fields": {
+              "eliminates": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "option_text": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "question_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "answers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "option_id"
+                  ]
+                },
+                "to": {
+                  "model": "ApplicationAnswer",
+                  "namespace": "public"
+                }
+              },
+              "question": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "question_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "JobQuestion",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "eliminates": {
+                  "column": "eliminates"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "option_text": {
+                  "column": "option_text"
+                },
+                "question_id": {
+                  "column": "question_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "questionOption"
             }
           },
           "SavedCandidate": {
@@ -2265,17 +2525,17 @@
             },
             "applicationAnswer": {
               "columns": {
-                "answer": {
-                  "codecId": "pg/bool@1",
-                  "nativeType": "bool",
-                  "nullable": false
-                },
                 "application_id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
                 },
                 "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "option_id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
@@ -2320,6 +2580,23 @@
                     "namespaceId": "public",
                     "tableName": "jobQuestion"
                   }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "option_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "applicationAnswer"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "questionOption"
+                  }
                 }
               ],
               "indexes": [
@@ -2329,6 +2606,14 @@
                   ],
                   "name": "applicationAnswer_application_id_idx_e32e1f6e",
                   "prefix": "applicationAnswer_application_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "option_id"
+                  ],
+                  "name": "applicationAnswer_option_id_idx_0c2968fe",
+                  "prefix": "applicationAnswer_option_id_idx",
                   "unique": false
                 },
                 {
@@ -2406,6 +2691,16 @@
             "candidateProfile": {
               "checks": [
                 {
+                  "expression": "\"area\" IN ('ADMINISTRACAO', 'TI', 'SAUDE', 'EDUCACAO', 'COMERCIO_VENDAS', 'ALIMENTACAO', 'CONSTRUCAO', 'LIMPEZA_SERVICOS_GERAIS', 'LOGISTICA_TRANSPORTE', 'TURISMO_HOTELARIA', 'OUTROS')",
+                  "name": "candidateProfile_area_check_fc1a8ede",
+                  "prefix": "candidateProfile_area_check"
+                },
+                {
+                  "expression": "array_position(\"languages\", NULL) IS NULL",
+                  "name": "candidateProfile_languages_elem_not_null_d4aa0a00",
+                  "prefix": "candidateProfile_languages_elem_not_null"
+                },
+                {
                   "expression": "array_position(\"skills\", NULL) IS NULL",
                   "name": "candidateProfile_skills_elem_not_null_79c19a4f",
                   "prefix": "candidateProfile_skills_elem_not_null"
@@ -2413,6 +2708,22 @@
               ],
               "columns": {
                 "address": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "area": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "JobArea",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "avatar_url": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": true
@@ -2443,6 +2754,16 @@
                 },
                 "id": {
                   "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "languages": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": true,
                   "nativeType": "text",
                   "nullable": false
                 },
@@ -2534,7 +2855,7 @@
                 "job_id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 }
               },
               "foreignKeys": [
@@ -2621,7 +2942,15 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "candidate_id",
+                    "employer_id",
+                    "job_id"
+                  ]
+                }
+              ]
             },
             "companyProfile": {
               "checks": [
@@ -2891,6 +3220,11 @@
             "job": {
               "checks": [
                 {
+                  "expression": "\"area\" IN ('ADMINISTRACAO', 'TI', 'SAUDE', 'EDUCACAO', 'COMERCIO_VENDAS', 'ALIMENTACAO', 'CONSTRUCAO', 'LIMPEZA_SERVICOS_GERAIS', 'LOGISTICA_TRANSPORTE', 'TURISMO_HOTELARIA', 'OUTROS')",
+                  "name": "job_area_check_fc1a8ede",
+                  "prefix": "job_area_check"
+                },
+                {
                   "expression": "array_position(\"benefits\", NULL) IS NULL",
                   "name": "job_benefits_elem_not_null_5177c089",
                   "prefix": "job_benefits_elem_not_null"
@@ -2930,6 +3264,17 @@
                   },
                   "nativeType": "text",
                   "nullable": false
+                },
+                "area": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "JobArea",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "benefits": {
                   "codecId": "pg/text@1",
@@ -3234,11 +3579,6 @@
             },
             "jobQuestion": {
               "columns": {
-                "expected_answer": {
-                  "codecId": "pg/bool@1",
-                  "nativeType": "bool",
-                  "nullable": false
-                },
                 "id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -3293,6 +3633,21 @@
             },
             "message": {
               "columns": {
+                "attachment_name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "attachment_type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "attachment_url": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "content": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -3306,6 +3661,16 @@
                   },
                   "nativeType": "timestamptz",
                   "nullable": false
+                },
+                "deleted_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "edited_at": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/text@1",
@@ -3383,6 +3748,69 @@
                   ],
                   "name": "message_sender_id_idx_311853a4",
                   "prefix": "message_sender_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "questionOption": {
+              "columns": {
+                "eliminates": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "option_text": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "question_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "question_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "questionOption"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "jobQuestion"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "question_id"
+                  ],
+                  "name": "questionOption_question_id_idx_fcfb223c",
+                  "prefix": "questionOption_question_id_idx",
                   "unique": false
                 }
               ],
@@ -3599,6 +4027,22 @@
                 "APPRENTICE"
               ]
             },
+            "JobArea": {
+              "kind": "valueSet",
+              "values": [
+                "ADMINISTRACAO",
+                "TI",
+                "SAUDE",
+                "EDUCACAO",
+                "COMERCIO_VENDAS",
+                "ALIMENTACAO",
+                "CONSTRUCAO",
+                "LIMPEZA_SERVICOS_GERAIS",
+                "LOGISTICA_TRANSPORTE",
+                "TURISMO_HOTELARIA",
+                "OUTROS"
+              ]
+            },
             "JobStatus": {
               "kind": "valueSet",
               "values": [
@@ -3638,10 +4082,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "616df3be643eae88142b358571a74142ef19944e951eec0bc9a08bf89862a662"
+    "storageHash": "86303abe25aff9c5866660eaabf7a9de16eabf98f3d1670c25bbdc4c654dc380"
   },
   "execution": {
-    "executionHash": "0e0f6985910590c64ddad14e2b60e2866029107e8241206e40bc8027bdfb3a88",
+    "executionHash": "707b50b8f94f1ec590b78bc4752559da9e7661db648a85d9714ebc68c4048d94",
     "mutations": {
       "defaults": [
         {
@@ -3834,6 +4278,17 @@
             "column": "id",
             "namespace": "public",
             "table": "message"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "questionOption"
           }
         },
         {

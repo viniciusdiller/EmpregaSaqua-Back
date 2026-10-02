@@ -1,12 +1,12 @@
-import { IsOptional, IsString, IsUrl, IsArray, ValidateNested, IsBoolean } from 'class-validator';
+import { IsOptional, IsString, IsUrl, IsArray, ValidateNested, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ApplicationAnswerDto {
   @IsString()
   question_id: string;
 
-  @IsBoolean()
-  answer: boolean;
+  @IsUUID()
+  option_id: string;
 }
 
 export class CreateApplicationDto {

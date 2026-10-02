@@ -104,4 +104,46 @@ export class UploadsController {
       size_bytes: result.sizeBytes,
     };
   }
+
+  /**
+   * POST /uploads/avatar
+   * Accepts a multipart/form-data with a single 'file' field.
+   * Only JOB_SEEKER role can upload a profile photo. Já salva a URL no CandidateProfile
+   * (diferente de /uploads/logo, que só devolve a URL e deixa o front gravar à parte).
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.JOB_SEEKER)
+  @UseInterceptors(ImageUploadInterceptor)
+  @Post('avatar')
+  async uploadAvatar(@Req() req: Request) {
+    const file = (req as any).file as Express.Multer.File | undefined;
+    const userId = (req.user as any).id;
+
+    if (!file) {
+      throw new BadRequestException(
+        'Nenhum arquivo enviado. Envie o campo "file" com uma imagem.',
+      );
+    }
+
+    let candidate = await this.prisma.candidateProfile.where((c) => c.user_id.eq(userId)).first();
+    if (!candidate) {
+      candidate = await this.prisma.candidateProfile.create({ user_id: userId });
+    }
+
+    const result = await this.imageProcessingService.processAndSaveImage(
+      file.buffer,
+      file.mimetype,
+      candidate.full_name || userId,
+      'Avatares',
+    );
+
+    await this.prisma.candidateProfile.where({ id: candidate.id }).update({ avatar_url: result.url });
+
+    return {
+      message: 'Foto de perfil enviada com sucesso.',
+      url: result.url,
+      filename: result.filename,
+      size_bytes: result.sizeBytes,
+    };
+  }
 }

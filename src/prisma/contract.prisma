@@ -40,6 +40,23 @@ enum VerificationStatus {
   REJECTED
 }
 
+// Área/segmento da vaga e da pessoa candidata. Usado pra: empresa escolher a área da vaga,
+// candidato escolher sua área de atuação, e bloquear candidatura quando as áreas não batem
+// (ver ApplicationsService#applyForJob). Null em qualquer um dos dois lados = sem restrição.
+enum JobArea {
+  ADMINISTRACAO
+  TI
+  SAUDE
+  EDUCACAO
+  COMERCIO_VENDAS
+  ALIMENTACAO
+  CONSTRUCAO
+  LIMPEZA_SERVICOS_GERAIS
+  LOGISTICA_TRANSPORTE
+  TURISMO_HOTELARIA
+  OUTROS
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -90,7 +107,10 @@ model CandidateProfile {
   telefone    String?
   habilidades String?
   skills      String[] @default([])
+  languages   String[] @default([])
   address     String?
+  avatar_url  String?
+  area        JobArea?
   created_at  TimestamptzString @default(now())
   updated_at  temporal.updatedAtString()
 
@@ -137,6 +157,7 @@ model Job {
   
   work_model       WorkModel
   contract_type    ContractType
+  area             JobArea?
   is_salary_visible Boolean   @default(true)
   is_pcd           Boolean   @default(false)
   expires_at       TimestamptzString?
@@ -155,14 +176,27 @@ model Job {
   questions        JobQuestion[]
 }
 
+// Pergunta de triagem com várias opções (não só sim/não). Cada opção marca se escolhê-la
+// elimina o candidato (ver QuestionOption). Vaga vira eliminatória se o candidato escolher
+// qualquer opção com eliminates=true em qualquer pergunta — ApplicationsService#applyForJob.
 model JobQuestion {
   id               String   @id @default(uuid())
   job_id           String
   question_text    String
-  expected_answer  Boolean
 
   job              Job      @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  options          QuestionOption[]
   answers          ApplicationAnswer[]
+}
+
+model QuestionOption {
+  id            String   @id @default(uuid())
+  question_id   String
+  option_text   String
+  eliminates    Boolean  @default(false)
+
+  question      JobQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  answers       ApplicationAnswer[]
 }
 
 model Application {
@@ -191,32 +225,44 @@ model ApplicationAnswer {
   id             String      @id @default(uuid())
   application_id String
   question_id    String
-  answer         Boolean
+  option_id      String
 
   application    Application @relation(fields: [application_id], references: [id], onDelete: Cascade)
   question       JobQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  option         QuestionOption @relation(fields: [option_id], references: [id], onDelete: Cascade)
 }
 
 model ChatRoom {
   id           String            @id @default(uuid())
-  job_id       String
+  // Null = conversa direta (banco de talentos), sem vaga associada — ver ChatService#getOrCreateDirectRoom.
+  job_id       String?
   candidate_id String
   employer_id  String
   created_at   TimestamptzString @default(now())
 
-  job          Job               @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  job          Job?              @relation(fields: [job_id], references: [id], onDelete: Cascade)
   candidate    User              @relation("CandidateRooms", fields: [candidate_id], references: [id], onDelete: Cascade)
   employer     User              @relation("EmployerRooms", fields: [employer_id], references: [id], onDelete: Cascade)
   messages     Message[]
+
+  @@unique([candidate_id, employer_id, job_id])
 }
 
 model Message {
-  id         String            @id @default(uuid())
-  room_id    String
-  sender_id  String
-  content    String
-  is_read    Boolean           @default(false)
-  created_at TimestamptzString @default(now())
+  id              String            @id @default(uuid())
+  room_id         String
+  sender_id       String
+  content         String
+  is_read         Boolean           @default(false)
+  created_at      TimestamptzString @default(now())
+
+  // Anexo opcional (imagem ou PDF) — url sempre começa com /uploads/, ver ChatAttachmentInterceptor.
+  attachment_url   String?
+  attachment_name  String?
+  attachment_type  String?
+
+  edited_at        TimestamptzString?
+  deleted_at       TimestamptzString?
 
   room       ChatRoom          @relation(fields: [room_id], references: [id], onDelete: Cascade)
   sender     User              @relation("SentMessages", fields: [sender_id], references: [id], onDelete: Cascade)
